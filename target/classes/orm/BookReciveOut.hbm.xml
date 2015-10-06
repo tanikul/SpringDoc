@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Apr 20, 2015 2:42:16 PM by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="model.BookReciveOut" table="book_recive_out" catalog="document">
+        <id name="brId" type="java.lang.Integer">
+            <column name="BR_ID" />
+            <generator class="identity" />
+        </id>
+        <property name="brNum" type="string">
+            <column name="BR_NUM" length="50" />
+        </property>
+        <property name="brYear" type="java.lang.Integer">
+            <column name="BR_YEAR" />
+        </property>
+        <property name="brRdate" type="string">
+            <column name="BR_RDATE" length="10" />
+        </property>
+        <property name="brTypeQuick" type="string">
+            <column name="BR_TYPE_QUICK" length="2" />
+        </property>
+        <property name="brTypeSecret" type="string">
+            <column name="BR_TYPE_SECRET" length="2" />
+        </property>
+        <property name="field1" type="string">
+            <column name="Field1" length="50" />
+        </property>
+        <property name="brPlace" type="string">
+            <column name="BR_PLACE" length="50" />
+        </property>
+        <property name="brDate" type="string">
+            <column name="BR_DATE" length="10" />
+        </property>
+        <property name="brFrom" type="string">
+            <column name="BR_FROM" length="100" />
+        </property>
+        <property name="brTo" type="string">
+            <column name="BR_TO" length="100" />
+        </property>
+        <property name="brSubject" type="string">
+            <column name="BR_SUBJECT" />
+        </property>
+        <property name="brRemark" type="string">
+            <column name="BR_REMARK" />
+        </property>
+        <property name="brDivision" type="string">
+            <column name="BR_DIVISION" length="50" />
+        </property>
+        <property name="brPcode" type="string">
+            <column name="BR_PCODE" length="13" />
+        </property>
+        <property name="brStatus" type="string">
+            <column name="BR_STATUS" length="1" />
+        </property>
+        <property name="brImage" type="string">
+            <column name="BR_IMAGE" />
+        </property>
+    </class>
+</hibernate-mapping>
