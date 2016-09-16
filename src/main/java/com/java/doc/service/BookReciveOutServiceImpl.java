@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.java.doc.dao.BookReciveOutDAO;
 import com.java.doc.model.BookReciveOut;
+import com.java.doc.model.BookReciveOutTable;
 import com.java.doc.util.TableSorter;
 
 @Service
@@ -37,7 +38,7 @@ public class BookReciveOutServiceImpl implements BookReciveOutService {
 	}
 
 	@Override
-	public List<BookReciveOut> ListPageRecive(TableSorter table) {
+	public BookReciveOutTable ListPageRecive(TableSorter table) {
 		return reciveout.ListPageRecive(table);
 	}
 
@@ -48,7 +49,8 @@ public class BookReciveOutServiceImpl implements BookReciveOutService {
 
 	@Override
 	public boolean SaveReciveOut(BookReciveOut recive) {
-		return reciveout.Save(recive);
+		//return reciveout.Save(recive);
+		return reciveout.merge(recive);
 	}
 
 	@Override
@@ -64,5 +66,20 @@ public class BookReciveOutServiceImpl implements BookReciveOutService {
 	@Override
 	public int LastID() {
 		return reciveout.LastID();
+	}
+
+	@Override
+	public List<Integer> getYear() {
+		return reciveout.getYear();
+	}
+
+	@Override
+	public Integer getNextBrNum(int brYear) {
+		return reciveout.getNextBrNum(brYear);
+	}
+
+	@Override
+	public String delete(int id) {
+		return reciveout.delete(id);
 	}
 }

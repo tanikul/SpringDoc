@@ -18,7 +18,7 @@ public class Divisions implements java.io.Serializable {
 
 	private static final long serialVersionUID = 7700831413351122353L;
 	private Integer id;
-	private String divisionCode;
+	private int divisionCode;
 	private String divisionShort;
 	private String divisionName;
 	private String organization;
@@ -26,11 +26,11 @@ public class Divisions implements java.io.Serializable {
 	public Divisions() {
 	}
 
-	public Divisions(String divisionCode) {
+	public Divisions(int divisionCode) {
 		this.divisionCode = divisionCode;
 	}
 
-	public Divisions(String divisionCode, String divisionShort,
+	public Divisions(int divisionCode, String divisionShort,
 			String divisionName, String organization) {
 		this.divisionCode = divisionCode;
 		this.divisionShort = divisionShort;
@@ -50,11 +50,11 @@ public class Divisions implements java.io.Serializable {
 	}
 
 	@Column(name = "division_code", nullable = false, length = 4)
-	public String getDivisionCode() {
+	public int getDivisionCode() {
 		return this.divisionCode;
 	}
 
-	public void setDivisionCode(String divisionCode) {
+	public void setDivisionCode(int divisionCode) {
 		this.divisionCode = divisionCode;
 	}
 

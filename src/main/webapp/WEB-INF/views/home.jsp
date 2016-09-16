@@ -3,7 +3,7 @@
 <%@ taglib uri="http://www.springframework.org/tags/form"
 	prefix="springForm"%>
 <%@taglib prefix="t" tagdir="/WEB-INF/tags"%>
-<c:url value="/download" var="downloadUrl"/>
+<c:url value="/exportReport" var="downloadUrl"/>
 <t:master>
 	<jsp:body>
 	<div class="modal fade" id="form-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -32,15 +32,15 @@
 				                    	<label>ประเภท</label>
 				                        <div class="radio">
 										  <label>
-										    <input type="radio" id="type" name="type" value="1" checked="checked" onchange="SearchResult();"> หนังสือรับ - จากภายนอก
+										    <input type="radio" id="type" name="type" value="1" <c:if test="${type eq '' or type eq 'IN'}">checked="checked"</c:if> onchange="SearchResult();"> หนังสือรับ - จากภายนอก
 										  </label>
 										</div>
 										<div class="radio">
 										  <label>
-										    <input type="radio" id="type" name="type" value="2" onchange="SearchResult();"> หนังสือส่ง - ออกภายนอก
+										    <input type="radio" id="type" name="type" value="2" <c:if test="${type eq 'OUT'}">checked="checked"</c:if> onchange="SearchResult();"> หนังสือส่ง - ออกภายนอก
 										  </label>
 										</div>
-										<label>ช่วงเวลาในการค้นหา</label>
+										<label for="date">ช่วงเวลาในการค้นหา</label>
 								      	<div class='input-group date' id='datetimepicker6' data-provide="datepicker" data-date-language="th-th" data-date-format="dd/mm/yyyy">
 							                <input type='text' class="form-control" id="startDate"
 												placeholder="วันที่เริ่มต้น" />
@@ -87,6 +87,14 @@
 								      <input type="text" class="form-control" id="to">
 								    </div>
 								  </div>
+								  <div class="form-group">
+								  	<label for="year" class="col-sm-3 control-label">ค้นหาจากปี</label>
+								    <div class="col-sm-3">
+								    	<select class="form-control" id="year">
+								    		<!-- <option value="">--ทั้งหมด--</option> -->
+								    	</select>
+								    </div>
+								  </div>
 								</form>
 								<div class="form-group">
 									<div class="col-sm-3"></div>
@@ -108,21 +116,25 @@
 							<div class="report">
 				            	<div class="col_12" id="table-display" style="display:none;">
 									<div class="bnt-export">
-										<input type="button" onclick="download();" value="ออกรายงาน" class="button blue">
+										<input type="button" onclick="download(1);" value="ออกรายงาน (Pdf)" class="button blue">
+										<input type="button" onclick="download(2);" value="ออกรายงาน (Excel)" class="button blue">
 									</div>
 									<table id="myTable" class="tablesorter">
 										<thead>
 											<tr>
-												<th class="header">1</th>
-												<th class="header">2</th>
-												<th class="header">3</th>
-												<th class="header">4</th>
-												<th class="header">5</th>
-												<th class="header">6</th>
-												<th class="header">7</th>
-												<th class="header">8</th>
-												<th class="header">9</th>
-												<th class="header">10</th>
+												<th class="header" style="display:none;">1</th>
+												<th class="header">ปี</th>
+												<th class="header">วันที่ส่งหนังสือ</th>
+												<th class="header">เลขทะเบียนส่ง</th>
+												<th class="header">ที่</th>
+												<th class="header">ลงวันที่</th>
+												<th class="header">จาก</th>
+												<th class="header">ถึง</th>
+												<th class="header">เรื่อง</th>
+												<th class="header">สถานะ</th>
+												<th class="header">ชั้นความลับ</th>
+												<th class="header">หมายเหตุ</th>
+												<th class="header">แก้ไข</th>
 											</tr>
 										</thead>
 										<tbody>
@@ -130,28 +142,34 @@
 										</tbody>
 										<tfoot>
 											<tr>
-										      <th>1</th>
-										      <th>2</th>
-										      <th>3</th>
-										      <th>4</th>
-										      <th>5</th>
-										      <th>6</th>
-										      <th>7</th>
-										      <th>8</th>
-										      <th>9</th>
-										      <th>10</th>
+										      <th class="header" style="display:none;">1</th>
+										      <th>ปี</th>
+										      <th>วันที่ส่งหนังสือ</th>
+										      <th>เลขทะเบียนส่ง</th>
+										      <th>ที่</th>
+										      <th>ลงวันที่</th>
+										      <th>จาก</th>
+										      <th>ถึง</th>
+										      <th>เรื่อง</th>
+										      <th>สถานะ</th>
+										      <th>ชั้นความลับ</th>
+										      <th>หมายเหตุ</th>
+										      <th>แก้ไข</th>
 										    </tr>
 											<tr>
-										      <td class="pager" colspan="10">
+										      <td class="pager" colspan="12">
 										        <img src="<c:url value="/css/blue/icon/first.png" />" class="first"/>
 										        <img src="<c:url value="/css/blue/icon/prev.png" />" class="prev"/>
 										        <span class="pagedisplay"></span> <!-- this can be any element, including an input -->
 										        <img src="<c:url value="/css/blue/icon/next.png" />" class="next"/>
 										        <img src="<c:url value="/css/blue/icon/last.png" />" class="last"/>
 										        <select class="pagesize">
-										          <option value="25">25</option>
+										          	<option value="50">50</option>
+										        	<option value="100">100</option>
+										        	<option value="200">200</option>
 										        </select>
 										      </td>
+										     <tr>
 										</tfoot>
 									</table>                
 				            	</div>
@@ -163,21 +181,25 @@
 		</div>
 		<div id="hide" style="display:none;">
 			<div class="bnt-export">
-				<input type="button" onclick="download();" value="ออกรายงาน" class="button blue">
+				<input type="button" onclick="download(1);" value="ออกรายงาน (Pdf)" class="button blue">
+				<input type="button" onclick="download(2);" value="ออกรายงาน (Excel)" class="button blue">
 			</div>
-			<table class="tablesorter">
+			<table class="tablesorter" id="search_tb">
 				<thead>
 					<tr>
-						<th class="header">1</th>
-						<th class="header">2</th>
-						<th class="header">3</th>
-						<th class="header">4</th>
-						<th class="header">5</th>
-						<th class="header">6</th>
-						<th class="header">7</th>
-						<th class="header">8</th>
-						<th class="header">9</th>
-						<th class="header">10</th>
+						<th class="header" style="display:none;">1</th>
+										      <th>ปี</th>
+										      <th>วันที่ส่งหนังสือ</th>
+										      <th>เลขทะเบียนส่ง</th>
+										      <th>ที่</th>
+										      <th>ลงวันที่</th>
+										      <th>จาก</th>
+										      <th>ถึง</th>
+										      <th>เรื่อง</th>
+										      <th>สถานะ</th>
+										      <th>ชั้นความลับ</th>
+										      <th>หมายเหตุ</th>
+										      <th>แก้ไข</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -185,31 +207,37 @@
 				</tbody>
 				<tfoot>
 					<tr>
-				      <th>1</th>
-				      <th>2</th>
-				      <th>3</th>
-				      <th>4</th>
-				      <th>5</th>
-				      <th>6</th>
-				      <th>7</th>
-				      <th>8</th>
-				      <th>9</th>
-				      <th>10</th>
+				      <th class="header" style="display:none;">1</th>
+										      <th>ปี</th>
+										      <th>วันที่ส่งหนังสือ</th>
+										      <th>เลขทะเบียนส่ง</th>
+										      <th>ที่</th>
+										      <th>ลงวันที่</th>
+										      <th>จาก</th>
+										      <th>ถึง</th>
+										      <th>เรื่อง</th>
+										      <th>สถานะ</th>
+										      <th>ชั้นความลับ</th>
+										      <th>หมายเหตุ</th>
+										      <th>แก้ไข</th>
 				    </tr>
 					<tr>
-				      <td class="pager" colspan="10">
+				      <td class="pager" colspan="12">
 				        <img src="<c:url value="/css/blue/icon/first.png" />" class="first"/>
 				        <img src="<c:url value="/css/blue/icon/prev.png" />" class="prev"/>
 				        <span class="pagedisplay"></span> <!-- this can be any element, including an input -->
 				        <img src="<c:url value="/css/blue/icon/next.png" />" class="next"/>
 				        <img src="<c:url value="/css/blue/icon/last.png" />" class="last"/>
 				        <select class="pagesize">
-				          <option value="25">25</option>
+				          <option value="50">50</option>
+						  <option value="100">100</option>
+						  <option value="200">200</option>
 				        </select>
 				      </td>
+				     <tr>
 				</tfoot>
 			</table>   
-		</div>
+		</div> 
 		<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" id="_csrf"/>
 		<link href="<c:url value="/css/blue/style.css" />" rel="stylesheet">
 		<link href="<c:url value="/css/bootstrap-datetimepicker.css" />" rel="stylesheet">
@@ -245,67 +273,50 @@
 					$('#datetimepicker6').data("DateTimePicker").maxDate(e.date);
 				});*/
 				//$("#myTable").tablesorter({sortList:[[0,0],[2,1]], widgets: ['zebra']});
-		
-			  $("#myTable").tablesorter({
-			      theme: 'blue',
-			      widthFixed: true,
-			      sortLocaleCompare: true, // needed for accented characters in the data
-			      sortList: [ [0,1] ],
-			      widgets: ['zebra', 'filter']
-			    }).tablesorterPager({
-				    container: $(".pager"),
-				    ajaxUrl : 'loadData',
-				    customAjaxUrl: function(table, url) {
-			        $(table).trigger('changingUrl', url);
-			        	return url;
-			      },
-			      ajaxObject: {
-			        dataType: 'json',
-			      },
-			      ajaxProcessing: function(data){
-			        if (data && data.hasOwnProperty('rows')) {
-			          var indx, r, row, c, d = data.rows,
-			          total = data.total_rows,
-			          headers = data.headers,
-			          headerXref = headers.join(',').replace(/\s+/g,'').split(','),
-			          rows = [],
-			          len = d.length;
-			          for ( r=0; r < len; r++ ) {
-			            row = []; // new row array
-			            for ( c in d[r] ) {
-			              if (typeof(c) === "string") {
-			                indx = $.inArray( c, headerXref );
-			                if (indx >= 0) {
-			                  row[indx] = d[r][c];
-			                }
-			              }
-			            }
-			            rows.push(row); // add new row array to rows array
-			          }
-			          $("#loading").hide();
-			          $('#table-display').show();
-			          return [ total, rows, headers ];
-			        }
-			      },
-			      output: '{startRow} to {endRow} ({totalRows})',
-			      updateArrows: true,
-			      /* page: 0, */
-			      size: 25,
-			      fixedHeight: false,
-			      removeRows: false,
-			      cssNext        : '.next',  // next page arrow
-			      cssPrev        : '.prev',  // previous page arrow
-			      cssFirst       : '.first', // go to first page arrow
-			      cssLast        : '.last',  // go to last page arrow
-			      cssPageDisplay : '.pagedisplay', // location of where the "output" is displayed
-			      cssPageSize    : '.pagesize', // page size selector - select dropdown that sets the "size" option
-			      cssErrorRow    : 'tablesorter-errorRow', // error information row
-			      cssDisabled    : 'disabled' // Note there is no period "." in front of this class name
-			    });
+				loadTable();
+			  	$('#year').change(function(){
+					 if($(this).val() != '') {
+						 $('#startDate').val('');
+						 $('#endDate').val('');
+					 }
+				});
+				  
+				$('#startDate').change(function(){
+					if($(this).val() != '') {
+						$('#year').val('');
+					}
+				});
+				
+				$('#endDate').change(function(){
+					if($(this).val() != '') {
+						$('#year').val('');
+					}
+				});
+			  
+				
 			});
 
-			function download() {
-				window.open('${downloadUrl}');
+			function download(id) {
+				var type = ($('input[name=type]:checked').val() == 1) ? 'IN' : 'OUT';
+				if(id == 1){
+					window.open('${downloadUrl}?type=' + type);
+				}else{
+				
+				 	var form = document.createElement("form"); //created dummy form for submitting.
+				    var element1 = document.createElement("input"); 
+				    form.method = "POST";
+				    form.action = (type == 'IN') ? '${pageContext.servletContext.contextPath}/BOOK_RECIEVE_OUT' : '${pageContext.servletContext.contextPath}/BOOK_SEND_OUT';
+				
+				    element1.value = type; //its a json string I need to pass to server.
+				    element1.name = "type";
+				    element1.type = 'hidden'
+				    form.appendChild(element1);
+				
+				    document.body.appendChild(form);
+				
+				    form.submit();
+    				form.remove();
+				}
 			}
 		</script>
 	</jsp:body>

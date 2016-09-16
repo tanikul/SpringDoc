@@ -2,13 +2,18 @@ package com.java.doc.model;
 
 // Generated Apr 20, 2015 2:42:16 PM by Hibernate Tools 3.4.0.CR1
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 /**
@@ -20,14 +25,13 @@ public class BookReciveOut implements java.io.Serializable {
 
 	private static final long serialVersionUID = -7691383831281035458L;
 	private Integer brId;
-	private String brNum;
+	private Integer brNum;
 	private Integer brYear;
-	private String brRdate;
-	private String brTypeQuick;
-	private String brTypeSecret;
-	private String field1;
+	private Date brRdate;
+	private Integer brTypeQuick;
+	private Integer brTypeSecret;
 	private String brPlace;
-	private String brDate;
+	private Date brDate;
 	private String brFrom;
 	private String brTo;
 	private String brSubject;
@@ -35,13 +39,41 @@ public class BookReciveOut implements java.io.Serializable {
 	private String brDivision;
 	private String brPcode;
 	private String brStatus;
-	private String brImage;
-
+	private String brImage;/*
+	private integer typequick;
+	private integer typesecret;*/
+	private String createdBy;
+	private Date createdDate;
+	private String division;
+	private String updatedBy;
+	private Date updatedDate;
+	
 	public BookReciveOut() {
 	}
 
-	public BookReciveOut(Integer brYear, String brRdate, String brNum,
-			String brPlace, String brDate, String brFrom, String brTo,
+	@Override
+	public String toString(){
+		String str = " brId : " + brId + ", "
+				+ " brNum : " + brNum + ", "
+				+ " brYear : " + brYear + ", "
+				+ " brRdate : " + brRdate + ", "
+				+ " brTypeQuick : " + brTypeQuick + ", "
+				+ " brTypeSecret : " + brTypeSecret + ", "
+				+ " brPlace : " + brPlace + ", "
+				+ " brDate : " + brDate + ", "
+				+ " brFrom : " + brFrom + ", "
+				+ " brTo : " + brTo + ", "
+				+ " brSubject : " + brSubject + ", "
+				+ " brRemark : " + brRemark + ", "
+				+ " brDivision : " + brDivision + ", "
+				+ " brPcode : " + brPcode + ", "
+				+ " brStatus : " + brStatus + ", "
+				+ " brImage : " + brImage + ", ";
+		return str;
+	}
+	
+	public BookReciveOut(Integer brYear, Date brRdate, Integer brNum,
+			String brPlace, Date brDate, String brFrom, String brTo,
 			String brSubject, String brRemark) {
 		this.brNum = brNum;
 		this.brYear = brYear;
@@ -54,9 +86,9 @@ public class BookReciveOut implements java.io.Serializable {
 		this.brRemark = brRemark;
 	}
 	
-	public BookReciveOut(String brNum, Integer brYear, String brRdate,
-			String brTypeQuick, String brTypeSecret, String field1,
-			String brPlace, String brDate, String brFrom, String brTo,
+	public BookReciveOut(Integer brNum, Integer brYear, Date brRdate,
+			Integer brTypeQuick, Integer brTypeSecret, String field1,
+			String brPlace, Date brDate, String brFrom, String brTo,
 			String brSubject, String brRemark, String brDivision,
 			String brPcode, String brStatus, String brImage) {
 		this.brNum = brNum;
@@ -64,7 +96,6 @@ public class BookReciveOut implements java.io.Serializable {
 		this.brRdate = brRdate;
 		this.brTypeQuick = brTypeQuick;
 		this.brTypeSecret = brTypeSecret;
-		this.field1 = field1;
 		this.brPlace = brPlace;
 		this.brDate = brDate;
 		this.brFrom = brFrom;
@@ -88,12 +119,12 @@ public class BookReciveOut implements java.io.Serializable {
 		this.brId = brId;
 	}
 
-	@Column(name = "BR_NUM", length = 50)
-	public String getBrNum() {
+	@Column(name = "BR_NUM")
+	public Integer getBrNum() {
 		return this.brNum;
 	}
 
-	public void setBrNum(String brNum) {
+	public void setBrNum(Integer brNum) {
 		this.brNum = brNum;
 	}
 
@@ -106,40 +137,31 @@ public class BookReciveOut implements java.io.Serializable {
 		this.brYear = brYear;
 	}
 
-	@Column(name = "BR_RDATE", length = 10)
-	public String getBrRdate() {
+	@Column(name = "BR_RDATE")
+	public Date getBrRdate() {
 		return this.brRdate;
 	}
 
-	public void setBrRdate(String brRdate) {
+	public void setBrRdate(Date brRdate) {
 		this.brRdate = brRdate;
 	}
 
 	@Column(name = "BR_TYPE_QUICK", length = 2)
-	public String getBrTypeQuick() {
+	public Integer getBrTypeQuick() {
 		return this.brTypeQuick;
 	}
 
-	public void setBrTypeQuick(String brTypeQuick) {
+	public void setBrTypeQuick(Integer brTypeQuick) {
 		this.brTypeQuick = brTypeQuick;
 	}
 
 	@Column(name = "BR_TYPE_SECRET", length = 2)
-	public String getBrTypeSecret() {
+	public Integer getBrTypeSecret() {
 		return this.brTypeSecret;
 	}
 
-	public void setBrTypeSecret(String brTypeSecret) {
+	public void setBrTypeSecret(Integer brTypeSecret) {
 		this.brTypeSecret = brTypeSecret;
-	}
-
-	@Column(name = "Field1", length = 50)
-	public String getField1() {
-		return this.field1;
-	}
-
-	public void setField1(String field1) {
-		this.field1 = field1;
 	}
 
 	@Column(name = "BR_PLACE", length = 50)
@@ -151,12 +173,12 @@ public class BookReciveOut implements java.io.Serializable {
 		this.brPlace = brPlace;
 	}
 
-	@Column(name = "BR_DATE", length = 10)
-	public String getBrDate() {
+	@Column(name = "BR_DATE")
+	public Date getBrDate() {
 		return this.brDate;
 	}
 
-	public void setBrDate(String brDate) {
+	public void setBrDate(Date brDate) {
 		this.brDate = brDate;
 	}
 
@@ -232,4 +254,68 @@ public class BookReciveOut implements java.io.Serializable {
 		this.brImage = brImage;
 	}
 
+	/*//@ManyToOne(fetch = FetchType.LAZY)
+   // @JoinColumn(name = "BR_TYPE_QUICK", insertable=false, updatable=false)
+	public Integer getTypeQuick() {
+		return typeQuick;
+	}
+
+	public void setTypeQuick(Integer typeQuick) {
+		this.typeQuick = typeQuick;
+	}
+
+	//@ManyToOne(fetch = FetchType.LAZY)
+    //@JoinColumn(name = "BR_TYPE_SECRET", insertable=false, updatable=false)
+	public Integer getTypeSecret() {
+		return typeSecret;
+	}
+
+	public void setTypeSecret(Integer typeSecret) {
+		this.typeSecret = typeSecret;
+	}*/
+
+	@Column(name = "CREATED_BY")
+	public String getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(String createdBy) {
+		this.createdBy = createdBy;
+	}
+
+	@Column(name = "CREATED_DATE")
+	public Date getCreatedDate() {
+		return createdDate;
+	}
+
+	public void setCreatedDate(Date createdDate) {
+		this.createdDate = createdDate;
+	}
+
+	@Column(name = "DIVISION")
+	public String getDivision() {
+		return division;
+	}
+
+	public void setDivision(String division) {
+		this.division = division;
+	}
+	
+	@Column(name = "UPDATED_BY")
+	public String getUpdatedBy() {
+		return updatedBy;
+	}
+
+	public void setUpdatedBy(String updatedBy) {
+		this.updatedBy = updatedBy;
+	}
+
+	@Column(name = "UPDATED_DATE")
+	public Date getUpdatedDate() {
+		return updatedDate;
+	}
+
+	public void setUpdatedDate(Date updatedDate) {
+		this.updatedDate = updatedDate;
+	}
 }

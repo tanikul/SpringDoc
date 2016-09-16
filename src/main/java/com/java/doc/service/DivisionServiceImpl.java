@@ -26,7 +26,7 @@ public class DivisionServiceImpl implements DivisionService {
 
 	@Override
 	@Transactional
-	public Map<String, String> selectDivision() {
+	public Map<Integer, String> selectDivision() {
 		return divisions.selectDivision();
 	}
 

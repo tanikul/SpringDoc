@@ -1,18 +1,18 @@
 package com.java.doc.validator;
 
-import org.hibernate.validator.constraints.NotEmpty;
+import java.util.Date;
 
 public class BookSendOutValidator {
 
-//	@NotEmpty(message = "กรุณากรอกวันที่")
+//	@NotEmpty(message = "à¸�à¸£à¸¸à¸“à¸²à¸�à¸£à¸­à¸�à¸§à¸±à¸™à¸—à¸µà¹ˆ")
 	private Integer bsId;
-	private String bsNum;
-	private String bsTypeQuick;
-	private String bsTypeSecret;
+	private Integer bsNum;
+	private Integer bsTypeQuick;
+	private Integer bsTypeSecret;
 	private Integer bsYear;
-	private String bsRdate;
+	private Date bsRdate;
 	private String bsPlace;
-	private String bsDate;
+	private Date bsDate;
 	private String bsFrom;
 	private String bsTo;
 	private String bsSubject;
@@ -27,22 +27,22 @@ public class BookSendOutValidator {
 	public void setBsId(Integer bsId) {
 		this.bsId = bsId;
 	}
-	public String getBsNum() {
+	public Integer getBsNum() {
 		return bsNum;
 	}
-	public void setBsNum(String bsNum) {
+	public void setBsNum(Integer bsNum) {
 		this.bsNum = bsNum;
 	}
-	public String getBsTypeQuick() {
+	public Integer getBsTypeQuick() {
 		return bsTypeQuick;
 	}
-	public void setBsTypeQuick(String bsTypeQuick) {
+	public void setBsTypeQuick(Integer bsTypeQuick) {
 		this.bsTypeQuick = bsTypeQuick;
 	}
-	public String getBsTypeSecret() {
+	public Integer getBsTypeSecret() {
 		return bsTypeSecret;
 	}
-	public void setBsTypeSecret(String bsTypeSecret) {
+	public void setBsTypeSecret(Integer bsTypeSecret) {
 		this.bsTypeSecret = bsTypeSecret;
 	}
 	public Integer getBsYear() {
@@ -51,10 +51,10 @@ public class BookSendOutValidator {
 	public void setBsYear(Integer bsYear) {
 		this.bsYear = bsYear;
 	}
-	public String getBsRdate() {
+	public Date getBsRdate() {
 		return bsRdate;
 	}
-	public void setBsRdate(String bsRdate) {
+	public void setBsRdate(Date bsRdate) {
 		this.bsRdate = bsRdate;
 	}
 	public String getBsPlace() {
@@ -63,10 +63,10 @@ public class BookSendOutValidator {
 	public void setBsPlace(String bsPlace) {
 		this.bsPlace = bsPlace;
 	}
-	public String getBsDate() {
+	public Date getBsDate() {
 		return bsDate;
 	}
-	public void setBsDate(String bsDate) {
+	public void setBsDate(Date bsDate) {
 		this.bsDate = bsDate;
 	}
 	public String getBsFrom() {

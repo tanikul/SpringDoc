@@ -9,6 +9,18 @@
       <springForm:form id="usersForm" action="" method="POST" commandName="users" cssClass="form-horizontal">
 			  <springForm:hidden path="id" value="${obj.getId()}"/>
 			  <div class="form-group">
+			    <label class="col-sm-2 control-label">Username</label>
+			    <div class="col-sm-9">
+			    	<springForm:input path="username" cssClass="form-control" value="${obj.getUsername()}"/>
+			    </div>
+			  </div>
+			  <div class="form-group">
+			    <label class="col-sm-2 control-label">Password</label>
+			    <div class="col-sm-9">
+			    	<springForm:password path="password" cssClass="form-control" value="${obj.getPassword()}"/>
+			    </div>
+			  </div>
+			  <div class="form-group">
 			    <label class="col-sm-2 control-label">ชื่อ</label>
 			    <div class="col-sm-9">
 			    	<springForm:input path="fname" cssClass="form-control" value="${obj.getFname()}"/>

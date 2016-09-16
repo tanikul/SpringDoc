@@ -11,7 +11,7 @@
 		page: 0,
 		filter: [],
 		sortList: [[]],
-		size: 0,
+		size: 50,
 		search: {}
 	};
 	
@@ -44,7 +44,7 @@
 				type: 'POST',
 				//page: 0
 			},
-			dataSearch: {
+			/*dataSearch: {
 				type :"1",
 				startDate : "",
 				endDate : "",
@@ -52,8 +52,20 @@
 				num : "",
 				remark : "",
 				from : "",
-				to : ""
-			},
+				to : "",
+				year : ""
+			},*/
+			dataSearch : {
+				type : $('input[id="type"]:checked').val(),
+				startDate : $('#startDate').val(),
+				endDate : $('#endDate').val(),
+				subject : $('#subject').val(),
+				num : $('#num').val(),
+				remark : $('#remark').val(),
+				from : $('#from').val(),
+				to : $('#to').val(),
+				year : $('#year').val()
+		    },
 			// set this to false if you want to block ajax loading on init
 			processAjaxOnInit: true,
 

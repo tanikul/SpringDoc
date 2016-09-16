@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="document" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="db788c75-d2ee-4244-afcc-7c2177605a32">
-	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.zoom" value="1.2100000000000006"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
-	<field name="brNum" class="java.lang.String"/>
+	<property name="ireport.y" value="26"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="brNum" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
 	<field name="brYear" class="java.lang.String"/>
 	<field name="brRdate" class="java.lang.String"/>
 	<field name="brPlace" class="java.lang.String"/>
@@ -20,7 +25,7 @@
 			<staticText>
 				<reportElement x="122" y="4" width="295" height="49" uuid="d0ca51ef-b46b-4736-b804-930f0504d30f"/>
 				<textElement textAlignment="Center">
-					<font fontName="TH Sarabun New" size="36" isBold="true" pdfEncoding="Cp1250" isPdfEmbedded="true"/>
+					<font fontName="TH Sarabun New" size="36" isBold="true" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[รายงานการค้นหา]]></text>
 			</staticText>
@@ -142,9 +147,6 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{brYear}]]></textFieldExpression>
 			</textField>
-			<rectangle>
-				<reportElement mode="Transparent" x="0" y="0" width="57" height="20" uuid="a10bb915-7030-42c2-815f-b7b524f9079c"/>
-			</rectangle>
 			<textField>
 				<reportElement x="57" y="0" width="65" height="20" uuid="1cf5e65d-aa72-4428-8ef0-f9573ad99964"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -214,6 +216,9 @@
 			</textField>
 			<rectangle>
 				<reportElement mode="Transparent" x="502" y="0" width="53" height="20" uuid="a3655e6f-548b-4d74-a715-9887bd96dee1"/>
+			</rectangle>
+			<rectangle>
+				<reportElement mode="Transparent" x="0" y="0" width="57" height="20" uuid="a10bb915-7030-42c2-815f-b7b524f9079c"/>
 			</rectangle>
 		</band>
 	</detail>

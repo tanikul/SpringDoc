@@ -52,7 +52,7 @@
             <artifactId>hibernate-validator</artifactId>
             <version>4.1.0.Final</version>
         </dependency>
-        
+
 		<!-- database pool -->
 		<dependency>
 			<groupId>commons-dbcp</groupId>
@@ -67,6 +67,12 @@
 			<version>${org.aspectj-version}</version>
 		</dependency>	
 		
+		<dependency>
+		<groupId>c3p0</groupId>
+		<artifactId>c3p0</artifactId>
+		<version>0.9.1.2</version>
+	</dependency>
+	
 		<!-- Logging -->
 		<!-- <dependency>
 			<groupId>org.slf4j</groupId>
@@ -316,6 +322,36 @@
 		    <artifactId>commons-io</artifactId>
 		    <version>2.4</version>
 		</dependency>
+		<dependency>
+		    <groupId>org.apache.xmlbeans</groupId>
+		    <artifactId>xmlbeans</artifactId>
+		    <version>2.3.0</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.apache.poi</groupId>
+		    <artifactId>poi-ooxml</artifactId>
+		    <version>3.9</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.apache.poi</groupId>
+		    <artifactId>poi</artifactId>
+		    <version>3.9</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.apache.poi</groupId>
+		    <artifactId>poi-ooxml-schemas</artifactId>
+		    <version>3.9</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.hibernate</groupId>
+		    <artifactId>hibernate-c3p0</artifactId>
+		    <version>4.2.1.Final</version>
+		</dependency>
+		<dependency>
+		    <groupId>dom4j</groupId>
+		    <artifactId>dom4j</artifactId>
+		    <version>1.6.1</version>
+		</dependency>	
 	</dependencies>
     <build>
         <plugins>

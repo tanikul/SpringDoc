@@ -8,6 +8,9 @@ public class TableSorter {
 	private List<List<Integer>> sortList;
 	private int size;
 	private ObjSearch search;
+	private String role;
+	private String division;
+	private String userId;
 	
 	public ObjSearch getSearch() {
 		return search;
@@ -40,6 +43,26 @@ public class TableSorter {
 		this.filter = filter;
 	}
 	
+	public String getRole() {
+		return role;
+	}
+	public void setRole(String role) {
+		this.role = role;
+	}
+	public String getDivision() {
+		return division;
+	}
+	public void setDivision(String division) {
+		this.division = division;
+	}
+
+	public String getUserId() {
+		return userId;
+	}
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+
 	public class ObjSearch {
 		private String type;
 		private String startDate;
@@ -49,6 +72,7 @@ public class TableSorter {
 		private String remark;
 		private String from;
 		private String to;
+		private String year;
 		
 		public String getType() {
 			return type;
@@ -97,6 +121,12 @@ public class TableSorter {
 		}
 		public void setTo(String to) {
 			this.to = to;
+		}
+		public String getYear() {
+			return year;
+		}
+		public void setYear(String year) {
+			this.year = year;
 		}
 		
 		

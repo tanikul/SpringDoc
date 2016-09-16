@@ -4,9 +4,14 @@ package com.java.doc.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import static javax.persistence.GenerationType.IDENTITY;
+
+import java.util.List;
+
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 /**
@@ -20,7 +25,9 @@ public class TypeQuick implements java.io.Serializable {
 	private Integer id;
 	private String typeQuick;
 	private String active;
-
+	/*private List<BookReciveOut> bookReciveOuts;
+	private List<BookSendOut> bookSendOuts;*/
+	
 	public TypeQuick() {
 	}
 
@@ -57,5 +64,23 @@ public class TypeQuick implements java.io.Serializable {
 	public void setActive(String active) {
 		this.active = active;
 	}
+
+	/*@OneToMany(fetch = FetchType.LAZY, mappedBy = "typeQuick")
+	public List<BookReciveOut> getBookReciveOuts() {
+		return bookReciveOuts;
+	}
+
+	public void setBookReciveOuts(List<BookReciveOut> bookReciveOuts) {
+		this.bookReciveOuts = bookReciveOuts;
+	}
+
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "typeSecret")
+	public List<BookSendOut> getBookSendOuts() {
+		return bookSendOuts;
+	}
+
+	public void setBookSendOuts(List<BookSendOut> bookSendOuts) {
+		this.bookSendOuts = bookSendOuts;
+	}*/
 
 }

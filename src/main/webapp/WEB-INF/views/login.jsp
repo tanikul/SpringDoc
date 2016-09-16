@@ -8,7 +8,7 @@
 			<div class="container">
 			    <div class="login-container">
 			        <div id="output"></div>
-			        <div class="avatar"></div>
+			        <div class="avatar"><img src="<c:url value="/img/IMG_2258.JPG" />"/></div>
 			        <div class="form-box">
 			        	<springForm:form id="loginForm" action="${loginUrl}" method="POST" commandName="login">
 				            <c:if test="${not empty error}">
@@ -31,10 +31,10 @@
 				                </div>
 				                <small class="help-block" style="color:red"><springForm:errors path="password" /></small>
 			                </div>
-			                <div>
+			                <!-- <div>
 			                    <label class="login-checkbox"><input id="remember" name="_spring_security_remember_me" type="checkbox"></label>
 			                    <label class="login-remember">Remember me</label>
-			                </div>
+			                </div> -->
 			                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
 			                <input class="btn btn-info" type="submit" value="Login">
 			        	</springForm:form>

@@ -12,24 +12,28 @@
 			    <label class="col-sm-2 control-label">Username</label>
 			    <div class="col-sm-9">
 			    	<springForm:input path="username" cssClass="form-control"/>
+			    	<p class="help-block"></p>
 			    </div>
 			  </div>
 			  <div class="form-group">
 			    <label class="col-sm-2 control-label">Password</label>
 			    <div class="col-sm-9">
 			    	<springForm:input path="password" cssClass="form-control"/>
+			    	<p class="help-block"></p>
 			    </div>
 			  </div>
 			  <div class="form-group">
 			    <label class="col-sm-2 control-label">ชื่อ</label>
 			    <div class="col-sm-9">
 			    	<springForm:input path="fname" cssClass="form-control"/>
+			    	<p class="help-block"></p>
 			    </div>
 			  </div>
 			  <div class="form-group">
 			    <label class="col-sm-2 control-label">นามสกุล</label>
 			    <div class="col-sm-9">
 			    	<springForm:input path="lname" cssClass="form-control" />
+			    	<p class="help-block"></p>
 			    </div>
 			  </div>
 			  <div class="form-group">
@@ -39,6 +43,7 @@
 			    		<springForm:option value="" label="--- เลือกหน่วยงาน ---" />
 			    		<springForm:options items="${divisions}" />
 			    	</springForm:select>   
+			    	<p class="help-block"></p>
 			    </div>
 			  </div>
 			  <div class="form-group">

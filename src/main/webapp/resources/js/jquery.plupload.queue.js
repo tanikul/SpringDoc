@@ -317,6 +317,15 @@ used as it is.
 
 						e.preventDefault();
 					});
+					
+					var $form = $('#sendReciveForm');alert(2);
+					$form.bind('submit', function(e) {alert(1);
+						if (!$(this).hasClass('plupload_disabled')) {
+							uploader.start();
+						}
+
+						e.preventDefault();
+					});
 
 					$('a.plupload_stop', target).click(function(e) {
 						e.preventDefault();

@@ -7,6 +7,7 @@ import com.java.doc.model.TypeQuick;
 
 public interface TypeQuickDAO {
 
-	public List<TypeQuick> listTypeQuick();
-	public HashMap<Integer, String> SelectQuick();
+	List<TypeQuick> listTypeQuick() throws Exception;
+	HashMap<Integer, String> SelectQuick() throws Exception;
+	String getTypeQuickById(Integer id) throws Exception;
 }

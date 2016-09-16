@@ -2,13 +2,18 @@ package com.java.doc.model;
 
 // Generated Apr 20, 2015 2:42:16 PM by Hibernate Tools 3.4.0.CR1
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 /**
@@ -20,13 +25,13 @@ public class BookSendOut implements java.io.Serializable {
 
 	private static final long serialVersionUID = -2935648839076161772L;
 	private Integer bsId;
-	private String bsNum;
-	private String bsTypeQuick;
-	private String bsTypeSecret;
+	private Integer bsNum;
+	private Integer bsTypeQuick;
+	private Integer bsTypeSecret;
 	private Integer bsYear;
-	private String bsRdate;
+	private Date bsRdate;
 	private String bsPlace;
-	private String bsDate;
+	private Date bsDate;
 	private String bsFrom;
 	private String bsTo;
 	private String bsSubject;
@@ -35,12 +40,19 @@ public class BookSendOut implements java.io.Serializable {
 	private String bsPcode;
 	private String bsStatus;
 	private String bsImage;
-
+	/*private Integer typeQuick;
+	private Integer typeSecret;*/
+	private String createdBy;
+	private Date createdDate;
+	private String division;
+	private String updatedBy;
+	private Date updatedDate;
+	
 	public BookSendOut() {
 	}
 
-	public BookSendOut(Integer bsYear, String bsRdate, String bsNum,
-			String bsPlace, String bsDate, String bsFrom, String bsTo,
+	public BookSendOut(Integer bsYear, Date bsRdate, Integer bsNum,
+			String bsPlace, Date bsDate, String bsFrom, String bsTo,
 			String bsSubject, String bsRemark) {
 		this.bsNum = bsNum;
 		this.bsYear = bsYear;
@@ -53,8 +65,8 @@ public class BookSendOut implements java.io.Serializable {
 		this.bsRemark = bsRemark;
 	}
 	
-	public BookSendOut(String bsNum, String bsTypeQuick, String bsTypeSecret,
-			Integer bsYear, String bsRdate, String bsPlace, String bsDate,
+	public BookSendOut(Integer bsNum, Integer bsTypeQuick, Integer bsTypeSecret,
+			Integer bsYear, Date bsRdate, String bsPlace, Date bsDate,
 			String bsFrom, String bsTo, String bsSubject, String bsRemark,
 			String bsDivision, String bsPcode, String bsStatus, String bsImage) {
 		this.bsNum = bsNum;
@@ -85,30 +97,30 @@ public class BookSendOut implements java.io.Serializable {
 		this.bsId = bsId;
 	}
 
-	@Column(name = "BS_NUM", length = 50)
-	public String getBsNum() {
+	@Column(name = "BS_NUM")
+	public Integer getBsNum() {
 		return this.bsNum;
 	}
 
-	public void setBsNum(String bsNum) {
+	public void setBsNum(Integer bsNum) {
 		this.bsNum = bsNum;
 	}
 
-	@Column(name = "BS_TYPE_QUICK", length = 2)
-	public String getBsTypeQuick() {
+	@Column(name = "BS_TYPE_QUICK")
+	public Integer getBsTypeQuick() {
 		return this.bsTypeQuick;
 	}
 
-	public void setBsTypeQuick(String bsTypeQuick) {
+	public void setBsTypeQuick(Integer bsTypeQuick) {
 		this.bsTypeQuick = bsTypeQuick;
 	}
 
-	@Column(name = "BS_TYPE_SECRET", length = 2)
-	public String getBsTypeSecret() {
+	@Column(name = "BS_TYPE_SECRET")
+	public Integer getBsTypeSecret() {
 		return this.bsTypeSecret;
 	}
 
-	public void setBsTypeSecret(String bsTypeSecret) {
+	public void setBsTypeSecret(Integer bsTypeSecret) {
 		this.bsTypeSecret = bsTypeSecret;
 	}
 
@@ -121,12 +133,12 @@ public class BookSendOut implements java.io.Serializable {
 		this.bsYear = bsYear;
 	}
 
-	@Column(name = "BS_RDATE", length = 10)
-	public String getBsRdate() {
+	@Column(name = "BS_RDATE")
+	public Date getBsRdate() {
 		return this.bsRdate;
 	}
 
-	public void setBsRdate(String bsRdate) {
+	public void setBsRdate(Date bsRdate) {
 		this.bsRdate = bsRdate;
 	}
 
@@ -139,12 +151,12 @@ public class BookSendOut implements java.io.Serializable {
 		this.bsPlace = bsPlace;
 	}
 
-	@Column(name = "BS_DATE", length = 10)
-	public String getBsDate() {
+	@Column(name = "BS_DATE")
+	public Date getBsDate() {
 		return this.bsDate;
 	}
 
-	public void setBsDate(String bsDate) {
+	public void setBsDate(Date bsDate) {
 		this.bsDate = bsDate;
 	}
 
@@ -218,6 +230,71 @@ public class BookSendOut implements java.io.Serializable {
 
 	public void setBsImage(String bsImage) {
 		this.bsImage = bsImage;
+	}
+/*	
+	//@ManyToOne(fetch = FetchType.LAZY)
+    //@JoinColumn(name = "BS_TYPE_QUICK", insertable=false, updatable=false)
+	public Integer getTypeQuick() {
+		return typeQuick;
+	}
+
+	public void setTypeQuick(Integer typeQuick) {
+		this.typeQuick = typeQuick;
+	}
+
+	//@ManyToOne(fetch = FetchType.LAZY)
+    //@JoinColumn(name = "BS_TYPE_SECRET", insertable=false, updatable=false)
+	public Integer getTypeSecret() {
+		return typeSecret;
+	}
+
+	public void setTypeSecret(Integer typeSecret) {
+		this.typeSecret = typeSecret;
+	}*/
+
+	@Column(name = "CREATED_BY")
+	public String getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(String createdBy) {
+		this.createdBy = createdBy;
+	}
+
+	@Column(name = "CREATED_DATE")
+	public Date getCreatedDate() {
+		return createdDate;
+	}
+
+	public void setCreatedDate(Date createdDate) {
+		this.createdDate = createdDate;
+	}
+
+	@Column(name = "DIVISION")
+	public String getDivision() {
+		return division;
+	}
+
+	public void setDivision(String division) {
+		this.division = division;
+	}
+
+	@Column(name = "UPDATED_BY")
+	public String getUpdatedBy() {
+		return updatedBy;
+	}
+
+	public void setUpdatedBy(String updatedBy) {
+		this.updatedBy = updatedBy;
+	}
+
+	@Column(name = "UPDATED_DATE")
+	public Date getUpdatedDate() {
+		return updatedDate;
+	}
+
+	public void setUpdatedDate(Date updatedDate) {
+		this.updatedDate = updatedDate;
 	}
 
 }

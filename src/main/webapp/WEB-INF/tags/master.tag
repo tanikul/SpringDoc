@@ -8,7 +8,7 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบสารบรรณ</title>
+    <title>ระบบสารบรรณ สำนักผังเมือง กรุงเทพมหานคร</title>
     <link href="<c:url value="/css/bootstrap.css" />" rel="stylesheet">
     <link href="<c:url value="/css/theme.css" />" rel="stylesheet">
     <link href="<c:url value="/css/font-awesome.css" />" rel="stylesheet">
@@ -22,22 +22,9 @@
     <script src="<c:url value="/js/script.js" />"></script>
 </head>
   <body>
- 	<nav class="navbar navbar-default navbar-fixed-top" role="navigation" style="background-color: #76C7C1; min-height:65px;">
-    <a class="navbar-brand" href="#">Printer</a>
-    	<sec:authorize access="isAuthenticated()">
-	        <ul class="nav pull-right">
-	            <li class="nav-user dropdown">
-	                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-	                    <img src="<c:url value="/img/user.png" />" class="nav-avatar" />
-	                    <b class="caret"></b>
-	                </a>
-	                <ul class="dropdown-menu">
-	                    <li><a href="ManageAccount">Manage Account</a></li>
-	                    <li><a href="javascript:formSubmit()">Logout</a></li>
-	                </ul>
-	            </li>
-	        </ul>
-        </sec:authorize>
+ 	<nav class="navbar navbar-default navbar-fixed-top" role="navigation" style="min-height:65px;">
+    <a class="navbar-brand" href="#"><img src="<c:url value="/img/HL-02.jpg" />"/></a>
+    	
 	</nav>
 	<sec:authorize access="isAuthenticated()">
 		<c:url value="/j_spring_security_logout" var="logoutUrl" />

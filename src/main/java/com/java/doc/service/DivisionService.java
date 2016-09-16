@@ -8,5 +8,5 @@ import com.java.doc.model.Divisions;
 public interface DivisionService {
 
 	public List<Divisions> listDivision();
-	public Map<String, String> selectDivision();
+	public Map<Integer, String> selectDivision();
 }

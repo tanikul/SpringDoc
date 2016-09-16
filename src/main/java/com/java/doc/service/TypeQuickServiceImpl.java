@@ -20,13 +20,19 @@ public class TypeQuickServiceImpl implements TypeQuickService {
 
 	@Override
 	@Transactional
-	public List<TypeQuick> listTypeQuick() {
+	public List<TypeQuick> listTypeQuick() throws Exception {
 		return this.type.listTypeQuick();
 	}
 
 	@Override
 	@Transactional
-	public HashMap<Integer, String> SelectQuick() {
+	public HashMap<Integer, String> SelectQuick() throws Exception {
 		return this.type.SelectQuick();
+	}
+
+	@Override
+	public String getTypeQuickById(Integer id) throws Exception {
+		// TODO Auto-generated method stub
+		return type.getTypeQuickById(id);
 	}
 }

@@ -51,8 +51,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public Users findByUserName(String username) {
-		// TODO Auto-generated method stub
-		return null;
+		return this.users.findByUserName(username);
 	}
 
 	@Override

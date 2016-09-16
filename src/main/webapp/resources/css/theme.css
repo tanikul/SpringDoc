@@ -278,12 +278,14 @@ box-shadow: none;
 	margin: 15px 0 0 0
 }
 .nav-avatar {
-	width: 34px;
+	/* width: 34px;
 	height: 34px;
-	margin: -7px 5px 0 0;
+	margin: 21px 5px 0 0;
 	-webkit-border-radius: 50%;
 	-moz-border-radius: 50%;
-	border-radius: 50%
+	border-radius: 50% */
+	 border-radius: 50%;
+    height: 23px;
 }
 .dropdown-menu {
 	-webkit-border-radius: 3px;

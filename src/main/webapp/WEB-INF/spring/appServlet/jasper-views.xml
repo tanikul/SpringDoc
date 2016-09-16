@@ -22,8 +22,12 @@
 	-->
 	<bean id="pdfReport"
 	   class="org.springframework.web.servlet.view.jasperreports.JasperReportsPdfView"
-		p:url="classpath:document.jrxml"
+		p:url="classpath:document_.jrxml"
 		p:reportDataKey="datasource" />
+		
+	<bean id="ExcelRevenueSummary"
+   	class="com.java.doc.view.ExcelRevenueReportView">
+   </bean>
 
 	<!-- <bean id="xlsReport"
 	   class="org.springframework.web.servlet.view.jasperreports.JasperReportsXlsView"

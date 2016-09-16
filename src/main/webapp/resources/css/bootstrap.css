@@ -2358,10 +2358,11 @@ output {
   padding: 6px 12px;
   font-size: 14px;
   line-height: 1.42857143;
-  color: #555;
+  color: black;
   background-color: #fff;
   background-image: none;
   border: 1px solid #ccc;
+  font-weight: bold;
   border-radius: 4px;
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
           box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
@@ -3879,14 +3880,14 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
   border-width: 1px 0 0;
 }
 .navbar-brand {
-    float: left;
+    /* float: left; */
     font-family: initial;
     font-size: 30px;
     font-weight: bold;
     height: 50px;
-    line-height: 20px;
+    /* line-height: 20px;
     margin-left: 20px;
-    padding: 25px;
+    padding: 25px; */
 }
 .navbar-brand:hover,
 .navbar-brand:focus {
@@ -6205,3 +6206,12 @@ button.close {
   }
 }
 /*# sourceMappingURL=bootstrap.css.map */
+
+
+.navbar .nav > li > a:hover {
+	background-color: #cfcfcf;
+}
+
+.choose {
+	background-color: #c1c1c1;
+}

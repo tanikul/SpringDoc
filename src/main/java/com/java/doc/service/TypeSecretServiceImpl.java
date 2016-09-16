@@ -1,5 +1,6 @@
 package com.java.doc.service;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -19,8 +20,19 @@ public class TypeSecretServiceImpl implements TypeSecretService {
 
 	@Transactional
 	@Override
-	public List<TypeSecret> listTypeSecret() {
+	public List<TypeSecret> listTypeSecret() throws Exception{
 		return secret.listTypeSecret();
 	}
+	
+	@Override
+	@Transactional
+	public HashMap<Integer, String> SelectSecret() throws Exception {
+		return this.secret.SelectSecret();
+	}
 
+	@Override
+	public String getTypeSecretById(Integer id) throws Exception {
+		// TODO Auto-generated method stub
+		return secret.getTypeSecretById(id);
+	}
 }

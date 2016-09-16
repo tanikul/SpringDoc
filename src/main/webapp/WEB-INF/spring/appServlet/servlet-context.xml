@@ -4,6 +4,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
 	xmlns:p="http://www.springframework.org/schema/p" 
 	xmlns:mvc="http://www.springframework.org/schema/mvc" 
+	xmlns:aop="http://www.springframework.org/schema/aop"
 	xmlns:context="http://www.springframework.org/schema/context"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans 
 	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
@@ -12,7 +13,9 @@
 	http://www.springframework.org/schema/mvc
 	http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
 	http://www.springframework.org/schema/security
-	http://www.springframework.org/schema/security/spring-security-3.2.xsd">
+	http://www.springframework.org/schema/security/spring-security-3.2.xsd
+	http://www.springframework.org/schema/aop
+    http://www.springframework.org/schema/aop/spring-aop-3.2.xsd">
 	
 	<sec:global-method-security pre-post-annotations="enabled"/>
 	<mvc:annotation-driven />
@@ -23,6 +26,7 @@
 	<mvc:resources mapping="/img/**" location="/resources/css/img/" />
 	<mvc:resources mapping="/images/**" location="/resources/css/images/" />
 	<mvc:resources mapping="/fonts/**" location="/resources/css/fonts/" />
+	<mvc:resources mapping="/plugins/**" location="/resources/plugins/" />
 	
 	<!-- Resolves views selected for rendering by @Controllers to .jsp resources in the /WEB-INF/views directory -->
 	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
@@ -63,6 +67,11 @@
  		<property name="reciveout" ref="reciveouts"></property>
  	</bean>
  	
+ 	<bean id="attachmentDAO" class="com.java.doc.dao.AttachmentDAOImpl"/>
+ 	<bean id="attachmentService" class="com.java.doc.service.AttachmentServiceImpl">
+ 		<property name="attachments" ref="attachmentDAO"></property>
+ 	</bean>
+ 	
  	<bean id="messageSource"
         class="org.springframework.context.support.ResourceBundleMessageSource">
         <property name="basename" value="messages" />
@@ -75,7 +84,7 @@
 
 	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
          <!-- setting maximum upload size -->
-        <property name="maxUploadSize" value="100000" />
+        <property name="maxUploadSize" value="99999999" />
     </bean>
     
 	<context:component-scan base-package="com.java.doc.controller" />
