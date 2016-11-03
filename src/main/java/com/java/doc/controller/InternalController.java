@@ -3,6 +3,7 @@ package com.java.doc.controller;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -164,6 +165,7 @@ public class InternalController {
 			
 			model.addObject("mode", "edit");
 			model.addObject("sendRecive", sendRecive);
+			model.addObject("disable", (!user.getRole().equals("ADMIN")) ? "true" : "");
 			model.addObject("quick", this.typeQuick.listTypeQuick());
 			model.addObject("secret", this.typeSecret.listTypeSecret());
 			model.addObject("divisions", this.divisions.selectDivision());

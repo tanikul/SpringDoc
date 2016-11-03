@@ -164,6 +164,7 @@ public class ExternalController {
 			model.addObject("role", user.getRole());
 			model.addObject("sendOut", sendOut);
 			model.addObject("quick", this.typeQuick.listTypeQuick());
+			model.addObject("disable", (!user.getRole().equals("ADMIN")) ? "true" : "");
 			model.addObject("secret", this.typeSecret.listTypeSecret());
 			model.addObject("divisions", this.divisions.selectDivision());
 			model.addObject("lastId", sendOut.getBsNum());

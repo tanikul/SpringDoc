@@ -337,7 +337,9 @@ used as it is.
 									/*bootbox.alert('บันทึกข้อมูลสำเร็จ', function() {
 										window.location.href = GetSiteRoot() + '/home?type=IN';
 									});*/
-									location.reload(true);
+									if(fileCnt < 1){
+										location.reload(true);
+									}
 								}
 							}, 'json');
 						}else if(settings.flagType == 'OUT'){
@@ -367,7 +369,9 @@ used as it is.
 									/*bootbox.alert('บันทึกข้อมูลสำเร็จ', function() {
 										window.location.href = GetSiteRoot() + '/home?type=OUT';
 									});*/
-									location.reload(true);
+									if(fileCnt < 1){
+										location.reload(true);
+									}
 								}
 							}, 'json');
 						}

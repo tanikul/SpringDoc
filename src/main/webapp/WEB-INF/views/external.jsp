@@ -24,7 +24,7 @@
 			    <c:forEach var="item" items="${quick}" varStatus="loop">
 			      <div class="radio-inline">
 				    <label>
-				    	<springForm:radiobutton path="bsTypeQuick" value="${item.getId()}"/> ${item.getTypeQuick()}
+				    	<springForm:radiobutton path="bsTypeQuick" value="${item.getId()}" disabled="${disable}"/> ${item.getTypeQuick()}
 				    </label>
 				  </div>
 				 </c:forEach>
@@ -35,7 +35,7 @@
 			    <label class="col-sm-2 control-label">วันที่ส่งหนังสือ</label>
 			    <div class="col-sm-4">
 			      <div class='input-group date' id='datetimepicker1' data-provide="datepicker" data-date-language="th-th" data-date-format="dd/mm/yyyy">
-			      		<springForm:input path="bsRdate" cssClass="form-control" readonly="true" />
+			      		<springForm:input path="bsRdate" cssClass="form-control" readonly="true" disabled="${disable}"/>
 		                <span class="input-group-addon">
 		                    <span class="glyphicon glyphicon-calendar"></span>
 		                </span>
@@ -53,7 +53,7 @@
 			  <div class="form-group">
 			    <label class="col-sm-2 control-label">หน่วยงานที่ส่ง</label>
 			    <div class="col-sm-4">
-			    	<springForm:select path="bsDivision" cssClass="form-control" onchange="ex.changeDivision(this);">
+			    	<springForm:select path="bsDivision" cssClass="form-control" onchange="ex.changeDivision(this);" disabled="${disable}">
 			    		<springForm:option value="" label="--- เลือกหน่วยงาน ---" />
 			    		<springForm:options items="${divisions}" />
 			    	</springForm:select>
@@ -68,11 +68,11 @@
 				    <div class="col-sm-1 slashs"><label class="label-control">/</label></div> --%>
 				    <div class="col-sm-2 slash">
 				      <springForm:hidden path="bsId" cssClass="form-control" />
-				      <springForm:input path="bsNum" cssClass="form-control" />
+				      <springForm:input path="bsNum" cssClass="form-control" disabled="${disable}"/>
 				    </div>
 				    <div class="col-sm-1 slashs"><label class="label-control">/</label></div>
 				    <div class="col-sm-2 slash">				 
-				      <springForm:input path="bsYear" cssClass="form-control" />
+				      <springForm:input path="bsYear" cssClass="form-control" disabled="${disable}"/>
 				    </div>
 				    <!-- <div class="col-sm-2">
 				      <div class="checkbox">
@@ -85,7 +85,7 @@
 			  <div class="form-group">
 			    <label class="col-sm-2 control-label">เลขที่หนังสือ</label>
 			    <div class="col-sm-4">
-			      <springForm:input path="bsPlace" cssClass="form-control" readonly="true"/>
+			      <springForm:input path="bsPlace" cssClass="form-control" readonly="true" disabled="${disable}"/>
 			    </div>
 			    <div class="col-sm-3">
 			      <div class="checkbox">
@@ -99,7 +99,7 @@
 			    <label class="col-sm-2 control-label">ลงวันที่</label>
 			    <div class="col-sm-4">
 			      <div class='input-group date' id='datetimepicker2'  data-provide="datepicker" data-date-language="th-th" data-date-format="dd/mm/yyyy">
-			      		<springForm:input path="bsDate" cssClass="form-control"/>
+			      		<springForm:input path="bsDate" cssClass="form-control" disabled="${disable}"/>
 		                <span class="input-group-addon">
 		                    <span class="glyphicon glyphicon-calendar"></span>
 		                </span>
@@ -110,21 +110,21 @@
 			  <div class="form-group">
 			    <label class="col-sm-2 control-label">จาก</label>
 			    <div class="col-sm-9">
-			      <springForm:input path="bsFrom" cssClass="form-control"/>
+			      <springForm:input path="bsFrom" cssClass="form-control" disabled="${disable}"/>
 			      <small class="help-block" style="color:red" id="err-bsFrom"></small>
 			    </div>
 			  </div>
 			  <div class="form-group">
 			    <label class="col-sm-2 control-label">ถึง</label>
 			    <div class="col-sm-9">
-			      <springForm:input path="bsTo" cssClass="form-control"/>
+			      <springForm:input path="bsTo" cssClass="form-control" disabled="${disable}"/>
 			      <small class="help-block" style="color:red" id="err-bsTo"></small>
 			    </div>
 			  </div>
 			  <div class="form-group">
 			    <label class="col-sm-2 control-label">เรื่อง</label>
 			    <div class="col-sm-9">
-			       <springForm:input path="bsSubject" cssClass="form-control"/>
+			       <springForm:input path="bsSubject" cssClass="form-control" disabled="${disable}"/>
 			       <small class="help-block" style="color:red" id="err-bsSubject"></small>
 			    </div>
 			  </div>
@@ -132,13 +132,21 @@
 			    <label class="col-sm-2 control-label">หมายเหตุ</label>
 			    <div class="col-sm-9">
 			      <%-- <textarea class="form-control" id="bsRemark"></textarea> --%>
-			      <springForm:textarea path="bsRemark" cssClass="form-control"/>
+			      <springForm:textarea path="bsRemark" cssClass="form-control" disabled="${disable}"/>
 			    </div>
 			  </div>
 			  <div class="form-group">
 			    <div class="col-sm-2"></div>
 			    <div class="col-sm-9">
-			      <button class="btn btn-info" type="submit" id="plupload_start">บันทึก</button>
+			    	<c:choose>
+			    		<c:when test="${disable == 'true'}">
+			    			<button class="btn btn-info" type="submit" id="plupload_start" disabled="${disable}">บันทึก</button>
+			    		</c:when>
+			    		<c:otherwise>
+			    			<button class="btn btn-info" type="submit" id="plupload_start">บันทึก</button>
+			    		</c:otherwise>
+			    	</c:choose>
+			      
 			      <!-- <a href="#" class="plupload_button plupload_start">Start Upload</a>-->
 			    </div>
 			  </div>
@@ -152,10 +160,10 @@
 					    <label>
 					    <c:choose>
 						    <c:when test="${loop.index == 0}">
-						    	<springForm:radiobutton path="bsTypeSecret" value="${item.getId()}" checked="checked"/> ${item.getTypeSecret()}
+						    	<springForm:radiobutton path="bsTypeSecret" value="${item.getId()}" checked="checked" disabled="${disable}"/> ${item.getTypeSecret()}
 						    </c:when>
 						    <c:otherwise>
-						    	<springForm:radiobutton path="bsTypeSecret" value="${item.getId()}" /> ${item.getTypeSecret()}
+						    	<springForm:radiobutton path="bsTypeSecret" value="${item.getId()}" disabled="${disable}"/> ${item.getTypeSecret()}
 						    </c:otherwise> 
 					      </c:choose>
 					    </label>
@@ -174,7 +182,9 @@
 								<tr>
 								  <th class="header">#</th>
 								  <th class="header">Filename</th>
-								  <th class="header">ลบ</th>
+								  <c:if test="${disable != 'true'}">
+								  	<th class="header">ลบ</th>
+								  </c:if>
 								</tr>
 							  </thead>
 							  <tbody>
@@ -184,9 +194,11 @@
 							        <td>
 							        	<a href="<c:url value="/downloadFiles/?id="/>${attachment.attachmentId}"><c:out value="${attachment.attachmentName}"/></a>
 							        </td>
-							        <td align="center">
-							        	<a href="javascript:;" class="btn-del-attachment" data-attachment-id="${attachment.attachmentId}"><span class='glyphicon glyphicon-trash'></span></a>
-							        </td>
+							        <c:if test="${disable != 'true'}">
+								        <td align="center">
+								        	<a href="javascript:;" class="btn-del-attachment" data-attachment-id="${attachment.attachmentId}"><span class='glyphicon glyphicon-trash'></span></a>
+								        </td>
+							        </c:if>
 							      </tr>
 							    </c:forEach>
 							  </tbody>
@@ -210,7 +222,9 @@
 	      </div>
 	      </div>
 	      </div>
-	
+	<script type="text/javascript">
+		var fileCnt = 0;
+	</script>
 	<link href="<c:url value="/css/blue/style.css" />" rel="stylesheet">
 	<link href="<c:url value="/css/bootstrap-datetimepicker.css" />" rel="stylesheet">
 	
@@ -236,19 +250,28 @@
 			if(mode == 'edit'){
 				$('#bsPlace').removeAttr('readonly');
 				$('#bsRdate').removeAttr('readonly');
+				$('#datetimepicker1').datepicker({
+					/* language : 'th',
+					format : "dd/mm/yyyy",
+					startDate : new Date(), */
+					autoclose : true,
+					todayHighlight : true,
+					disabled : true
+				});
+			}else{
+				$('#datetimepicker1').datepicker({
+					/* language : 'th',
+					format : "dd/mm/yyyy",
+					startDate : new Date(), */
+					autoclose : true,
+					todayHighlight : true,
+					disabled : true
+				}).on('click', function() {
+					if (!$('#date_1').is(':checked')) {
+						$(this).datepicker('hide');
+					}
+				});
 			}
-			$('#datetimepicker1').datepicker({
-				/* language : 'th',
-				format : "dd/mm/yyyy",
-				startDate : new Date(), */
-				autoclose : true,
-				todayHighlight : true,
-				disabled : true
-			}).on('click', function() {
-				if (!$('#date_1').is(':checked')) {
-					$(this).datepicker('hide');
-				}
-			});
 			$('#datetimepicker2').datepicker({
 				/* language : 'th',
 				format : "dd/mm/yyyy",
@@ -267,6 +290,7 @@
 		        rename : true,
 		        dragdrop: false,
 		        flagType: 'OUT', 
+		        //multi_selection: false,
 		        filters : {
 		            // Maximum file size
 		            max_file_size : '15mb',
@@ -296,7 +320,20 @@
 		                var attachmentIdList = $("#attachmentIdList").val() + (($("#attachmentIdList").val() != '') ? ',' : '') + attachmentId;
 		                $("#attachmentIdList").val(attachmentIdList);
 		                console.log(attachmentIdList);
-		            }
+		            },
+		            UploadComplete: function(up, files) {
+		        	   if(fileCnt > 0) location.reload(true);
+		            },
+		            FilesAdded: function(up, files) {
+		            	plupload.each(files, function(file) {
+		        		   fileCnt = fileCnt + 1;
+		                });
+		           },
+		           FilesRemoved: function(up, files) {
+		        	   plupload.each(files, function(file) {
+		        		   fileCnt = fileCnt - 1;
+		                });
+		           }
 				}
 		    });
 			

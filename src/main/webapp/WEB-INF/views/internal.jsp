@@ -24,7 +24,7 @@
 			    <c:forEach var="item" items="${quick}" varStatus="loop">
 			      <div class="radio-inline">
 				    <label>
-				    	<springForm:radiobutton path="brTypeQuick" value="${item.getId()}"/> ${item.getTypeQuick()}
+				    	<springForm:radiobutton path="brTypeQuick" value="${item.getId()}" disabled="${disable}"/> ${item.getTypeQuick()}
 				    </label>
 				  </div>
 				 </c:forEach>
@@ -35,7 +35,7 @@
 			    <label class="col-sm-3 control-label">วันที่รับหนังสือ</label>
 			    <div class="col-sm-4">
 			      <div class="input-group date" id="datetimepicker1" data-provide="datepicker" data-date-language="th-th" data-date-format="dd/mm/yyyy">
-			      		<springForm:input path="brRdate" cssClass="form-control" readonly="true" />
+			      		<springForm:input path="brRdate" cssClass="form-control" readonly="true" disabled="${disable}"/>
 		                <span class="input-group-addon">
 		                    <span class="glyphicon glyphicon-calendar"></span>
 		                </span>
@@ -54,11 +54,11 @@
 			    <label class="col-sm-3 control-label">เลขทะเบียนรับ</label>
 			    <div class="col-sm-2 slash">
 			    	<springForm:hidden path="brId"/>
-			    	<springForm:input path="brNum" cssClass="form-control"/>
+			    	<springForm:input path="brNum" cssClass="form-control" disabled="${disable}"/>
 			    </div>
 			    <div class="col-sm-1 slashs"><label class="label-control">/</label></div>
 			    <div class="col-sm-2 slash">
-			      <springForm:input path="brYear" cssClass="form-control"/>
+			      <springForm:input path="brYear" cssClass="form-control" disabled="${disable}"/>
 			    </div>
 			    <!-- <div class="col-sm-3">
 			      <div class="checkbox">
@@ -71,14 +71,14 @@
 			  <div class="form-group">
 			    <label class="col-sm-3 control-label">เลขที่หนังสือ</label>
 			    <div class="col-sm-4">
-			      <springForm:input path="brPlace" cssClass="form-control"/>
+			      <springForm:input path="brPlace" cssClass="form-control" disabled="${disable}"/>
 			    </div>
 			  </div>
 			  <div class="form-group">
 			    <label class="col-sm-3 control-label">ลงวันที่</label>
 			    <div class="col-sm-4">
 			      <div class='input-group date' id='datetimepicker2' data-provide="datepicker" data-date-language="th-th" data-date-format="dd/mm/yyyy">
-			      		<springForm:input path="brDate" cssClass="form-control"/>
+			      		<springForm:input path="brDate" cssClass="form-control" disabled="${disable}"/>
 		                <span class="input-group-addon">
 		                    <span class="glyphicon glyphicon-calendar"></span>
 		                </span>
@@ -89,34 +89,41 @@
 			  <div class="form-group">
 			    <label class="col-sm-3 control-label">จาก</label>
 			    <div class="col-sm-9">
-			      <springForm:input path="brFrom" cssClass="form-control"/>
+			      <springForm:input path="brFrom" cssClass="form-control" disabled="${disable}"/>
 			      <small class="help-block" style="color:red" id="err-brFrom"></small>
 			    </div>
 			  </div>
 			  <div class="form-group">
 			    <label class="col-sm-3 control-label">ถึง</label>
 			    <div class="col-sm-9">
-			      <springForm:input path="brTo" cssClass="form-control"/>
+			      <springForm:input path="brTo" cssClass="form-control" disabled="${disable}"/>
 			      <small class="help-block" style="color:red" id="err-brTo"></small>
 			    </div>
 			  </div>
 			  <div class="form-group">
 			    <label class="col-sm-3 control-label">เรื่อง</label>
 			    <div class="col-sm-9">
-			       <springForm:input path="brSubject" cssClass="form-control"/>
+			       <springForm:input path="brSubject" cssClass="form-control" disabled="${disable}"/>
 			       <small class="help-block" style="color:red" id="err-brSubject"></small>
 			    </div>
 			  </div>
 			  <div class="form-group">
 			    <label class="col-sm-3 control-label">หมายเหตุ</label>
 			    <div class="col-sm-9">
-			      <springForm:textarea cssClass="form-control" path="brRemark"></springForm:textarea>
+			      <springForm:textarea cssClass="form-control" path="brRemark" disabled="${disable}"></springForm:textarea>
 			    </div>
 			  </div>
 			  <div class="form-group">
 			    <div class="col-sm-3"></div>
 			    <div class="col-sm-9">
-			      <button class="btn btn-info" type="button" id="plupload_start">บันทึก</button>
+			    <c:choose>
+			    	<c:when test="${disable == 'true'}">
+			    		<button class="btn btn-info" type="button" id="plupload_start" disabled="${disable}">บันทึก</button>
+			    	</c:when>
+			    	<c:otherwise>
+			    		<button class="btn btn-info" type="button" id="plupload_start">บันทึก</button>
+			    	</c:otherwise>
+			    </c:choose>
 			    </div>
 			  </div>
 			</div>
@@ -127,7 +134,7 @@
 			    <c:forEach var="item" items="${secret}" varStatus="loop">
 			      <div class="radio-inline">
 				    <label>
-					    <springForm:radiobutton path="brTypeSecret" value="${item.getId()}" /> ${item.getTypeSecret()}
+					    <springForm:radiobutton path="brTypeSecret" value="${item.getId()}" disabled="${disable}"/> ${item.getTypeSecret()}
 				    </label>
 				  </div>
 				  </c:forEach>
@@ -144,7 +151,9 @@
 							<tr>
 							  <th class="header">#</th>
 							  <th class="header">Filename</th>
-							  <th class="header">ลบ</th>
+			    			  <c:if test="${disable != 'true'}">
+							  	<th class="header">ลบ</th>
+							  </c:if>
 							</tr>
 						  </thead>
 						  <tbody>
@@ -154,9 +163,11 @@
 						        <td>
 						        	<a href="<c:url value="/downloadFiles/?id="/>${attachment.attachmentId}"><c:out value="${attachment.attachmentName}"/></a>
 						        </td>
-						        <td align="center">
-						        	<a href="javascript:;" class="btn-del-attachment" data-attachment-id="${attachment.attachmentId}"><span class='glyphicon glyphicon-trash'></span></a>
-						        </td>
+						        <c:if test="${disable != 'true'}">
+							        <td align="center">
+							        	<a href="javascript:;" class="btn-del-attachment" data-attachment-id="${attachment.attachmentId}"><span class='glyphicon glyphicon-trash'></span></a>
+							        </td>
+						        </c:if>
 						      </tr>
 						    </c:forEach>
 						  </tbody>
@@ -180,7 +191,9 @@
 	      </div>
 	   </div>
 	</div>
-
+	<script type="text/javascript">
+		var fileCnt = 0;
+	</script>
 	<link href="<c:url value="/css/blue/style.css" />" rel="stylesheet">
 	<link href="<c:url value="/css/bootstrap-datetimepicker.css" />" rel="stylesheet">
 	
@@ -206,19 +219,28 @@
 			var mode = "${mode}";
 			if(mode == 'edit'){
 				$('#brRdate').removeAttr('readonly');
+				$('#datetimepicker1').datepicker({
+					/* language : 'th',
+					format : "dd/mm/yyyy",
+					startDate : new Date(),*/
+					autoclose : true,
+					todayHighlight : true,
+					disabled : true 
+				});
+			}else{
+				 $('#datetimepicker1').datepicker({
+					/* language : 'th',
+					format : "dd/mm/yyyy",
+					startDate : new Date(),*/
+					autoclose : true,
+					todayHighlight : true,
+					disabled : true 
+				}).on('click', function() {
+					if (!$('#date_1').is(':checked')) {
+						$(this).datepicker('hide');
+					}
+				}); 
 			}
-			 $('#datetimepicker1').datepicker({
-				/* language : 'th',
-				format : "dd/mm/yyyy",
-				startDate : new Date(),*/
-				autoclose : true,
-				todayHighlight : true,
-				disabled : true 
-			}).on('click', function() {
-				if (!$('#date_1').is(':checked')) {
-					$(this).datepicker('hide');
-				}
-			}); 
 			 $('#datetimepicker2').datepicker({
 				/* language : 'th',
 				format : "dd/mm/yyyy",
@@ -238,6 +260,7 @@
 		        rename : true,
 		        dragdrop: false,
 		        flagType: 'IN',
+		        //multi_selection: false,
 		        filters : {
 		            // Maximum file size
 		            max_file_size : '15mb',
@@ -264,6 +287,19 @@
 		                var attachmentId = info.response;
 		                var attachmentIdList = $("#attachmentIdList").val() + (($("#attachmentIdList").val() != '') ? ',' : '') + attachmentId;
 		                $("#attachmentIdList").val(attachmentIdList);
+		            },
+		           UploadComplete: function(up, files) {
+		        	   if(fileCnt > 0) location.reload(true);
+		            },
+		           FilesAdded: function(up, files) {
+		        	   plupload.each(files, function(file) {
+		        		   fileCnt = fileCnt + 1;
+		                });
+		           },
+		           FilesRemoved: function(up, files) {
+		        	   plupload.each(files, function(file) {
+		        		   fileCnt = fileCnt - 1;
+		                });
 		            }
 				}
 		    });

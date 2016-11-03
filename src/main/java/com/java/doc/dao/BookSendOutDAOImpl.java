@@ -93,10 +93,10 @@ public class BookSendOutDAOImpl implements BookSendOutDAO {
 			if(!StringUtils.isNullOrEmpty(table.getSearch().getNum().trim())) query.add(Restrictions.like("bsPlace", "%" + table.getSearch().getNum().trim() + "%"));
 			if(!StringUtils.isNullOrEmpty(table.getSearch().getRemark().trim())) query.add(Restrictions.like("bsRemark", "%" + table.getSearch().getRemark().trim() + "%"));
 			if(!StringUtils.isNullOrEmpty(table.getSearch().getSubject().trim())) query.add(Restrictions.like("bsSubject", "%" + table.getSearch().getSubject().trim() + "%"));
-			if(!table.getRole().equals("ADMIN")){
+			//if(!table.getRole().equals("ADMIN")){
 				//query.add(Restrictions.eq("division", table.getDivision()));
-				query.add(Restrictions.like("brPlace", "%" + table.getDivision() + "%"));
-			}
+				//query.add(Restrictions.like("brPlace", "%" + table.getDivision() + "%"));
+			//}
 			
 			
 			int year = Calendar.getInstance(Locale.US).get(Calendar.YEAR);
