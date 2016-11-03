@@ -106,10 +106,10 @@ public class BookReciveOutDAOImpl implements BookReciveOutDAO {
 			if(!StringUtils.isNullOrEmpty(table.getSearch().getSubject().trim())){
 				query.add(Restrictions.like("brSubject", "%" + table.getSearch().getSubject().trim() + "%"));
 			}
-			if(!table.getRole().equals("ADMIN")){
+			//if(!table.getRole().equals("ADMIN")){
 				//query.add(Restrictions.eq("division", table.getDivision()));
-				query.add(Restrictions.like("brPlace", "%" + table.getDivision() + "%"));
-			}
+				//query.add(Restrictions.like("brPlace", "%" + table.getDivision() + "%"));
+			//}
 			int year = Calendar.getInstance(Locale.US).get(Calendar.YEAR);
 			if(StringUtils.isNullOrEmpty(table.getSearch().getYear()) && StringUtils.isNullOrEmpty(table.getSearch().getStartDate()) && StringUtils.isNullOrEmpty(table.getSearch().getEndDate())){
 				query.add(Restrictions.eq("brYear", year + 543));

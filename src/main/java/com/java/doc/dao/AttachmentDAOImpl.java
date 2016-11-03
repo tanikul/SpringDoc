@@ -74,9 +74,9 @@ public class AttachmentDAOImpl implements AttachmentDAO {
 
 	@Override
 	public boolean delete(int attachmentId) {
-		startOperation();
 		try {
 			Attachment attachment = this.getAttachment(attachmentId);
+			startOperation();
 			session.delete(attachment);
 			tx.commit();
 			return true;
