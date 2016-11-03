@@ -27,10 +27,8 @@
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
                 <li class="<%=home%>"><a href="${pageContext.request.contextPath}/home">หน้าแรก</a></li>
-                <c:if test="${role == 'ADMIN'}">
-	                <li class="<%=internal%>"><a href="${pageContext.request.contextPath}/addinternal">เพิ่มหนังสือรับ - จากภายนอก</a></li>
-	                <li class="<%=external%>"><a href="${pageContext.request.contextPath}/addexternal">เพิ่มหนังสือส่ง - ออกภายนอก</a></li>
-                </c:if>
+                <li class="<%=internal%>"><a href="${pageContext.request.contextPath}/addinternal">เพิ่มหนังสือรับ - จากภายนอก</a></li>
+                <li class="<%=external%>"><a href="${pageContext.request.contextPath}/addexternal">เพิ่มหนังสือส่ง - ออกภายนอก</a></li>
             </ul>
             <sec:authorize access="isAuthenticated()">
 	        <ul class="nav pull-right">

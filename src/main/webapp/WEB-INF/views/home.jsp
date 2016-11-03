@@ -134,14 +134,7 @@
 												<th class="header">สถานะ</th>
 												<th class="header">ชั้นความลับ</th>
 												<th class="header">หมายเหตุ</th>
-												<c:choose>
-											      <c:when test="${role == 'ADMIN'}">
-											      	<th class="header">แก้ไข</th>
-											      </c:when>
-											      <c:otherwise>
-											      	<th class="header">ข้อมูล</th>
-											      </c:otherwise>
-										      </c:choose>
+												<th class="header">แก้ไข</th>
 											</tr>
 										</thead>
 										<tbody>
@@ -161,14 +154,7 @@
 										      <th>สถานะ</th>
 										      <th>ชั้นความลับ</th>
 										      <th>หมายเหตุ</th>
-										      <c:choose>
-											      <c:when test="${role == 'ADMIN'}">
-											      	<th>แก้ไข</th>
-											      </c:when>
-											      <c:otherwise>
-											      	<th>ข้อมูล</th>
-											      </c:otherwise>
-										      </c:choose>
+										      <th>แก้ไข</th>
 										    </tr>
 											<tr>
 										      <td class="pager" colspan="12">
@@ -213,14 +199,7 @@
 										      <th>สถานะ</th>
 										      <th>ชั้นความลับ</th>
 										      <th>หมายเหตุ</th>
-										      <c:choose>
-											      <c:when test="${role == 'ADMIN'}">
-											      	<th>แก้ไข</th>
-											      </c:when>
-											      <c:otherwise>
-											      	<th>ข้อมูล</th>
-											      </c:otherwise>
-										      </c:choose>
+										      <th>แก้ไข</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -240,14 +219,7 @@
 										      <th>สถานะ</th>
 										      <th>ชั้นความลับ</th>
 										      <th>หมายเหตุ</th>
-										      <c:choose>
-											      <c:when test="${role == 'ADMIN'}">
-											      	<th>แก้ไข</th>
-											      </c:when>
-											      <c:otherwise>
-											      	<th>ข้อมูล</th>
-											      </c:otherwise>
-										      </c:choose>
+										      <th>แก้ไข</th>
 				    </tr>
 					<tr>
 				      <td class="pager" colspan="12">

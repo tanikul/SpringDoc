@@ -175,11 +175,7 @@ public class HomeController {
 			headers.add("สถานะ");
 			headers.add("ชั้นความลับ");
 			headers.add("หมายเหตุ");
-			if(table.getRole().equals("ADMIN")){
-				headers.add("แก้ไข");
-			}else{
-				headers.add("ข้อมูล");
-			}
+			headers.add("แก้ไข");
 			if(table.getSearch().getType().equals("1")){
 				BookReciveOutTable bookReciveOutTable = reciveout.ListPageRecive(table);
 				request.getSession().setAttribute("listResultRecive", bookReciveOutTable.getSendoutListReport());
@@ -199,11 +195,7 @@ public class HomeController {
 					row.put("หมายเหตุ", item.getBrRemark());
 					
 					//row.put("แก้ไข/ลบ", "<span class='glyphicon glyphicon-pencil' id='edit-"+item.getBrId()+"' style='padding-left:6px;cursor:pointer;' onclick='inter.editGet("+ item.getBrId() +");'></span>  <span class='glyphicon glyphicon-trash' style='padding-left:6px;cursor:pointer;' onclick='removeItem(" + item.getBrId() + ", 0, this)'></span>");
-					if(table.getRole().equals("ADMIN")){
-						row.put("แก้ไข", "<span class='glyphicon glyphicon-pencil' id='edit-"+item.getBrId()+"' style='padding-left:6px;cursor:pointer;' onclick='inter.editGet("+ item.getBrId() +");'></span>");
-					}else{
-						row.put("ข้อมูล", "<span class='glyphicon glyphicon-search' id='edit-"+item.getBrId()+"' style='padding-left:6px;cursor:pointer;' onclick='inter.editGet("+ item.getBrId() +");'></span>");
-					}
+					row.put("แก้ไข", "<span class='glyphicon glyphicon-pencil' id='edit-"+item.getBrId()+"' style='padding-left:6px;cursor:pointer;' onclick='inter.editGet("+ item.getBrId() +");'></span>");
 					rows.add(row);
 				}
 				rs.put("total_rows", bookReciveOutTable.getCountSelect());
@@ -225,11 +217,7 @@ public class HomeController {
 					row.put("สถานะ", item.getBsTypeQuick() != null ? typeQuickService.getTypeQuickById(item.getBsTypeQuick()) : "");
 					row.put("ชั้นความลับ", item.getBsTypeSecret() != null ? typeSecretService.getTypeSecretById(item.getBsTypeSecret()) : "");
 					row.put("หมายเหตุ", item.getBsRemark());
-					if(table.getRole().equals("ADMIN")){
-						row.put("แก้ไข", "<span class='glyphicon glyphicon-pencil' id='edit-"+item.getBsId()+"' style='padding-left:6px;cursor:pointer;' onclick='ex.editGet("+ item.getBsId() +");'></span>");
-					}else{
-						row.put("ข้อมูล", "<span class='glyphicon glyphicon-search' id='edit-"+item.getBsId()+"' style='padding-left:6px;cursor:pointer;' onclick='ex.editGet("+ item.getBsId() +");'></span>");
-					}
+					row.put("แก้ไข", "<span class='glyphicon glyphicon-pencil' id='edit-"+item.getBsId()+"' style='padding-left:6px;cursor:pointer;' onclick='ex.editGet("+ item.getBsId() +");'></span>");
 					//row.put("แก้ไข/ลบ", "<span class='glyphicon glyphicon-pencil' id='edit-"+item.getBsId()+"' style='padding-left:6px;cursor:pointer;' onclick='ex.editGet("+ item.getBsId() +");'></span>  <span class='glyphicon glyphicon-trash' style='padding-left:6px;cursor:pointer;' onclick='removeItem(" + item.getBsId() + ", 1, this);'></span>");
 					rows.add(row);
 				}

@@ -242,7 +242,7 @@ SearchResult = function(){
 		from : $('#from').val(),
 		to : $('#to').val()
       },
-      ajaxProcessing: function(data){console.log(data);
+      ajaxProcessing: function(data){
         if (data && data.hasOwnProperty('rows')) {
           var indx, r, row, c, d = data.rows,
           total = data.total_rows,
