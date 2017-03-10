@@ -12,7 +12,6 @@ import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
-import com.java.doc.controller.InternalController;
 import com.java.doc.hibernate.HibernateUtil;
 import com.java.doc.model.Attachment;
 
@@ -26,6 +25,7 @@ public class AttachmentDAOImpl implements AttachmentDAO {
         HibernateUtil.buildIfNeeded();
     }
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Attachment> listAttachment(int objectId, String objectName) {
 		startOperation();

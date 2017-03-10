@@ -12,7 +12,8 @@ public class HibernateUtil {
 	private static SessionFactory sessionFactory;
 	private static final Logger logger = Logger.getLogger(HibernateUtil.class);
 	
-	 private static SessionFactory configureSessionFactory()
+	 @SuppressWarnings("deprecation")
+	private static SessionFactory configureSessionFactory()
 	            throws HibernateException {
 	        Configuration configuration = new Configuration();
 	        configuration.configure();

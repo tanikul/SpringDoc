@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -18,7 +17,7 @@ public class TypeQuickDAOImpl implements TypeQuickDAO {
 	
 	protected Session session;
     protected Transaction tx;
-    private static final Logger logger = Logger.getLogger(TypeQuickDAOImpl.class);
+
     public TypeQuickDAOImpl() {
         HibernateUtil.buildIfNeeded();
     }

@@ -15,6 +15,7 @@
 		<org.slf4j-version>1.7.5</org.slf4j-version>
 		<log4j.version>1.2.17</log4j.version>
 		<dbcp.version>1.4</dbcp.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 	<dependencies>
 		<!-- Spring -->
@@ -376,6 +377,7 @@
                 <configuration>
                     <source>1.6</source>
                     <target>1.6</target>
+                    <encoding>UTF-8</encoding>
                     <compilerArgument>-Xlint:all</compilerArgument>
                     <showWarnings>true</showWarnings>
                     <showDeprecation>true</showDeprecation>

@@ -21,7 +21,6 @@ import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -268,6 +267,7 @@ public class HomeController {
 		return rs;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/exportReport", method = RequestMethod.GET)
 	@PreAuthorize("isAuthenticated()")
 	public @ResponseBody ModelAndView doSalesReportPDF(ModelAndView modelAndView, 
@@ -334,6 +334,7 @@ public class HomeController {
 		return modelAndView;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/BOOK_RECIEVE_OUT", method = RequestMethod.POST)
 	@PreAuthorize("isAuthenticated()")
 	public @ResponseBody ModelAndView doSalesReportExcel(ModelAndView modelAndView, 
@@ -405,6 +406,7 @@ public class HomeController {
 			
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/BOOK_SEND_OUT", method = RequestMethod.POST)
 	@PreAuthorize("isAuthenticated()")
 	public @ResponseBody ModelAndView doSalesReportExcelSend(ModelAndView modelAndView, 

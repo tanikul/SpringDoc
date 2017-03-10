@@ -1,12 +1,7 @@
 package com.java.doc.controller;
 
-import java.security.Principal;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -19,10 +14,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.LockedException;
-import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -37,7 +29,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.java.doc.model.BookReciveOut;
 import com.java.doc.model.DataTable;
 import com.java.doc.model.ResponseData;
 import com.java.doc.model.UserTable;
@@ -50,8 +41,6 @@ import com.java.doc.validator.ErrorMessage;
 import com.java.doc.validator.LoginValidator;
 import com.java.doc.validator.ValidatorResponse;
 
-import javax.servlet.*;
-import javax.servlet.http.*;
 
 @Controller
 public class AccountController {

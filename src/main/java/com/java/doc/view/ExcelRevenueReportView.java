@@ -1,6 +1,5 @@
 package com.java.doc.view;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,12 +13,12 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.web.servlet.view.document.AbstractExcelView;
 
 import com.java.doc.model.PdfForm;
-import com.java.doc.util.UtilDateTime;
 
 public class ExcelRevenueReportView extends AbstractExcelView{
 	
+	@SuppressWarnings("unchecked")
 	@Override
-	protected void buildExcelDocument(Map model, HSSFWorkbook workbook,
+	protected void buildExcelDocument(@SuppressWarnings("rawtypes") Map model, HSSFWorkbook workbook,
 		HttpServletRequest request, 
 		HttpServletResponse response)
 		throws Exception {
