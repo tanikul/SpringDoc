@@ -21,4 +21,11 @@ public interface BookSendOutService {
 	public Integer getNextBsNum(int bsYear);
 	public List<Integer> getYear();
 	public String delete(int id);
+	public int getCountDataBookSendOut(int year);
+	public BookSendOut getLastRowOfYear(int bsYear);
+	public boolean updateBookOut(BookSendOut bookSendOut);
+	public void saveBookOutFromExcel(BookSendOut bookSendOut);
+	public List<BookSendOut> listSendOutByYearAndBsNum(int year, int bsNum);
+	public boolean insertBsToExcel(BookSendOut bookSendOut);
+	public List<BookSendOut> listSendOutByYear(int year);
 }

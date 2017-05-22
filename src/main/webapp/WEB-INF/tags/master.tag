@@ -15,8 +15,10 @@
     <link href="<c:url value="/css/sign-in.css" />" rel="stylesheet">
     <link href="<c:url value="/css/columnal.css" />" rel="stylesheet">
     <link href="<c:url value="/css/admin.css" />" rel="stylesheet">
+    <link href="<c:url value="/css/bootstrap-select.min.css" />" rel="stylesheet">
     <script src="<c:url value="/js/jquery-1.11.2.js" />"></script>
     <script src="<c:url value="/js/bootstrap.js" />"></script>
+    <script src="<c:url value="/js/bootstrap-select.min.js" />"></script>
     <script src="<c:url value="/js/respond.js" />"></script>
     <script src="<c:url value="/js/dateFormat.js" />"></script>
     <script src="<c:url value="/js/script.js" />"></script>

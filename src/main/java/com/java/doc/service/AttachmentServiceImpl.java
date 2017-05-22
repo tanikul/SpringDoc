@@ -2,15 +2,18 @@ package com.java.doc.service;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.java.doc.dao.AttachmentDAO;
 import com.java.doc.model.Attachment;
 
-@Service
+@Service("attachmentService")
 public class AttachmentServiceImpl implements AttachmentService {
 
+	@Autowired
+	@Qualifier("attachmentDao")
 	private AttachmentDAO attachments;
 	
 	public AttachmentDAO getAttachments() {
@@ -22,7 +25,6 @@ public class AttachmentServiceImpl implements AttachmentService {
 	}
 
 	@Override
-	@Transactional
 	public List<Attachment> listAttachment(int objectId, String objectName) {
 		return attachments.listAttachment(objectId, objectName);
 	}

@@ -3,7 +3,12 @@ package com.java.doc.controller;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
@@ -24,6 +29,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.java.doc.model.Attachment;
 import com.java.doc.model.BookReciveOut;
+import com.java.doc.model.Divisions;
+import com.java.doc.model.Groups;
 import com.java.doc.model.Users;
 import com.java.doc.service.AttachmentService;
 import com.java.doc.service.BookReciveOutService;
@@ -33,55 +40,37 @@ import com.java.doc.service.TypeSecretService;
 import com.java.doc.service.UserService;
 import com.java.doc.util.Constants;
 import com.java.doc.util.UtilDateTime;
+import com.mysql.jdbc.StringUtils;
 
 @Controller
 public class InternalController {
 
 	private static final Logger logger = Logger.getLogger(InternalController.class);
 	
+	@Autowired
+	@Qualifier(value = "typeQuickService")
 	private TypeQuickService typeQuick;
+	
+	@Autowired
+	@Qualifier(value = "typeSecretService")
 	private TypeSecretService typeSecret;
+	
+	@Autowired
+	@Qualifier(value = "divisionService")
 	private DivisionService divisions;
+	
+	@Autowired
+	@Qualifier(value = "bookReciveOutService")
 	private BookReciveOutService reciveout;
+	
+	@Autowired
+	@Qualifier(value = "attachmentService")
 	private AttachmentService attachmentService;
+	
+	@Autowired
+	@Qualifier(value = "userService")
 	private UserService userService;
 	
-	@Autowired(required = true)
-	@Qualifier(value = "TypeSecretService")
-	public void setTypeSecret(TypeSecretService typeSecret) {
-		this.typeSecret = typeSecret;
-	}
-
-	@Autowired(required = true)
-	@Qualifier(value = "TypeQuickService")
-	public void setTypeQuick(TypeQuickService typeQuick) {
-		this.typeQuick = typeQuick;
-	}
-	
-	@Autowired(required = true)
-	@Qualifier(value = "divisionService")
-	public void setDivisions(DivisionService divisions) {
-		this.divisions = divisions;
-	}
-	
-	@Autowired(required = true)
-	@Qualifier(value = "recive")
-	public void setReciveout(BookReciveOutService reciveout) {
-		this.reciveout = reciveout;
-	}
-	
-	@Autowired(required = true)
-	@Qualifier(value = "attachmentService")
-	public void setAttachmentService(AttachmentService attachmentService) {
-		this.attachmentService = attachmentService;
-	}
-
-	@Autowired(required = true)
-	@Qualifier(value = "userService")
-	public void setUserService(UserService userService) {
-		this.userService = userService;
-	}
-
 	@InitBinder
     public void initBinder(WebDataBinder binder) {
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
@@ -94,7 +83,9 @@ public class InternalController {
 	public ModelAndView index(HttpServletRequest request){
 		ModelAndView model = new ModelAndView();
 		try {
-			Calendar cal = Calendar.getInstance();
+			Date date = new Date();
+		    Calendar cal = Calendar.getInstance(Locale.US);
+		    cal.setTime(date);
 			cal.add(Calendar.YEAR, 543); // to get previous year add -1
 			Date now = cal.getTime();
 			BookReciveOut sendRecive = new BookReciveOut();
@@ -105,6 +96,7 @@ public class InternalController {
 			sendRecive.setBrYear(UtilDateTime.getCurrentYear());
 			sendRecive.setBrTypeQuick(1);
 			sendRecive.setBrTypeSecret(1);
+			sendRecive.setBrToDepartment("-1");
 			sendRecive.setBrTo("สำนักผังเมือง");
 			
 			Users user = new Users();
@@ -118,6 +110,9 @@ public class InternalController {
 					request.getSession().setAttribute("user", user);
 				}
 			}
+			model.addObject("groups", new HashMap<Integer, String>());
+			model.addObject("userGroups", new HashMap<Integer, String>());
+			model.addObject("BrToMode", "N");
 			model.addObject("role", user.getRole());
 			model.addObject("sendRecive", sendRecive);
 			model.addObject("quick", this.typeQuick.listTypeQuick());
@@ -127,7 +122,7 @@ public class InternalController {
 			model.addObject("mode", "add");
 			model.setViewName("internal");
 		}catch(Exception ex){
-			logger.error("index : ", ex);
+			logger.error("addinternal : ", ex);
 		}
 		return model;
 	}
@@ -148,26 +143,39 @@ public class InternalController {
 					request.getSession().setAttribute("user", user);
 				}
 			}
-			model.addObject("role", user.getRole());
-			BookReciveOut sendRecive = reciveout.getDataFromId(id);
-			Calendar cal = Calendar.getInstance();
+			BookReciveOut sendRecive = reciveout.getDataFromId(id, user);
+			Calendar cal = Calendar.getInstance(Locale.US);
 			cal.setTime(sendRecive.getBrRdate());
 			cal.add(Calendar.YEAR, 543); // to get previous year add -1
 			Date brRDate = cal.getTime();
 			sendRecive.setBrRdate(brRDate);
-			Calendar cal2 = Calendar.getInstance();
+			Calendar cal2 = Calendar.getInstance(Locale.US);
 			cal2.setTime(sendRecive.getBrDate());
 			cal2.add(Calendar.YEAR, 543); // to get previous year add -1
 			Date brDate = cal2.getTime();
 			sendRecive.setBrDate(brDate);
 			
-			
+			model.addObject("BrToMode", "N");
+			model.addObject("role", user.getRole());
 			model.addObject("mode", "edit");
 			model.addObject("sendRecive", sendRecive);
 			model.addObject("disable", (!user.getRole().equals("ADMIN")) ? "true" : "");
+			model.addObject("disableBtn", (!user.getRole().equals("USER")) ? "" : "true");
 			model.addObject("quick", this.typeQuick.listTypeQuick());
-			model.addObject("secret", this.typeSecret.listTypeSecret());
-			model.addObject("divisions", this.divisions.selectDivision());
+			model.addObject("secret", this.typeSecret.listTypeSecret());			
+			if(user.getRole().equals("ADMIN")){
+				model.addObject("divisions", this.divisions.selectDivision());
+				model.addObject("brTo", sendRecive.getBrToDepartment());
+				model.addObject("brToGroup", sendRecive.getBrToGroup());
+				model.addObject("brToUser", sendRecive.getBrToUser());
+			}else if(user.getRole().equals("DEPARTMENT")){
+				model.addObject("groups", userService.getGroupFromDivisionDropDown(sendRecive.getBrToDepartment()));
+				model.addObject("brTo", sendRecive.getBrToGroup());
+			}else if(user.getRole().equals("GROUP")){
+				model.addObject("userGroups", userService.getUserFromGroupDropDown(sendRecive.getBrToGroup()));
+				model.addObject("brTo", sendRecive.getBrToUser());
+				model.addObject("brToUser", sendRecive.getBrToUser());
+			}
 			model.addObject("attachments", this.attachmentService.listAttachment(id, Constants.OBJECT_NAME_BOOK_RECIVE_OUT));
 			model.setViewName("internal");
 		}catch(Exception ex){
@@ -178,17 +186,17 @@ public class InternalController {
 	
 	@RequestMapping(value = "/saveRecive", method = RequestMethod.POST)
 	@PreAuthorize("isAuthenticated()")
-	public @ResponseBody boolean post(@ModelAttribute("sendRecive") BookReciveOut pet, HttpServletRequest request) {
+	public @ResponseBody boolean post(@ModelAttribute("sendRecive") BookReciveOut pet, HttpServletRequest request) throws ServletException {
 		boolean result = false;
 		try{
-			Calendar cal = Calendar.getInstance();
+			Calendar cal = Calendar.getInstance(Locale.US);
 			cal.setTime(pet.getBrRdate());
-			cal.add(Calendar.YEAR, -543); // to get previous year add -1
+			cal.add(Calendar.YEAR, -543);
 			Date brRDate = cal.getTime();
 			pet.setBrRdate(brRDate);
 			Calendar cal2 = Calendar.getInstance();
 			cal2.setTime(pet.getBrDate());
-			cal2.add(Calendar.YEAR, -543); // to get previous year add -1
+			cal2.add(Calendar.YEAR, -543);
 			Date brDate = cal2.getTime();
 			pet.setBrDate(brDate);
 			
@@ -204,17 +212,18 @@ public class InternalController {
 				}
 			}
 			pet.setCreatedBy(user.getId().toString());
-			pet.setCreatedDate(new Date());
+			pet.setUpdatedBy(user.getId().toString());
 			pet.setDivision(user.getDivision());
-			if(reciveout.SaveReciveOut(pet)){
+			int id = reciveout.SaveReciveOut(pet);
+			if(id > 0){
 				result = true;
 				// Update Attachment
 				String attachmentIdList = request.getParameter("attachmentIdList");
-				int objectId = reciveout.LastID();
-				attachmentService.updateObjectId(attachmentIdList, objectId, Constants.OBJECT_NAME_BOOK_RECIVE_OUT);
+				attachmentService.updateObjectId(attachmentIdList, id, Constants.OBJECT_NAME_BOOK_RECIVE_OUT);
 			}	
 		}catch(Exception ex){
-			logger.error("post : ", ex);
+			logger.error("saveRecive : ", ex);
+			throw new ServletException(ex); 
 		}
 		
 		return result;
@@ -222,49 +231,101 @@ public class InternalController {
 	
 	@RequestMapping(value = "/internal/edit", method = RequestMethod.POST)
 	@PreAuthorize("isAuthenticated()")
-	public @ResponseBody boolean Edit(@ModelAttribute("sendReciveForm") BookReciveOut recive) {
+	public @ResponseBody boolean Edit(@ModelAttribute("sendReciveForm") BookReciveOut recive, HttpServletRequest request) {
 		boolean result = false;
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(recive.getBrRdate());
-		cal.add(Calendar.YEAR, -543); // to get previous year add -1
-		Date brRDate = cal.getTime();
-		recive.setBrRdate(brRDate);
-		Calendar cal2 = Calendar.getInstance();
-		cal2.setTime(recive.getBrDate());
-		cal2.add(Calendar.YEAR, -543); // to get previous year add -1
-		Date brDate = cal2.getTime();
-		recive.setBrDate(brDate);
-		
-		if(reciveout.SaveReciveOut(recive)){
-			result = true;
+		try{
+			System.out.println("xxxx");
+			Users user = new Users();
+			if(request.getSession().getAttribute("user") == null){
+				user = userService.findByUserName(request.getUserPrincipal().getName());
+				request.getSession().setAttribute("user", user);
+			}else{
+				user = (Users) request.getSession().getAttribute("user");
+				if(!user.getUsername().equals(request.getUserPrincipal().getName())){
+					user = userService.findByUserName(request.getUserPrincipal().getName());
+					request.getSession().setAttribute("user", user);
+				}
+			}
+			if(user.getRole().equals("ADMIN")){
+				Calendar cal = Calendar.getInstance(Locale.US);
+				cal.setTime(recive.getBrRdate());
+				cal.add(Calendar.YEAR, -543);
+				Date brRDate = cal.getTime();
+				recive.setBrRdate(brRDate);
+				Calendar cal2 = Calendar.getInstance();
+				cal2.setTime(recive.getBrDate());
+				cal2.add(Calendar.YEAR, -543);
+				Date brDate = cal2.getTime();
+				recive.setBrDate(brDate);
+			}
+			recive.setUpdatedBy(user.getId().toString());
+			if(reciveout.updateReciveOut(recive, user.getRole()) == 1){
+				result = true;
+				if(user.getRole().equals("ADMIN")){
+					// Update Attachment
+					String attachmentIdList = request.getParameter("attachmentIdList");
+					attachmentService.updateObjectId(attachmentIdList, recive.getBrId(), Constants.OBJECT_NAME_BOOK_RECIVE_OUT);
+				}
+			}	
+		}catch(Exception ex){
+			logger.error("/internal/edit post : ", ex);
 		}
 		return result;
 	}
 	
-	@RequestMapping(value = "/internal/upload", method = RequestMethod.POST)
+	@RequestMapping(value = "/internal/upload", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	@PreAuthorize("isAuthenticated()")
 	public @ResponseBody
     String uploadMultipleFileHandler(@RequestParam("name") String[] names,
             @RequestParam("file") MultipartFile[] files,
             @RequestParam("id") int id) {
- 
-        if (files.length != names.length)
-            return "Mandatory information missing";
-        String message = "";
-        for (int i = 0; i < files.length; i++) {
-            MultipartFile file = files[i];
-            String name = names[i];
-            try {
-                Attachment attachment = new Attachment(name, id, Constants.OBJECT_NAME_BOOK_RECIVE_OUT, 
-                		file.getOriginalFilename(), file.getContentType(), file.getBytes());
-                int attachmentId = attachmentService.save(attachment);
-                
-                message += (!"".equals(message) ? "," : "") + attachmentId;
-            } catch (Exception e) {
-            	logger.error("uploadMultipleFileHandler : ", e);
-                return "You failed to upload " + name + " => " + e.getMessage();
-            }
-        }
+		String message = "";
+		try{
+			if (files.length != names.length)
+	            return "Mandatory information missing";
+	        
+	        for (int i = 0; i < files.length; i++) {
+	            MultipartFile file = files[i];
+	            String name = names[i];
+	            try {
+	                Attachment attachment = new Attachment(name, id, Constants.OBJECT_NAME_BOOK_RECIVE_OUT, 
+	                		file.getOriginalFilename(), file.getContentType(), file.getBytes());
+	                int attachmentId = attachmentService.save(attachment);
+	                
+	                message += (!"".equals(message) ? "," : "") + attachmentId;
+	            } catch (Exception e) {
+	            	logger.error("uploadMultipleFileHandler : ", e);
+	                return "You failed to upload " + name + " => " + e.getMessage();
+	            }
+	        }
+		}catch(Exception ex){
+			logger.error("/internal/upload post : ", ex);
+		}
+        
         return message;
     }
+	
+	@RequestMapping(value = "/getGroupSelectedByAdmin", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@PreAuthorize("isAuthenticated()")
+	public @ResponseBody Map<String, List<String>> getGroupSelectedByAdmin(@RequestParam("departments") String departments) {
+		Map<String, List<String>> message = null;
+		try{
+			message = reciveout.getGroupSelectedByAdmin(departments);
+		}catch(Exception ex){
+			logger.error("/getGroupSelectedByAdmin : ", ex);
+		}
+		return message;
+	}
+	
+	@RequestMapping(value = "/getUserSelectedByAdmin", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@PreAuthorize("isAuthenticated()")
+	public @ResponseBody Map<String, List<String>> getUserSelectedByAdmin(@RequestParam("groups") String groups) {
+		Map<String, List<String>> message = null;
+		try{
+			message = reciveout.getUserSelectedByAdmin(groups);
+		}catch(Exception ex){
+			logger.error("/getUserSelectedByAdmin : ", ex);
+		}
+		return message;
+	}
 }

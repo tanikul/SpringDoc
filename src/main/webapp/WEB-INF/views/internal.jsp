@@ -17,6 +17,7 @@
 				<div class="widget_inside">	
 	      <springForm:form id="sendReciveForm" action="" method="POST" commandName="sendRecive" cssClass="form-horizontal">
 	      	<input type="hidden" id="attachmentIdList" name="attachmentIdList" value=""/>
+	      	<input type="hidden" id="mode" name="mode" value="${mode}"/>
 	      <div class="col-md-7">
 			  <div class="form-group" style="color: red">
 			    <label class="col-sm-3 control-label">ขั้นความเร็ว</label>
@@ -93,13 +94,71 @@
 			      <small class="help-block" style="color:red" id="err-brFrom"></small>
 			    </div>
 			  </div>
-			  <div class="form-group">
-			    <label class="col-sm-3 control-label">ถึง</label>
-			    <div class="col-sm-9">
-			      <springForm:input path="brTo" cssClass="form-control" disabled="${disable}"/>
-			      <small class="help-block" style="color:red" id="err-brTo"></small>
-			    </div>
-			  </div>
+			  <c:if test="${role == 'ADMIN'}">
+				  <div class="form-group">
+				    <label class="col-sm-3 control-label">ถึง</label>
+				    <div class="col-sm-9">
+				      <springForm:input path="brTo" cssClass="form-control" disabled="${disable}"/>
+				      <small class="help-block" style="color:red" id="err-brTo"></small>
+				    </div>
+				  </div>
+			  </c:if>
+			  <c:choose>
+			  	<c:when test="${role == 'ADMIN'}">
+				  <div class="form-group">
+				    <label class="col-sm-3 control-label">ถึงกอง</label>
+				    <div class="col-sm-9">
+			    		<springForm:select path="brToDepartment" cssClass="form-control selectpicker" multiple="true" >
+				    		<springForm:options items="${divisions}" />
+				    	</springForm:select>	    	
+				    </div>
+				  </div>
+				  <div class="form-group">
+				    <label class="col-sm-3 control-label">ถึงฝ่าย</label>
+				    <div class="col-sm-9" id="admin-group">
+				    	<springForm:select path="brToGroup" cssClass="form-control selectpicker" multiple="true" >
+				    		<springForm:options items="${groups}" />
+				    	</springForm:select>   
+				    </div>
+				  </div>
+				  <div class="form-group">
+				    <label class="col-sm-3 control-label">ถึง</label>
+				    <div class="col-sm-9" id="admin-user">
+				    	<springForm:select path="brToUser" cssClass="form-control selectpicker" multiple="true" >
+				    		<springForm:options items="${userGroups}" />
+				    	</springForm:select>   
+				    </div>
+				  </div>
+				</c:when>
+				<c:when test="${role == 'DEPARTMENT'}">
+				  <div class="form-group">
+				    <label class="col-sm-3 control-label">ถึงฝ่าย</label>
+				    <div class="col-sm-9">
+				    	<springForm:select path="brToGroup" cssClass="form-control selectpicker" multiple="true" >
+				    		<springForm:options items="${groups}" />
+				    	</springForm:select>   
+				    </div>
+				  </div>
+				  <springForm:hidden path="brToDepartment"/>
+				</c:when>
+				<c:when test="${role == 'GROUP'}">
+				  <div class="form-group">
+				    <label class="col-sm-3 control-label">ถึง</label>
+				    <div class="col-sm-9">
+				    	<springForm:select path="brToUser" cssClass="form-control selectpicker" multiple="true" >
+				    		<springForm:options items="${userGroups}" />
+				    	</springForm:select>   
+				    </div>
+				  </div>
+				  <springForm:hidden path="brToGroup"/>
+				  <springForm:hidden path="brToDepartment"/>
+				</c:when>
+				<c:when test="${role == 'USER'}">
+					<springForm:hidden path="brToGroup"/>
+				 	<springForm:hidden path="brToDepartment"/>
+				 	<springForm:hidden path="brToUser"/>
+				</c:when>
+			  </c:choose>
 			  <div class="form-group">
 			    <label class="col-sm-3 control-label">เรื่อง</label>
 			    <div class="col-sm-9">
@@ -113,17 +172,18 @@
 			      <springForm:textarea cssClass="form-control" path="brRemark" disabled="${disable}"></springForm:textarea>
 			    </div>
 			  </div>
+			  <c:if test="${role eq 'USER'}">
+				  <div class="form-group">
+				    <label class="col-sm-3 control-label" for="brStatus">เอกสารเสร็จสิ้น</label>
+				    <div class="col-sm-1">
+				      <springForm:checkbox path="brStatus" value="SUCCESS"></springForm:checkbox>
+				    </div>
+				  </div>
+			  </c:if>
 			  <div class="form-group">
 			    <div class="col-sm-3"></div>
 			    <div class="col-sm-9">
-			    <c:choose>
-			    	<c:when test="${disable == 'true'}">
-			    		<button class="btn btn-info" type="button" id="plupload_start" disabled="${disable}">บันทึก</button>
-			    	</c:when>
-			    	<c:otherwise>
-			    		<button class="btn btn-info" type="button" id="plupload_start">บันทึก</button>
-			    	</c:otherwise>
-			    </c:choose>
+			    	<button class="btn btn-info" type="button" id="plupload_start">บันทึก</button>
 			    </div>
 			  </div>
 			</div>
@@ -175,7 +235,7 @@
 					</div>
 				</div>
 			  </div>
-			  <div class="form-group">
+			  <div class="form-group" id="upload_form">
 				<div class="row" style="padding: 0px;">
 					<div class="col-sm-12">
 						<div id="uploader">
@@ -211,12 +271,301 @@
 	<script src="<c:url value="/js/jquery.tablesorter.js" />"></script>
 	<script src="<c:url value="/js/jquery.tablesorter.pager.js" />"></script>
 	<script src="<c:url value="/js/jquery.tablesorter.widgets.js" />"></script>
-		
+	<script src="<c:url value="/js/moment.js" />"></script>
 	<script src="<c:url value="/js/bootbox.min.js" />"></script>
 		
 	<script type="text/javascript">
 		$(function() {
+			
+			/* var ds = "${sendRecive.brDate}";
+			//Thu May 11 10:43:33 ICT 2017
+			var ds1 = ds.split(' ');
+			var day = ds1[2];
+			var month = ds1[1];
+			var year = ds1[5];
+			console.log(day);
+			console.log(month);
+			console.log(year);
+			console.log(new Date(Date.parse(month + ' ' + day + ', ' + year))); */
+			
+			
 			var mode = "${mode}";
+			var disable = "${disable}";
+			var brTo = "${brTo}";
+			var role = "${role}";
+			if(brTo != null){
+				var arrBrTo = brTo.split(',');
+				$("#brToDepartment option").each(function(i, item){
+					if(arrBrTo.indexOf(item.value) > -1){
+						$(item).attr('selected', 'selected');	
+					}
+				});	
+				$("#brToGroup option").each(function(i, item){
+					if(arrBrTo.indexOf(item.value) > -1){
+						$(item).attr('selected', 'selected');	
+					}
+				});	
+				$("#brToUser option").each(function(i, item){
+					if(arrBrTo.indexOf(item.value) > -1){
+						$(item).attr('selected', 'selected');	
+					}
+				});	
+			}
+			if(role == 'USER'){
+				if($('body').find('#brStatus1').length > -1){
+					var status = "${sendRecive.brStatus}";
+					if(status == 'Y'){
+						$('#brStatus1').attr('checked', true).attr('disabled', 'disabled');	
+					}
+				}
+			}else if(role == 'ADMIN'){
+				var departmentTmp = [];
+				var groupTmp = [];
+				$('#brToDepartment').on('changed.bs.select', function (event, clickedIndex, newValue, oldValue) {
+					if(departmentTmp.hasOwnProperty('x' + clickedIndex)){
+						delete departmentTmp['x' + clickedIndex];
+					}else{
+						departmentTmp['x' + clickedIndex] = $("#brToDepartment option").eq(clickedIndex).val();		
+					}
+					var str = '';
+					for(var x in departmentTmp){
+						str += "'" + departmentTmp[x] + "',";
+					}
+					if(str.length > 0){
+						str = str.substring(0, str.length - 1);
+					}else{
+						str = "'" + "'";
+					}
+					$.ajax({
+				        url: GetSiteRoot() + "/getGroupSelectedByAdmin",
+				        type: "POST",
+				        cache: false,
+				        dataType : "json",
+				        data: { 'departments': str },
+				        success: function (response) {
+				        	var s = '';
+				        	for(var x in response){
+				        		s += '<optgroup label="' + x + '">';
+				        		for(var y in response[x]){
+				        			var t = response[x][y].split('xx#xx');
+				        			s += '<option value="' + t[0] + '">' + t[1] + '</option>'; 
+				        		}
+				        		s += '</optgroup>';			        	  
+				        	}
+				        	var strs = '';
+			        		strs = '<select class="form-control selectpicker" id="brToGroup" name="brToGroup" multiple="true">';
+			        		strs += s;
+			        		strs += '</select>';
+			        		$('#admin-group').html(strs);
+			        		strs = '<select class="form-control selectpicker" id="brToUser" name="brToUser" multiple="true">';
+			        		strs += '</select>';
+			        		$('#admin-user').html(strs);
+			        		$('#brToGroup').selectpicker('refresh');
+			        		$('#brToUser').selectpicker('refresh');
+			        		$('#brToGroup').on('changed.bs.select', function (event, clickedIndex, newValue, oldValue) {
+   								if(groupTmp.hasOwnProperty('x' + clickedIndex)){
+   									delete groupTmp['x' + clickedIndex];
+   								}else{
+   									var b = $("#brToGroup option").eq(clickedIndex).val();
+   									var af = b.split('xx##xx');
+   									groupTmp['x' + clickedIndex] = af[1];		
+   								}
+   								var str = '';
+   								for(var x in groupTmp){
+   									str += "'" + groupTmp[x] + "',";
+   								}
+   								if(str.length > 0){
+   									str = str.substring(0, str.length - 1);
+   								}else{
+   									str = "'" + "'";
+   								}
+   								$.ajax({
+   							        url: GetSiteRoot() + "/getUserSelectedByAdmin",
+   							        type: "POST",
+   							        cache: false,
+   							        dataType : "json",
+   							        data: { 'groups': str },
+   							        success: function (response) {
+   							        	var s = '';
+   							        	for(var x in response){
+   							        		s += '<optgroup label="' + x + '">';
+   							        		for(var y in response[x]){
+   							        			var t = response[x][y].split('xx#xx');
+   							        			s += '<option value="' + t[0] + '">' + t[1] + '</option>'; 
+   							        		}
+   							        		s += '</optgroup>';			        	  
+   							        	}
+   							        	var strs = '';
+   							        	if(s != ''){
+   							        		strs = '<select class="form-control selectpicker" id="brToUser" name="brToUser" multiple="true">';
+   							        		strs += s;
+   							        		strs += '</select>';
+   							        		$('#admin-user').html(strs);
+   							        		$('#brToUser').selectpicker('refresh');
+   							        	}
+   							        }
+   							    });
+   							});
+				        }
+				    });
+				});
+				
+				
+				if(brTo != null && brTo != ''){
+					
+					var brToDepartment = "${sendRecive.brToDepartment}";
+					if(brToDepartment != '' && brToDepartment != null){
+						var option = $('#brToDepartment').find('option');
+						var d = brToDepartment.split(',');
+						for(var x = 0; x < option.length; x++){
+							if(d.indexOf($(option[x]).val()) > -1){
+								departmentTmp['x' + x] = $(option[x]).val();
+							}
+						}
+					}
+					
+					var str = '';
+					for(var x in departmentTmp){
+						str += "'" + departmentTmp[x] + "',";
+					}
+					if(str.length > 0){
+						str = str.substring(0, str.length - 1);
+					}else{
+						str = "'" + "'";
+					}
+					$.ajax({
+				        url: GetSiteRoot() + "/getGroupSelectedByAdmin",
+				        type: "POST",
+				        cache: false,
+				        dataType : "json",
+				        data: { 'departments': str },
+				        success: function (response) {
+				        	var s = '';
+				        	for(var x in response){
+				        		s += '<optgroup label="' + x + '">';
+				        		for(var y in response[x]){
+				        			var t = response[x][y].split('xx#xx');
+				        			var o = t[0].split('xx##xx');
+					
+				        			var brToGroup = "${brToGroup}";
+									if(brToGroup != '' && brToGroup != null){
+										brToGroup = brToGroup.split(',');
+									}	
+				        			if(brToGroup.indexOf(o[1]) > -1){
+				        				s += '<option value="' + t[0] + '" selected>' + t[1] + '</option>'; 	
+				        			}else{
+				        				s += '<option value="' + t[0] + '">' + t[1] + '</option>'; 
+				        			}
+				        			
+				        		}
+				        		s += '</optgroup>';			        	  
+				        	}
+				        	var strs = '';
+			        		strs = '<select class="form-control selectpicker" id="brToGroup" name="brToGroup" multiple="true">';
+			        		strs += s;
+			        		strs += '</select>';
+			        		$('#admin-group').html(strs);
+			        		
+			        		strs = '<select class="form-control selectpicker" id="brToUser" name="brToUser" multiple="true">';
+			        		strs += '</select>';
+			        		$('#admin-user').html(strs);
+			        		$('#brToGroup').selectpicker('refresh');
+			        		$('#brToUser').selectpicker('refresh');
+			        		$('#brToGroup').on('changed.bs.select', function (event, clickedIndex, newValue, oldValue) {
+   								if(groupTmp.hasOwnProperty('x' + clickedIndex)){
+   									delete groupTmp['x' + clickedIndex];
+   								}else{
+   									var b = $("#brToGroup option").eq(clickedIndex).val();
+   									var af = b.split('xx##xx');
+   									groupTmp['x' + clickedIndex] = af[1];		
+   								}
+   								var str = '';
+   								for(var x in groupTmp){
+   									str += "'" + groupTmp[x] + "',";
+   								}
+   								if(str.length > 0){
+   									str = str.substring(0, str.length - 1);
+   								}else{
+   									str = "'" + "'";
+   								}
+   								$.ajax({
+   							        url: GetSiteRoot() + "/getUserSelectedByAdmin",
+   							        type: "POST",
+   							        cache: false,
+   							        dataType : "json",
+   							        data: { 'groups': str },
+   							        success: function (response) {
+   							        	var s = '';
+   							        	for(var x in response){
+   							        		s += '<optgroup label="' + x + '">';
+   							        		for(var y in response[x]){
+   							        			var t = response[x][y].split('xx#xx');
+   							        			s += '<option value="' + t[0] + '">' + t[1] + '</option>'; 
+   							        		}
+   							        		s += '</optgroup>';			        	  
+   							        	}
+   							        	var strs = '';
+   							        	if(s != ''){
+   							        		strs = '<select class="form-control selectpicker" id="brToUser" name="brToUser" multiple="true">';
+   							        		strs += s;
+   							        		strs += '</select>';
+   							        		$('#admin-user').html(strs);
+   							        		$('#brToUser').selectpicker('refresh');
+   							        	}
+   							        }
+   							    });
+   							});
+			        		
+							var str = '';
+							for(var x in brToGroup){
+								str += "'" + brToGroup[x] + "',";
+							}
+							if(str.length > 0){
+								str = str.substring(0, str.length - 1);
+							}else{
+								str = "'" + "'";
+							}
+							var brToUser = "${brToUser}";
+							brToUser = brToUser.split(',');
+							$.ajax({
+						        url: GetSiteRoot() + "/getUserSelectedByAdmin",
+						        type: "POST",
+						        cache: false,
+						        dataType : "json",
+						        data: { 'groups': str },
+						        success: function (response) {
+						        	var s = '';
+						        	for(var x in response){
+						        		s += '<optgroup label="' + x + '">';
+						        		for(var y in response[x]){
+						        			var t = response[x][y].split('xx#xx');
+						        			var p = t[0].split('xx##xx');
+						        			if(brToUser.indexOf(p[2]) > -1){
+						        				s += '<option value="' + t[0] + '" selected>' + t[1] + '</option>'; 	
+						        			}else{
+						        				s += '<option value="' + t[0] + '">' + t[1] + '</option>'; 
+						        			} 
+						        		}
+						        		s += '</optgroup>';			        	  
+						        	}
+						        	var strs = '';
+						        	if(s != ''){
+						        		strs = '<select class="form-control selectpicker" id="brToUser" name="brToUser" multiple="true">';
+						        		strs += s;
+						        		strs += '</select>';
+						        		$('#admin-user').html(strs);
+						        		$('#brToUser').selectpicker('refresh');
+						        	}
+						        }
+						    });
+				        }
+					});
+		        }	    
+			}
+			
+			if(disable){
+				$('#upload_form').hide();
+			}
 			if(mode == 'edit'){
 				$('#brRdate').removeAttr('readonly');
 				$('#datetimepicker1').datepicker({
@@ -318,7 +667,6 @@
 					if(result) {
 						$.post(GetSiteRoot() + '/deleteFiles/', {id : attachmentId}, 
 							function(data){
-								console.log(data);
 								$('.btn-del-attachment[data-attachment-id="' + attachmentId + '"]').closest('tr').remove();
 							}
 						);

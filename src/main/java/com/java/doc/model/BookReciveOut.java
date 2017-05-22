@@ -30,7 +30,14 @@ public class BookReciveOut implements java.io.Serializable {
 	private String brPlace;
 	private Date brDate;
 	private String brFrom;
+	private String brToDepartment;
+	private String brToGroup;
+	private String brToUser;
 	private String brTo;
+	private String brToDepartmentShort;
+	private String brToDepartmentName;
+	private String brToGroupName;
+	private String brToUserName;
 	private String brSubject;
 	private String brRemark;
 	private String brDivision;
@@ -59,7 +66,10 @@ public class BookReciveOut implements java.io.Serializable {
 				+ " brPlace : " + brPlace + ", "
 				+ " brDate : " + brDate + ", "
 				+ " brFrom : " + brFrom + ", "
-				+ " brTo : " + brTo + ", "
+				+ " brToDepartment : " + brToDepartment + ", "
+				+ " brToGroup : " + brToGroup + ", "
+				+ " brToDepartmentShort : " + brToDepartmentShort + ", "
+				+ " brToUser : " + brToUser + ", "
 				+ " brSubject : " + brSubject + ", "
 				+ " brRemark : " + brRemark + ", "
 				+ " brDivision : " + brDivision + ", "
@@ -70,24 +80,27 @@ public class BookReciveOut implements java.io.Serializable {
 	}
 	
 	public BookReciveOut(Integer brYear, Date brRdate, Integer brNum,
-			String brPlace, Date brDate, String brFrom, String brTo,
-			String brSubject, String brRemark) {
+			String brPlace, Date brDate, String brFrom, String brToDepartment,
+			String brToGroup, String brToDepartmentShort, String brToUser, String brSubject, String brRemark) {
 		this.brNum = brNum;
 		this.brYear = brYear;
 		this.brRdate = brRdate;
 		this.brPlace = brPlace;
 		this.brDate = brDate;
 		this.brFrom = brFrom;
-		this.brTo = brTo;
+		this.brToDepartment = brToDepartment;
+		this.brToGroup = brToGroup;
+		this.brToDepartmentShort = brToDepartmentShort;
+		this.brToUser = brToUser;
 		this.brSubject = brSubject;
 		this.brRemark = brRemark;
 	}
 	
 	public BookReciveOut(Integer brNum, Integer brYear, Date brRdate,
 			Integer brTypeQuick, Integer brTypeSecret, String field1,
-			String brPlace, Date brDate, String brFrom, String brTo,
-			String brSubject, String brRemark, String brDivision,
-			String brPcode, String brStatus, String brImage) {
+			String brPlace, Date brDate, String brFrom, String brToDepartment, String brToGroup, String brToUser,
+			String brSubject, String brRemark, String brDivision, String brToDepartmentShort,
+			String brPcode, String brStatus, String brImage, String brTo) {
 		this.brNum = brNum;
 		this.brYear = brYear;
 		this.brRdate = brRdate;
@@ -97,6 +110,10 @@ public class BookReciveOut implements java.io.Serializable {
 		this.brDate = brDate;
 		this.brFrom = brFrom;
 		this.brTo = brTo;
+		this.brToDepartment = brToDepartment;
+		this.brToGroup = brToGroup;
+		this.brToDepartmentShort = brToDepartmentShort;
+		this.brToUser = brToUser;
 		this.brSubject = brSubject;
 		this.brRemark = brRemark;
 		this.brDivision = brDivision;
@@ -187,7 +204,7 @@ public class BookReciveOut implements java.io.Serializable {
 	public void setBrFrom(String brFrom) {
 		this.brFrom = brFrom;
 	}
-
+	
 	@Column(name = "BR_TO", length = 100)
 	public String getBrTo() {
 		return this.brTo;
@@ -195,6 +212,33 @@ public class BookReciveOut implements java.io.Serializable {
 
 	public void setBrTo(String brTo) {
 		this.brTo = brTo;
+	}
+	
+	@Column(name = "BR_TO_DEPARTMENT", length = 100)
+	public String getBrToDepartment() {
+		return this.brToDepartment;
+	}
+
+	public void setBrToDepartment(String brToDepartment) {
+		this.brToDepartment = brToDepartment;
+	}
+	
+	@Column(name = "BR_TO_GROUP")
+	public String getBrToGroup() {
+		return this.brToGroup;
+	}
+
+	public void setBrToGroup(String brToGroup) {
+		this.brToGroup = brToGroup;
+	}
+	
+	@Column(name = "BR_TO_USER")
+	public String getBrToUser() {
+		return this.brToUser;
+	}
+
+	public void setBrToUser(String brToUser) {
+		this.brToUser = brToUser;
 	}
 
 	@Column(name = "BR_SUBJECT")
@@ -233,7 +277,7 @@ public class BookReciveOut implements java.io.Serializable {
 		this.brPcode = brPcode;
 	}
 
-	@Column(name = "BR_STATUS", length = 1)
+	@Column(name = "BR_STATUS", length = 20)
 	public String getBrStatus() {
 		return this.brStatus;
 	}
@@ -315,4 +359,41 @@ public class BookReciveOut implements java.io.Serializable {
 	public void setUpdatedDate(Date updatedDate) {
 		this.updatedDate = updatedDate;
 	}
+
+	@Column(name = "BR_TO_DEPARTMENT_NAME")
+	public String getBrToDepartmentName() {
+		return brToDepartmentName;
+	}
+
+	public void setBrToDepartmentName(String brToDepartmentName) {
+		this.brToDepartmentName = brToDepartmentName;
+	}
+
+	@Column(name = "BR_TO_GROUP_NAME")
+	public String getBrToGroupName() {
+		return brToGroupName;
+	}
+
+	public void setBrToGroupName(String brToGroupName) {
+		this.brToGroupName = brToGroupName;
+	}
+
+	@Column(name = "BR_TO_USER_NAME")
+	public String getBrToUserName() {
+		return brToUserName;
+	}
+
+	public void setBrToUserName(String brToUserName) {
+		this.brToUserName = brToUserName;
+	}
+
+	@Column(name = "BR_TO_DEPARTMENT_SHORT")
+	public String getBrToDepartmentShort() {
+		return brToDepartmentShort;
+	}
+
+	public void setBrToDepartmentShort(String brToDepartmentShort) {
+		this.brToDepartmentShort = brToDepartmentShort;
+	}
+	
 }

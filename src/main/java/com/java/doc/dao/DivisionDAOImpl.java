@@ -15,7 +15,7 @@ import org.springframework.stereotype.Repository;
 import com.java.doc.hibernate.HibernateUtil;
 import com.java.doc.model.Divisions;
 
-@Repository
+@Repository("divisionDao")
 public class DivisionDAOImpl implements DivisionDAO {
 
 	protected Session session;
@@ -57,4 +57,19 @@ public class DivisionDAOImpl implements DivisionDAO {
         session = HibernateUtil.openSession();
         tx = session.beginTransaction();
     }
+
+	@Override
+	public Divisions getDivisionByCode(String code) {
+		startOperation();
+		Divisions list = null;
+		try{
+			list = (Divisions) session.createQuery("from Divisions where divisionCode=?").setParameter(0, Integer.parseInt(code)).uniqueResult();
+		}catch(Exception ex){
+			logger.error("getDivisionByCode : ", ex);
+			tx.rollback();
+		}finally{
+			HibernateUtil.close(session);
+		}
+		return list;
+	}
 }

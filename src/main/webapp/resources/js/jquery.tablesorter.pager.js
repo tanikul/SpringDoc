@@ -471,7 +471,9 @@
 							for ( j = 0; j < d[i].length; j++ ) {
 								d[i][j] = (d[i][j] == null) ? "" : d[i][j];
 								// build tbody cells; watch for data containing HTML markup - see #434
+								if(p.dataSearch.type == 2 && j == 11) continue;
 								tds += /^\s*<td/.test(d[i][j]) ? $.trim(d[i][j]) : '<td>' + d[i][j] + '</td>';
+								
 							}
 							tds += '</tr>';
 						}

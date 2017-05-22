@@ -10,6 +10,7 @@ public class TableSorter {
 	private ObjSearch search;
 	private String role;
 	private String division;
+	private int groupId;
 	private String userId;
 	
 	public ObjSearch getSearch() {
@@ -61,6 +62,13 @@ public class TableSorter {
 	}
 	public void setUserId(String userId) {
 		this.userId = userId;
+	}
+
+	public int getGroupId() {
+		return groupId;
+	}
+	public void setGroupId(int groupId) {
+		this.groupId = groupId;
 	}
 
 	public class ObjSearch {

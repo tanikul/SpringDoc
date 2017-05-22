@@ -55,8 +55,9 @@
 								             	<th>ลำดับ</th>
 								                <th>ชื่อ</th>
 								                <th>นามสกุล</th>
-								                <th>แผนก</th>
-								                <th>สังกัดหน่วยงาน</th>
+								                <th>กอง</th>
+								                <th>ฝ่าย</th>
+								                <th>สิทธิ์การใช้ระบบ</th>
 								                <th>แก้ไข / ลบ</th>
 								            </tr>
 								        </thead>
@@ -83,7 +84,8 @@
 				        	{ "data" : "fname" },
 				        	{ "data" : "lname" },
 				        	{ "data" : "divisionName" },
-				        	{ "data" : "organization" },
+				        	{ "data" : "groupName" },
+				        	{ "data" : "role" },
 				        	{ "data" : "button" }
 				        ]
 				    } );

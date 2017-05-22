@@ -24,6 +24,7 @@ import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -44,6 +45,7 @@ import com.java.doc.model.BookReciveOutTable;
 import com.java.doc.model.BookSendOut;
 import com.java.doc.model.BookSendOutTable;
 import com.java.doc.model.PdfForm;
+import com.java.doc.model.StatusDetail;
 import com.java.doc.model.Users;
 import com.java.doc.service.AttachmentService;
 import com.java.doc.service.BookReciveOutService;
@@ -53,7 +55,9 @@ import com.java.doc.service.TypeSecretService;
 import com.java.doc.service.UserService;
 import com.java.doc.util.TableSorter;
 import com.java.doc.util.UtilDateTime;
+import com.java.doc.util.Utility;
 import com.java.doc.validator.LoginValidator;
+import com.mysql.jdbc.StringUtils;
 
 /**
  * Handles requests for the application home page.
@@ -63,49 +67,30 @@ public class HomeController {
 
 	final static Logger logger = Logger.getLogger(HomeController.class);
 	
+	@Autowired
+	@Qualifier(value = "bookSendOutService")
 	private BookSendOutService sendout;
+	
+	@Autowired
+	@Qualifier(value = "bookReciveOutService")
 	private BookReciveOutService reciveout;
+	
+	@Autowired
+	@Qualifier(value = "attachmentService")
 	private AttachmentService attachmentService;
+	
+	@Autowired
+	@Qualifier(value = "userService")
 	private UserService userService;
+	
+	@Autowired
+	@Qualifier(value = "typeQuickService")
 	private TypeQuickService typeQuickService;
+	
+	@Autowired
+	@Qualifier(value = "typeSecretService")
 	private TypeSecretService typeSecretService;
 	
-	@Autowired(required = true)
-	@Qualifier(value = "sendoutservice")
-	public void setSendout(BookSendOutService sendout) {
-		this.sendout = sendout;
-	}
-	
-	@Autowired(required = true)
-	@Qualifier(value = "recive")
-	public void setReciveout(BookReciveOutService reciveout) {
-		this.reciveout = reciveout;
-	}
-
-	@Autowired(required = true)
-	@Qualifier(value = "attachmentService")
-	public void setAttachmentService(AttachmentService attachmentService) {
-		this.attachmentService = attachmentService;
-	}
-	
-	@Autowired(required = true)
-	@Qualifier(value = "userService")
-	public void setUserService(UserService userService) {
-		this.userService = userService;
-	}
-	
-	@Autowired(required = true)
-	@Qualifier(value = "TypeQuickService")
-	public void setTypeQuickService(TypeQuickService typeQuickService) {
-		this.typeQuickService = typeQuickService;
-	}
-	
-	@Autowired(required = true)
-	@Qualifier(value = "TypeSecretService")
-	public void setTypeSecretService(TypeSecretService typeSecretService) {
-		this.typeSecretService = typeSecretService;
-	}
-
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public ModelAndView index() {
 		ModelAndView model = new ModelAndView();
@@ -130,8 +115,8 @@ public class HomeController {
 	public ModelAndView home(@RequestParam(value = "type", required = false, defaultValue = "") String type,
 			HttpServletRequest request) {
 		ModelAndView model = new ModelAndView();
-		logger.info("Welcome home The client.");
 		try{
+			logger.info("home");
 			Users user = new Users();
 			if(request.getSession().getAttribute("user") == null){
 				user = userService.findByUserName(request.getUserPrincipal().getName());
@@ -161,6 +146,7 @@ public class HomeController {
 			table.setDivision(user.getDivision());
 			table.setUserId(user.getId().toString());
 			table.setRole(user.getRole());
+			table.setGroupId(user.getGroupId());
 			List<HashMap<String, String>> rows = new ArrayList<HashMap<String, String>>();
 			List<String> headers = new ArrayList<String>();
 			headers.add("ปี");
@@ -169,12 +155,23 @@ public class HomeController {
 			headers.add("ที่");
 			headers.add("ลงวันที่");
 			headers.add("จาก");
-			headers.add("ถึง");
+			if(!table.getSearch().getType().equals("1")){
+				headers.add("ถึง");
+			}else{
+				if(user.getRole().equals("ADMIN")){
+					headers.add("ถึงกอง");
+				}else if(user.getRole().equals("DEPARTMENT")){
+					headers.add("ถึงฝ่าย");
+				}else if(user.getRole().equals("GROUP")){
+					headers.add("ถึง");
+				}	
+			}
 			headers.add("เรื่อง");
-			headers.add("สถานะ");
+			headers.add("ขั้นความเร็ว");
 			headers.add("ชั้นความลับ");
 			headers.add("หมายเหตุ");
-			if(table.getRole().equals("ADMIN")){
+			headers.add("สถานะ");
+			if(table.getRole().equals("ADMIN") || table.getRole().equals("DEPARTMENT") || table.getRole().equals("GROUP")){
 				headers.add("แก้ไข");
 			}else{
 				headers.add("ข้อมูล");
@@ -182,57 +179,76 @@ public class HomeController {
 			if(table.getSearch().getType().equals("1")){
 				BookReciveOutTable bookReciveOutTable = reciveout.ListPageRecive(table);
 				request.getSession().setAttribute("listResultRecive", bookReciveOutTable.getSendoutListReport());
-				for(BookReciveOut item : bookReciveOutTable.getSendoutList()){
-					HashMap<String, String> row = new HashMap<String, String>();
-					row.put("id", item.getBrId().toString());
-					row.put("ปี", item.getBrYear().toString());
-					row.put("วันที่รับหนังสือ", (UtilDateTime.convertToDateTH(item.getBrRdate()) != null) ? UtilDateTime.convertToDateTH(item.getBrRdate()) : "");
-					row.put("เลขทะเบียนรับ", (item.getBrNum() != null) ? item.getBrNum().toString() : "");
-					row.put("ที่", (item.getBrPlace() != null) ? item.getBrPlace() : "");
-					row.put("ลงวันที่", (UtilDateTime.convertToDateTH(item.getBrDate()) != null) ? UtilDateTime.convertToDateTH(item.getBrDate()) : "");
-					row.put("จาก", (item.getBrFrom() != null) ? item.getBrFrom() : "");
-					row.put("ถึง", (item.getBrTo() != null) ? item.getBrTo() : "");
-					row.put("เรื่อง", (item.getBrSubject() != null) ? item.getBrSubject() : "");
-					row.put("สถานะ", (item.getBrTypeQuick() != null) ? typeQuickService.getTypeQuickById(item.getBrTypeQuick()) : "");
-					row.put("ชั้นความลับ", (item.getBrTypeSecret() != null) ? typeSecretService.getTypeSecretById(item.getBrTypeSecret()) : "");
-					row.put("หมายเหตุ", item.getBrRemark());
-					
-					//row.put("แก้ไข/ลบ", "<span class='glyphicon glyphicon-pencil' id='edit-"+item.getBrId()+"' style='padding-left:6px;cursor:pointer;' onclick='inter.editGet("+ item.getBrId() +");'></span>  <span class='glyphicon glyphicon-trash' style='padding-left:6px;cursor:pointer;' onclick='removeItem(" + item.getBrId() + ", 0, this)'></span>");
-					if(table.getRole().equals("ADMIN")){
-						row.put("แก้ไข", "<a class='glyphicon glyphicon-pencil' id='edit-"+item.getBrId()+"' style='padding-left:6px;cursor:pointer;' href='internal/edit/?id="+ item.getBrId() + "'></a>");
-					}else{
-						row.put("ข้อมูล", "<a class='glyphicon glyphicon-search' id='edit-"+item.getBrId()+"' style='padding-left:6px;cursor:pointer;' href='internal/edit/?id="+ item.getBrId() + "'></a>");
+				if(bookReciveOutTable.getSendoutList() != null){
+					for(BookReciveOut item : bookReciveOutTable.getSendoutList()){
+						HashMap<String, String> row = new HashMap<String, String>();
+						row.put("id", item.getBrId().toString());
+						row.put("ปี", item.getBrYear().toString());
+						row.put("วันที่รับหนังสือ", (UtilDateTime.convertToDateTH(item.getBrRdate()) != null) ? UtilDateTime.convertToDateTH(item.getBrRdate()) : "");
+						row.put("เลขทะเบียนรับ", (item.getBrNum() != null) ? item.getBrNum().toString() : "");
+						row.put("ที่", (item.getBrPlace() != null) ? item.getBrPlace() : "");
+						row.put("ลงวันที่", (UtilDateTime.convertToDateTH(item.getBrDate()) != null) ? UtilDateTime.convertToDateTH(item.getBrDate()) : "");
+						row.put("จาก", (item.getBrFrom() != null) ? item.getBrFrom() : "");
+						if(user.getRole().equals("ADMIN")){
+							if(item.getBrToDepartmentName() == null){
+								row.put("ถึงกอง", (item.getBrToDepartment() != null) ? item.getBrToDepartment() : "");
+							}else{
+								row.put("ถึงกอง", (item.getBrToDepartmentShort() != null) ? item.getBrToDepartmentShort() : "");
+							}
+						}else if(user.getRole().equals("DEPARTMENT")){
+							row.put("ถึงฝ่าย", (item.getBrToGroupName() != null) ? item.getBrToGroupName() : "");
+						}else if(user.getRole().equals("GROUP")){
+							row.put("ถึง", (item.getBrToUserName() != null) ? item.getBrToUserName() : "");
+						}
+						row.put("เรื่อง", (item.getBrSubject() != null) ? item.getBrSubject() : "");
+						row.put("ขั้นความเร็ว", (item.getBrTypeQuick() != null) ? typeQuickService.getTypeQuickById(item.getBrTypeQuick()) : "");
+						row.put("ชั้นความลับ", (item.getBrTypeSecret() != null) ? typeSecretService.getTypeSecretById(item.getBrTypeSecret()) : "");
+						row.put("หมายเหตุ", item.getBrRemark());
+						if(StringUtils.isNullOrEmpty(item.getBrToDepartment())){
+							row.put("สถานะ", "<span>สถานะ</span>");
+						}else{
+							row.put("สถานะ", "<a href=\"javascript:void(0);\" val=\"" + item.getBrId() + "\" title=\"\" class=\"tooltips\" style=\"text-decoration:none;\">สถานะ</a>");
+						}
+						//row.put("สถานะ", "<a href=\"javascript:void(0);\" class=\"tooltips\" title=\"" + item.getBrId() + "\" style=\"text-decoration:none;\">สถานะ</a>");
+						//row.put("แก้ไข/ลบ", "<span class='glyphicon glyphicon-pencil' id='edit-"+item.getBrId()+"' style='padding-left:6px;cursor:pointer;' onclick='inter.editGet("+ item.getBrId() +");'></span>  <span class='glyphicon glyphicon-trash' style='padding-left:6px;cursor:pointer;' onclick='removeItem(" + item.getBrId() + ", 0, this)'></span>");
+						if(table.getRole().equals("ADMIN") || table.getRole().equals("DEPARTMENT") || table.getRole().equals("GROUP")){
+							row.put("แก้ไข", "<a class='glyphicon glyphicon-pencil' id='edit-"+item.getBrId()+"' style='padding-left:6px;cursor:pointer;' href='internal/edit/?id="+ item.getBrId() + "'></a>");
+						}else{
+							row.put("ข้อมูล", "<a class='glyphicon glyphicon-search' id='edit-"+item.getBrId()+"' style='padding-left:6px;cursor:pointer;' href='internal/edit/?id="+ item.getBrId() + "'></a>");
+						}
+						rows.add(row);
 					}
-					rows.add(row);
 				}
 				rs.put("total_rows", bookReciveOutTable.getCountSelect());
 			}else{
 				BookSendOutTable bookSendOutTable = sendout.ListPageSendOut(table);
 				
 				request.getSession().setAttribute("listResultSend", bookSendOutTable.getSendoutListReport());
-				for(BookSendOut item : bookSendOutTable.getSendoutList()){
-					HashMap<String, String> row = new HashMap<String, String>();
-					row.put("id", item.getBsId().toString());
-					row.put("ปี", item.getBsYear().toString());
-					row.put("วันที่ส่งหนังสือ", (UtilDateTime.convertToDateTH(item.getBsRdate()) != null) ? UtilDateTime.convertToDateTH(item.getBsRdate()) : "");
-					row.put("เลขทะเบียนส่ง", (item.getBsNum() != null) ? item.getBsNum().toString() : "");
-					row.put("ที่", (item.getBsPlace() != null) ? item.getBsPlace() : "");
-					row.put("ลงวันที่", (UtilDateTime.convertToDateTH(item.getBsDate()) != null) ? UtilDateTime.convertToDateTH(item.getBsDate()) : "");
-					row.put("จาก", (item.getBsFrom() != null) ? item.getBsFrom() : "");
-					row.put("ถึง", (item.getBsTo() != null) ? item.getBsTo() : "");
-					row.put("เรื่อง", (item.getBsSubject() != null) ? item.getBsSubject() : "");
-					row.put("สถานะ", item.getBsTypeQuick() != null ? typeQuickService.getTypeQuickById(item.getBsTypeQuick()) : "");
-					row.put("ชั้นความลับ", item.getBsTypeSecret() != null ? typeSecretService.getTypeSecretById(item.getBsTypeSecret()) : "");
-					row.put("หมายเหตุ", item.getBsRemark());
-					if(table.getRole().equals("ADMIN")){
-						row.put("แก้ไข", "<a class='glyphicon glyphicon-pencil' id='edit-"+item.getBsId()+"' style='padding-left:6px;cursor:pointer;' href='external/edit/?id="+ item.getBsId() + "'></a>");
-					}else{
-						row.put("ข้อมูล", "<a class='glyphicon glyphicon-search' id='edit-"+item.getBsId()+"' style='padding-left:6px;cursor:pointer;' href='external/edit/?id="+ item.getBsId() + "'></a>");
+				if(bookSendOutTable.getSendoutList() != null){
+					for(BookSendOut item : bookSendOutTable.getSendoutList()){
+						HashMap<String, String> row = new HashMap<String, String>();
+						row.put("id", item.getBsId().toString());
+						row.put("ปี", item.getBsYear().toString());
+						row.put("วันที่ส่งหนังสือ", (UtilDateTime.convertToDateTH(item.getBsRdate()) != null) ? UtilDateTime.convertToDateTH(item.getBsRdate()) : "");
+						row.put("เลขทะเบียนส่ง", (item.getBsNum() != null) ? item.getBsNum().toString() : "");
+						row.put("ที่", (item.getBsPlace() != null) ? item.getBsPlace() : "");
+						row.put("ลงวันที่", (UtilDateTime.convertToDateTH(item.getBsDate()) != null) ? UtilDateTime.convertToDateTH(item.getBsDate()) : "");
+						row.put("จาก", (item.getBsFrom() != null) ? item.getBsFrom() : "");
+						row.put("ถึง", (item.getBsTo() != null) ? item.getBsTo() : "");
+						row.put("เรื่อง", (item.getBsSubject() != null) ? item.getBsSubject() : "");
+						row.put("ขั้นความเร็ว", item.getBsTypeQuick() != null ? typeQuickService.getTypeQuickById(item.getBsTypeQuick()) : "");
+						row.put("ชั้นความลับ", item.getBsTypeSecret() != null ? typeSecretService.getTypeSecretById(item.getBsTypeSecret()) : "");
+						row.put("หมายเหตุ", item.getBsRemark());
+						if(table.getRole().equals("ADMIN")){
+							row.put("แก้ไข", "<a target='_blank' class='glyphicon glyphicon-pencil' id='edit-"+item.getBsId()+"' style='padding-left:6px;cursor:pointer;' href='external/edit/?id="+ item.getBsId() + "'></a>");
+						}else{
+							row.put("ข้อมูล", "<a target='_blank' class='glyphicon glyphicon-search' id='edit-"+item.getBsId()+"' style='padding-left:6px;cursor:pointer;' href='external/edit/?id="+ item.getBsId() + "'></a>");
+						}
+						//row.put("แก้ไข/ลบ", "<span class='glyphicon glyphicon-pencil' id='edit-"+item.getBsId()+"' style='padding-left:6px;cursor:pointer;' onclick='ex.editGet("+ item.getBsId() +");'></span>  <span class='glyphicon glyphicon-trash' style='padding-left:6px;cursor:pointer;' onclick='removeItem(" + item.getBsId() + ", 1, this);'></span>");
+						rows.add(row);
 					}
-					//row.put("แก้ไข/ลบ", "<span class='glyphicon glyphicon-pencil' id='edit-"+item.getBsId()+"' style='padding-left:6px;cursor:pointer;' onclick='ex.editGet("+ item.getBsId() +");'></span>  <span class='glyphicon glyphicon-trash' style='padding-left:6px;cursor:pointer;' onclick='removeItem(" + item.getBsId() + ", 1, this);'></span>");
-					rows.add(row);
+					rs.put("total_rows", bookSendOutTable.getCountSelect());
 				}
-				rs.put("total_rows", bookSendOutTable.getCountSelect());
 			}
 			
 			rs.put("headers", headers);
@@ -292,7 +308,7 @@ public class HomeController {
 					tmp.setBrRemark(rs.getBrRemark());
 					tmp.setBrStatus(rs.getBrStatus());
 					tmp.setBrSubject(rs.getBrSubject());
-					tmp.setBrTo(rs.getBrTo());
+					tmp.setBrTo(Utility.getStrTo(rs));
 					tmp.setBrTypeQuick(rs.getBrTypeQuick());
 					tmp.setBrTypeSecret(rs.getBrTypeSecret());
 					tmp.setBrYear(rs.getBrYear());
@@ -363,7 +379,7 @@ public class HomeController {
 					tmp.setBrRemark(rs.getBrRemark());
 					tmp.setBrStatus(rs.getBrStatus());
 					tmp.setBrSubject(rs.getBrSubject());
-					tmp.setBrTo(rs.getBrTo());
+					tmp.setBrTo(Utility.getStrTo(rs));
 					tmp.setBrTypeQuick(rs.getBrTypeQuick());
 					tmp.setBrTypeSecret(rs.getBrTypeSecret());
 					tmp.setBrYear(rs.getBrYear());
@@ -435,7 +451,7 @@ public class HomeController {
 					tmp.setBrRemark(rs.getBrRemark());
 					tmp.setBrStatus(rs.getBrStatus());
 					tmp.setBrSubject(rs.getBrSubject());
-					tmp.setBrTo(rs.getBrTo());
+					tmp.setBrTo(rs.getBrToDepartmentName());
 					tmp.setBrTypeQuick(rs.getBrTypeQuick());
 					tmp.setBrTypeSecret(rs.getBrTypeSecret());
 					tmp.setBrYear(rs.getBrYear());
@@ -608,7 +624,7 @@ public class HomeController {
                 bs.setBsStatus(row.getCell(14) == null ?  "" : row.getCell(14).getStringCellValue());
                 bs.setBsImage(row.getCell(15) == null ?  "" : row.getCell(15).getStringCellValue());
                 logger.info(bs.toString());
-                this.sendout.saveBookOut(bs);
+                this.sendout.saveBookOutFromExcel(bs);
             }
             file.close();        	
         } catch(Exception ex){
@@ -697,7 +713,7 @@ public class HomeController {
 	                }
                 }
                 bs.setBrFrom(row.getCell(9) == null ?  "" : row.getCell(9).getStringCellValue());
-                bs.setBrTo(row.getCell(10) == null ?  "" : row.getCell(10).getStringCellValue());
+                bs.setBrToDepartment(row.getCell(10) == null ?  "" : row.getCell(10).getStringCellValue());
                 bs.setBrSubject(row.getCell(11) == null ?  "" : row.getCell(11).getStringCellValue());
                 bs.setBrRemark(row.getCell(12) == null ?  "" : row.getCell(12).getStringCellValue());
                 bs.setBrDivision(row.getCell(13) == null ?  "" : row.getCell(13).getStringCellValue());
@@ -705,7 +721,7 @@ public class HomeController {
                 bs.setBrStatus(row.getCell(15) == null ?  "" : row.getCell(15).getStringCellValue());
                 bs.setBrImage(row.getCell(16) == null ?  "" : row.getCell(16).getStringCellValue());
                 logger.info(bs.toString());
-                this.reciveout.SaveReciveOut(bs);
+                this.reciveout.SaveReciveOutFromExcel(bs);
             }
             file.close();        	
         } catch (Exception ex) {
@@ -714,5 +730,18 @@ public class HomeController {
         }
 
         return "home";
+	}
+	
+	@RequestMapping(value = "/getStatusDetail", method = RequestMethod.POST, headers = {"Accept=text/xml, application/json;charset=UTF-8"}, produces = "application/json")
+	@PreAuthorize("isAuthenticated()")
+	public @ResponseBody List<StatusDetail> getStatusDetail(@RequestBody String id,
+			HttpServletRequest request) {
+		List<StatusDetail> rs = null;
+		try{
+			rs = reciveout.getStatusDetail(id);
+		}catch(Exception ex){
+			logger.error("getStatusDetail : ", ex);
+		}
+		return rs;
 	}
 }

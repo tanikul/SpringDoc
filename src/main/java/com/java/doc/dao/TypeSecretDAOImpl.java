@@ -13,7 +13,7 @@ import com.java.doc.hibernate.HibernateUtil;
 import com.java.doc.model.TypeQuick;
 import com.java.doc.model.TypeSecret;
 
-@Repository
+@Repository("typeSecretDao")
 public class TypeSecretDAOImpl implements TypeSecretDAO {
 
 	protected Session session;

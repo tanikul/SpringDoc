@@ -15,7 +15,7 @@ import org.springframework.stereotype.Repository;
 import com.java.doc.hibernate.HibernateUtil;
 import com.java.doc.model.Attachment;
 
-@Repository
+@Repository("attachmentDao")
 public class AttachmentDAOImpl implements AttachmentDAO {
 
 	protected Session session;

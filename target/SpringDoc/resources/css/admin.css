@@ -1,0 +1,171 @@
+/*
+Theme Name: Muse
+Theme URI: tpl_muse
+Description: A full featured unlimited colors admin panel theme from Themio
+Author: Themio
+Author URI: http://themio.net
+Version: 2.11
+
+/* Body
+-------------------------------------------------------------------*/
+#actualbody {font-size: 12px; color: #474747; font-weight: bold;}
+#actualbody .row {padding: 25px 0px 40px 0}
+
+h1, h2 {color: #3b3b3b;}
+h1 {font-size: 2.333em; text-shadow: 0 1px 0 rgba(0,0,0,0.5)}
+h2 {font-size: 1.333em;text-shadow: 0 1px 0 #fff;}
+h3 {font-size: 1.667em; color: #000; padding-bottom: 5px; font-weight: bold;}
+
+.widget {background: #fbfbfb; padding: 20px 0; box-shadow: 0 1px 2px #858585}
+
+h2, .widget .ui-tabs-nav li.ui-state-active h2  {
+    background: #f8f8f8;
+    background: -moz-linear-gradient(top, #f8f8f8 0%, #f3f3f3 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f8f8f8), color-stop(100%,#f3f3f3));
+    background: -webkit-linear-gradient(top, #f8f8f8 0%,#f3f3f3 100%);
+    background: -o-linear-gradient(top, #f8f8f8 0%,#f3f3f3 100%);
+    background: -ms-linear-gradient(top, #f8f8f8 0%,#f3f3f3 100%);
+    -ms-filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f8f8f8', endColorstr='#f3f3f3',GradientType=0 );
+    background: linear-gradient(top, #f8f8f8 0%,#f3f3f3 100%);
+    position: relative; top: -2em; padding: 0.5em 1em; left: 1em; 
+    box-shadow: 0 1px 0 #FFFFFF inset, 0 1px 1px #E0E0E0;
+    display:inline; border: 1px solid #BCBCBC;
+}
+
+.widget_inside {padding: 10px 20px}
+
+.widget_inside .col_12 {margin-bottom: 40px}
+.widget_inside .col_12:last-child {margin-bottom: 20px}
+
+
+/* Button
+-------------------------------------------------------------------*/
+
+.button.blue {border: 1px solid #19559e; box-shadow:inset 0 1px 0px #58a4e9; color: #fff;
+    background: #3d90e3;
+    background: -moz-linear-gradient(top, #3d90e3 0%, #2d6ad9 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#3d90e3), color-stop(100%,#2d6ad9));
+    background: -webkit-linear-gradient(top, #3d90e3 0%,#2d6ad9 100%);
+    background: -o-linear-gradient(top, #3d90e3 0%,#2d6ad9 100%);
+    background: -ms-linear-gradient(top, #3d90e3 0%,#2d6ad9 100%);
+    -ms-filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#3d90e3', endColorstr='#2d6ad9',GradientType=0 );
+    background: linear-gradient(top, #3d90e3 0%,#2d6ad9 100%);
+	padding: 7px 15px; outline: none;
+}
+
+.button.blue:hover {box-shadow:0 1px 1px #58A4E9 inset, 0 0 2px #62A1E3}
+.button.blue:active {box-shadow: 0 0 5px #3067A2 inset;}
+
+.button.black {border: 1px solid #000; box-shadow:inset 0 1px 0px #545454; color: #fff;
+    background: #404040;
+    background: -moz-linear-gradient(top, #404040 0%, #323232 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#404040), color-stop(100%,#323232));
+    background: -webkit-linear-gradient(top, #404040 0%,#323232 100%);
+    background: -o-linear-gradient(top, #404040 0%,#323232 100%);
+    background: -ms-linear-gradient(top, #404040 0%,#323232 100%);
+    -ms-filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#404040', endColorstr='#323232',GradientType=0 );
+    background: linear-gradient(top, #404040 0%,#323232 100%);
+    padding: 7px 15px; outline: none;
+}
+
+.button.black:hover {box-shadow:0 1px 1px #545454 inset, 0 0 2px #4D4D4D}
+.button.black:active {box-shadow: 0 0 5px #232323 inset}
+
+.small.button {font-size:0.8em; padding: 3px 5px}
+.large.button {font-size:1.3em; padding: 7px 10px}
+
+/* Report
+-------------------------------------------------------------------*/
+.report {text-align: center; }
+
+.report .button {
+    display: inline-block;
+    margin: 0 12px 10px;
+    width: 13% !important;
+    min-width: 130px;
+    padding: 10px 5px;
+}
+
+.report .up, .report .down {color: #fff;}
+.report .value, .report .attr  {display: block; text-align: center}
+.report .value {font-size: 1.833em; padding: 4px 0 2px}
+.report .attr {font-size: 0.917em; padding: 2px 0 4px}
+
+.report .button:active {box-shadow: none}
+.report .button:active span {top: 0;}
+
+/* Fixes for Mobile
+-------------------------------------------------------------------*/
+
+@media handheld, only screen and (max-width: 767px) {
+    /* Layout Fixes */
+    .widget {padding-top:0px}
+    h2 {top: -1em}
+    .col_12 .col_1, .col_12 .col_2, .col_12 .col_3, .col_12 .col_4, .col_12 .col_5, .col_12 .col_6,
+    .col_12 .col_7, .col_12 .col_8, .col_12 .col_9, .col_12 .col_10, .col_12 .col_11 {margin-bottom: 10px}
+
+    .pattern h1, header .left {margin-left: 10px}
+    header .right {margin-right: 10px}
+
+    .report .button {margin: 0 0px 10px}
+
+    /* Form Fixes */
+    .form div.clearfix label {text-align: left; float:none}
+    .form div.clearfix div.input {display:block; margin-left: 0; margin-top:10px; float:none}
+    .form div.clearfix div.input input[type="text"], .form div.clearfix div.input input[type="password"] {width: 80%}
+
+    /* Sidebar */
+    #wrap.sidebarred {margin-left: 0}
+
+}
+
+/* http://sonspring.com/journal/clearing-floats */
+
+.clear {
+  clear: both;
+  display: block;
+  overflow: hidden;
+  visibility: hidden;
+  width: 0;
+  height: 0;
+}
+
+/* http://www.yuiblog.com/blog/2010/09/27/clearfix-reloaded-overflowhidden-demystified */
+
+.ui-helper-clearfix:before,
+.ui-helper-clearfix:after,
+.clearfix:before,
+.clearfix:after,
+.container_12:before,
+.container_12:after,
+.container_16:before,
+.container_16:after {
+  content: '.';
+  display: block;
+  overflow: hidden;
+  visibility: hidden;
+  font-size: 0;
+  line-height: 0;
+  width: 0;
+  height: 0;
+}
+
+.clearfix:after, .ui-helper-clearfix:after,
+.container_12:after,
+.container_16:after {
+  clear: both;
+}
+
+/*
+  The following zoom:1 rule is specifically for IE6 + IE7.
+  Move to separate stylesheet if invalid CSS is a problem.
+*/
+
+.clearfix, .ui-helper-clearfix,
+.container_12,
+.container_16 {
+  zoom: 1;
+}
+
+/* Chose background pattern of body, and color, and fonts! here */
+body {background-color: #e5e5e5; background-image: none}

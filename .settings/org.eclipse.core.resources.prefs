@@ -1,11 +1,2 @@
 eclipse.preferences.version=1
-encoding//src/main/java/com/java/doc/controller/ExternalController.java=UTF-8
-encoding//src/main/java/com/java/doc/controller/HomeController.java=UTF-8
-encoding//src/main/java/com/java/doc/controller/InternalController.java=UTF-8
-encoding//src/main/java/com/java/doc/dao/UserDAOImpl.java=UTF-8
-encoding//src/main/java/com/java/doc/validator/BookSendOutValidator.java=UTF-8
-encoding//src/main/java/com/java/doc/validator/LoginValidator.java=UTF-8
-encoding//src/main/webapp/WEB-INF/tags/header.tag=UTF-8
-encoding//src/main/webapp/WEB-INF/tags/master.tag=UTF-8
-encoding//src/main/webapp/WEB-INF/views/home.jsp=UTF-8
 encoding/<project>=UTF-8

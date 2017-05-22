@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -40,48 +41,30 @@ public class ExternalController {
 
 	private static final Logger logger = Logger.getLogger(ExternalController.class);
 	
+	@Autowired
+	@Qualifier(value = "typeQuickService")
 	private TypeQuickService typeQuick;
+	
+	@Autowired
+	@Qualifier(value = "typeSecretService")
 	private TypeSecretService typeSecret;
+	
+	@Autowired
+	@Qualifier(value = "divisionService")
 	private DivisionService divisions;
+	
+	@Autowired
+	@Qualifier(value = "bookSendOutService")
 	private BookSendOutService sendout;
+	
+	@Autowired
+	@Qualifier(value = "attachmentService")
 	private AttachmentService attachmentService;
+	
+	@Autowired
+	@Qualifier(value = "userService")
 	private UserService userService;
 	
-	@Autowired(required = true)
-	@Qualifier(value = "sendoutservice")
-	public void setSendout(BookSendOutService sendout) {
-		this.sendout = sendout;
-	}
-
-	@Autowired(required = true)
-	@Qualifier(value = "divisionService")
-	public void setDivisions(DivisionService divisions) {
-		this.divisions = divisions;
-	}
-
-	@Autowired(required = true)
-	@Qualifier(value = "TypeSecretService")
-	public void setTypeSecret(TypeSecretService typeSecret) {
-		this.typeSecret = typeSecret;
-	}
-
-	@Autowired(required = true)
-	@Qualifier(value = "TypeQuickService")
-	public void setTypeQuick(TypeQuickService typeQuick) {
-		this.typeQuick = typeQuick;
-	}
-	
-	@Autowired(required = true)
-	@Qualifier(value = "attachmentService")
-	public void setAttachmentService(AttachmentService attachmentService) {
-		this.attachmentService = attachmentService;
-	}
-
-	@Autowired(required = true)
-	@Qualifier(value = "userService")
-	public void setUserService(UserService userService) {
-		this.userService = userService;
-	}
 	
 	@InitBinder
     public void initBinder(WebDataBinder binder) {
@@ -95,7 +78,7 @@ public class ExternalController {
 	public ModelAndView AddExternal(HttpServletRequest request) throws ParseException {
 		ModelAndView model = new ModelAndView();
 		try{
-			Calendar cal = Calendar.getInstance();
+			Calendar cal = Calendar.getInstance(Locale.US);
 			cal.add(Calendar.YEAR, 543); // to get previous year add -1
 			Date now = cal.getTime();
 			Users user = new Users();
@@ -151,12 +134,12 @@ public class ExternalController {
 				}
 			}
 			BookSendOut sendOut = sendout.getDataFromId(id);
-			Calendar cal = Calendar.getInstance();
+			Calendar cal = Calendar.getInstance(Locale.US);
 			cal.setTime(sendOut.getBsRdate());
 			cal.add(Calendar.YEAR, 543); // to get previous year add -1
 			Date bsRDate = cal.getTime();
 			sendOut.setBsRdate(bsRDate);
-			Calendar cal2 = Calendar.getInstance();
+			Calendar cal2 = Calendar.getInstance(Locale.US);
 			cal2.setTime(sendOut.getBsDate());
 			cal2.add(Calendar.YEAR, 543); // to get previous year add -1
 			Date bsDate = cal2.getTime();
@@ -177,19 +160,59 @@ public class ExternalController {
 		return model;
 	}
 	
+	@RequestMapping(value = "/external/edit", method = RequestMethod.POST)
+	@PreAuthorize("isAuthenticated()")
+	public @ResponseBody boolean saveEdit(@ModelAttribute("sendOut") BookSendOut pet, HttpServletRequest request) {
+		boolean result = false;
+		try{
+			Calendar cal = Calendar.getInstance(Locale.US);
+			cal.setTime(pet.getBsRdate());
+			cal.add(Calendar.YEAR, -543);
+			Date bsRDate = cal.getTime();
+			pet.setBsRdate(bsRDate);
+			Calendar cal2 = Calendar.getInstance();
+			cal2.setTime(pet.getBsDate());
+			cal2.add(Calendar.YEAR, -543);
+			Date bsDate = cal2.getTime();
+			pet.setBsDate(bsDate);
+			Users user = new Users();
+			if(request.getSession().getAttribute("user") == null){
+				user = userService.findByUserName(request.getUserPrincipal().getName());
+				request.getSession().setAttribute("user", user);
+			}else{
+				user = (Users) request.getSession().getAttribute("user");
+				if(!user.getUsername().equals(request.getUserPrincipal().getName())){
+					user = userService.findByUserName(request.getUserPrincipal().getName());
+					request.getSession().setAttribute("user", user);
+				}
+			}
+			pet.setUpdatedBy(user.getId().toString());
+			pet.setDivision(user.getDivision());
+			if(sendout.updateBookOut(pet)) {
+				String attachmentIdList = request.getParameter("attachmentIdList");
+				int objectId = sendout.LastID();
+				attachmentService.updateObjectId(attachmentIdList, objectId, Constants.OBJECT_NAME_BOOK_SEND_OUT);
+				result = true;
+			}
+		}catch(Exception ex){
+			logger.error("saveEdit : " , ex);
+		}
+		return result;
+	}
+	
 	@RequestMapping(value = "/saveSendOut", method = RequestMethod.POST)
 	@PreAuthorize("isAuthenticated()")
 	public @ResponseBody boolean post(@ModelAttribute("sendOut") BookSendOut pet, HttpServletRequest request) {
 		boolean result = false;
 		try{
-			Calendar cal = Calendar.getInstance();
+			Calendar cal = Calendar.getInstance(Locale.US);
 			cal.setTime(pet.getBsRdate());
-			cal.add(Calendar.YEAR, -543); // to get previous year add -1
+			cal.add(Calendar.YEAR, -543);
 			Date bsRDate = cal.getTime();
 			pet.setBsRdate(bsRDate);
 			Calendar cal2 = Calendar.getInstance();
 			cal2.setTime(pet.getBsDate());
-			cal2.add(Calendar.YEAR, -543); // to get previous year add -1
+			cal2.add(Calendar.YEAR, -543);
 			Date bsDate = cal2.getTime();
 			pet.setBsDate(bsDate);
 			Users user = new Users();
@@ -207,14 +230,13 @@ public class ExternalController {
 			pet.setCreatedDate(new Date());
 			pet.setDivision(user.getDivision());
 			if(sendout.saveBookOut(pet)) {
-				result = true;
-				// Update Attachment
 				String attachmentIdList = request.getParameter("attachmentIdList");
 				int objectId = sendout.LastID();
 				attachmentService.updateObjectId(attachmentIdList, objectId, Constants.OBJECT_NAME_BOOK_SEND_OUT);
+				result = true;
 			}
 		}catch(Exception ex){
-			logger.error("post : " , ex);
+			logger.error("saveSendOut : " , ex);
 		}
 		return result;
 	}

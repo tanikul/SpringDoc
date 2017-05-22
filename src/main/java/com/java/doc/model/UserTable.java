@@ -6,6 +6,7 @@ public class UserTable implements java.io.Serializable {
 	private int id;
 	private String username;
 	private String password;
+	private String prefix;
 	private String fname;
 	private String lname;
 	private String role;
@@ -14,6 +15,8 @@ public class UserTable implements java.io.Serializable {
 	private String organization;
 	private String button;
 	private int seq;
+	private Integer groupId;
+	private String groupName;
 	
 	public int getId() {
 		return id;
@@ -81,6 +84,23 @@ public class UserTable implements java.io.Serializable {
 	public void setSeq(int seq) {
 		this.seq = seq;
 	}
-	
+	public Integer getGroupId() {
+		return groupId;
+	}
+	public void setGroupId(Integer groupId) {
+		this.groupId = groupId;
+	}
+	public String getGroupName() {
+		return groupName;
+	}
+	public void setGroupName(String groupName) {
+		this.groupName = groupName;
+	}
+	public String getPrefix() {
+		return prefix;
+	}
+	public void setPrefix(String prefix) {
+		this.prefix = prefix;
+	}
 	
 }

@@ -293,5 +293,4 @@ public class BookSendOut implements java.io.Serializable {
 	public void setUpdatedDate(Date updatedDate) {
 		this.updatedDate = updatedDate;
 	}
-
 }

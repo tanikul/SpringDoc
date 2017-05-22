@@ -4,7 +4,6 @@ import java.util.Date;
 
 public class BookSendOutValidator {
 
-//	@NotEmpty(message = "à¸�à¸£à¸¸à¸“à¸²à¸�à¸£à¸­à¸�à¸§à¸±à¸™à¸—à¸µà¹ˆ")
 	private Integer bsId;
 	private Integer bsNum;
 	private Integer bsTypeQuick;

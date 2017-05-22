@@ -1,5 +1,6 @@
 package com.java.doc.view;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +19,7 @@ public class ExcelRevenueReportView extends AbstractExcelView{
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	protected void buildExcelDocument(@SuppressWarnings("rawtypes") Map model, HSSFWorkbook workbook,
+	protected void buildExcelDocument(Map model, HSSFWorkbook workbook,
 		HttpServletRequest request, 
 		HttpServletResponse response)
 		throws Exception {

@@ -3,20 +3,20 @@ package com.java.doc.service;
 import java.util.HashMap;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.java.doc.dao.TypeQuickDAO;
 import com.java.doc.model.TypeQuick;
 
-@Service
+@Service("typeQuickService")
 public class TypeQuickServiceImpl implements TypeQuickService {
 
+	@Autowired
+	@Qualifier("typeQuickDao")
 	private TypeQuickDAO type;
-	
-	public void setType(TypeQuickDAO type) {
-		this.type = type;
-	}
 
 	@Override
 	@Transactional

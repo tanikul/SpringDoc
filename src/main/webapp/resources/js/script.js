@@ -169,7 +169,7 @@ inter.edit = function(id){
 
 inter.editGet = function(id){
 	url = GetSiteRoot() + "/internal/edit/?id=" + id;
-	window.location.href = url;
+	window.open(url);
 }
 
 inter.checkbrPlace = function(obj){
@@ -269,6 +269,15 @@ SearchResult = function(){
         	  $(th).find('div').html('วันที่รับหนังสือ');
         	  var tf = $('.tablesorter').find('tfoot').find('tr').find('th')[2];
         	  $(tf).html('วันที่รับหนังสือ');
+          }else{
+        	  var th = $('.tablesorter').find('thead').find('tr').find('th')[12];
+        	  var tf = $('.tablesorter').find('tfoot').find('tr').find('th')[12];
+        	  $(th).hide();
+        	  $(tf).hide();
+        	  th = $('.tablesorter').find('thead').find('tr').find('th')[7];
+        	  $(th).find('div').html('ถึง');
+          	  tf = $('.tablesorter').find('tfoot').find('tr').find('th')[7];
+    	  	  $(tf).html('ถึง');
           }
           return [ total, rows, headers ];
         }
@@ -329,11 +338,16 @@ saveEditUser = function(id){
 	var fname = $('#fname').val();
 	var lname = $('#lname').val();
 	var divisionCode = $('#divisionCode').val();
+	var groupId = $('#groupId').val();
+	var role = $('#role').val();
+	var prefix = $('#prefix').val();
+	var username = $('#username').val();
+	var password = $('#password').val();
 	$.ajax({
         url: GetSiteRoot() + "/saveEditUser",
         type: "POST",
         cache: false,
-        data: { 'id': id,'fname': fname, 'lname' : lname, 'divisionCode' : divisionCode },
+        data: { 'id': id,'fname': fname, 'lname' : lname, 'divisionCode' : divisionCode, 'groupId' : groupId, 'role' : role, 'prefix' : prefix, 'password' : password, 'username' : username },
         success: function (response) {
         	if(response == 'success'){
         		table.ajax.reload();
@@ -360,7 +374,7 @@ saveAddUser = function(){
 	var chk = true;
 	if($('#username').val() == ''){
 		$('#username').parent().prev().parent().addClass('has-error');
-		$('#username').next().html('กรุณากรอก Username ด้วยครับ');
+		$('#username').next().html('กรุณากรอก Username ');
 		chk = false;
 	}else{
 		$('#username').next().html('');
@@ -368,15 +382,23 @@ saveAddUser = function(){
 	}
 	if($('#password').val() == ''){
 		$('#password').parent().prev().parent().addClass('has-error');
-		$('#password').next().html('กรุณากรอก Password ด้วยครับ');
+		$('#password').next().html('กรุณากรอก Password ');
 		chk = false;
 	}else{
 		$('#password').next().html('');
 		$('#password').parent().prev().parent().removeClass('has-error');
 	}
+	if($('#prefix').val() == ''){
+		$('#prefix').parent().prev().parent().addClass('has-error');
+		$('#prefix').next().html('กรุณาเลือกคำนำหน้า');
+		chk = false;
+	}else{
+		$('#prefix').next().html('');
+		$('#prefix').parent().prev().parent().removeClass('has-error');
+	}
 	if($('#fname').val() == ''){
 		$('#fname').parent().prev().parent().addClass('has-error');
-		$('#fname').next().html('กรุณากรอกชื่อด้วยครับ');
+		$('#fname').next().html('กรุณากรอกชื่อ');
 		chk = false;
 	}else{
 		$('#fname').next().html('');
@@ -384,7 +406,7 @@ saveAddUser = function(){
 	}
 	if($('#lname').val() == ''){
 		$('#lname').parent().prev().parent().addClass('has-error');
-		$('#lname').next().html('กรุณากรอกนามสกุลด้วยครับ');
+		$('#lname').next().html('กรุณากรอกนามสกุล');
 		chk = false;
 	}else{
 		$('#lname').next().html('');
@@ -392,7 +414,7 @@ saveAddUser = function(){
 	}
 	if($('#division').val() == ''){
 		$('#division').parent().prev().parent().addClass('has-error');
-		$('#division').next().html('กรุณาระบุหน่วยงานด้วยครับ');
+		$('#division').next().html('กรุณาระบุหน่วยงาน');
 		chk = false;
 	}else{
 		$('#division').next().html('');
@@ -404,11 +426,14 @@ saveAddUser = function(){
 		var division = $('#division').val();
 		var username = $('#username').val();
 		var password = $('#password').val();
+		var groupId = $('#groupId').val();
+		var prefix = $('#prefix').val();
+		var role = $('#role').val();
 		$.ajax({
 	        url: GetSiteRoot() + "/addUser",
 	        type: "POST",
 	        cache: false,
-	        data: { 'username': username, 'password': password,'fname': fname, 'lname' : lname, 'division' : division },
+	        data: { 'username': username, 'password': password,'fname': fname, 'lname' : lname, 'division' : division, 'groupId' : groupId, 'prefix' : prefix, 'role' : role },
 	        success: function (response) {
 	        	if(response == 'success'){
 	        		table.ajax.reload();
@@ -497,7 +522,13 @@ function loadTable(){
 	        	  $(th).find('div').html('วันที่รับหนังสือ');
 	          	  var tf = $('.tablesorter').find('tfoot').find('tr').find('th')[2];
         	  	  $(tf).html('วันที่รับหนังสือ');
+	          }else{
+	        	  var th = $('.tablesorter').find('thead').find('tr').find('th')[7];
+	        	  $(th).find('div').html('ถึง');
+	          	  var tf = $('.tablesorter').find('tfoot').find('tr').find('th')[7];
+        	  	  $(tf).html('ถึง');
 	          }
+	          var tf = $('.tablesorter').find('tfoot').find('tr').find('th')[2];
 	          $('#table-display').show();
 	          var type = $("input:radio[name ='type']:checked").val();
 			  setDDLYear(type);
@@ -518,5 +549,95 @@ function loadTable(){
 	      cssPageSize    : '.pagesize', // page size selector - select dropdown that sets the "size" option
 	      cssErrorRow    : 'tablesorter-errorRow', // error information row
 	      cssDisabled    : 'disabled' // Note there is no period "." in front of this class name
+	    }).bind('pagerChange pagerComplete', function(event, options){
+	      $('.tooltips').tooltipster({	     
+			    functionBefore: function(instance, helper) { 
+			    	var id = $(helper.origin).attr('val');
+			    	$.ajax({
+			            url: GetSiteRoot() + "/getStatusDetail",
+			            type: "POST",
+			            cache: false,
+			            data: id,
+			            contentType: "application/json; charset=utf-8",
+			            dataType: "json",
+			            success: function (response) {
+				            var tmpDepartment = "";
+							var tmpGroup = "";
+							var strUser = "";
+							var mapGroup = {};
+							var rs = '';
+							var status = '';
+							$(response).each(function (i, row){
+								status = row.status;
+								if(i == 0){
+									tmpDepartment = row.brToDepartmentName;
+								}
+								tmpGroup = (tmpGroup == '') ? row.brToGroupName : tmpGroup;
+								if(tmpDepartment != row.brToDepartmentName){
+									rs += "<div style=\"margin-left:5px;\">" + tmpDepartment + "</div>";
+									for(var x in mapGroup){
+										rs += "<div style=\"margin-left:20px; list-style-type: disc;\">" + x + "</div>";
+										rs += mapGroup[x];
+									}
+									mapGroup = {};
+									tmpDepartment = row.brToDepartmentName;
+								}
+								if(row.brToGroup != ''){
+									if(tmpGroup != row.brToGroupName){
+										mapGroup["<li>ฝ่่าย" + tmpGroup + "</li>"] = strUser;
+										strUser = "";
+										tmpGroup = row.brToGroupName;
+									}
+									if(row.brToUserName != ''){
+										if(status == 'Y'){
+											strUser += "<li style=\"margin-left:40px; list-style-type: disc;\">" + row.brToUserName + "</li>";
+										}else{
+											strUser += "<li style=\"margin-left:40px; list-style-type: circle;\">" + row.brToUserName + "</li>";
+										}
+									}
+								}
+							});
+							if(tmpGroup != ''){
+								mapGroup["<li>ฝ่่าย" + tmpGroup + "</li>"] = strUser;	
+							}
+							rs += "<div style=\"margin-left:5px;\">" + tmpDepartment + "</div>";
+							for(var x in mapGroup){
+								rs += "<div style=\"margin-left:20px; list-style-type: disc;\">" + x + "</div>";
+								rs += mapGroup[x];
+							}
+			            	instance.content(rs);
+			            }
+			        });
+			    },
+			    contentAsHTML: true,
+			    animation: 'fade',
+			    delay: 200,
+			    maxWidth: 'auto',
+			    trigger: 'click'
+			});
 	    });
+	  
 	}
+
+function changeDivisionToGroup(obj){
+	$.ajax({
+        url: GetSiteRoot() + "/account/getGroup",
+        type: "POST",
+        cache: false,
+        dataType : "json",
+        data: { 'divisionCode': $(obj).val() },
+        success: function (response) {
+        	var str = '';
+        	for(var x in response){
+        		str += '<option value="' + x + '">' + response[x] + '</option>';
+        	}
+        	if(str != ''){
+        		str = '<select id="groupId" name="groupId" class="form-control"><option value="">--- เลือกฝ่าย ---</option>' + str + '</select>';
+        		$('#group-box').html(str);
+        	}else{
+        		$('#groupId').val('').attr('disabled', true);
+        	}
+        }
+    });
+}
+

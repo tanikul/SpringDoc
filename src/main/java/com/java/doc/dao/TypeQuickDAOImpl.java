@@ -12,12 +12,12 @@ import org.springframework.stereotype.Repository;
 import com.java.doc.hibernate.HibernateUtil;
 import com.java.doc.model.TypeQuick;
 
-@Repository
+@Repository("typeQuickDao")
 public class TypeQuickDAOImpl implements TypeQuickDAO {
 	
 	protected Session session;
     protected Transaction tx;
-
+    
     public TypeQuickDAOImpl() {
         HibernateUtil.buildIfNeeded();
     }

@@ -3,6 +3,7 @@ package com.java.doc.dao;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
@@ -11,12 +12,15 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+
 import com.java.doc.hibernate.HibernateUtil;
 import com.java.doc.model.DataTable;
+import com.java.doc.model.Groups;
 import com.java.doc.model.UserTable;
 import com.java.doc.model.Users;
+import com.java.doc.util.Constants;
 
-@Repository
+@Repository("userDao")
 public class UserDAOImpl implements UserDAO {
 
 
@@ -49,7 +53,6 @@ public class UserDAOImpl implements UserDAO {
 	public void updateUser(Users u) {
 		startOperation();
 		try {
-			tx = session.beginTransaction();
 			session.update(u);
 			tx.commit();
 		} catch (HibernateException ex) {
@@ -78,16 +81,15 @@ public class UserDAOImpl implements UserDAO {
 	}
 
 	@Override
-	@Transactional(readOnly = true)
 	public Users getUserById(int id) {
 		startOperation();
-		Users u = null;
+		Users users = null;
 		try {
-			u = (Users) session.load(Users.class, new Integer(id));
+			users = (Users) session.createQuery("from Users where id=?").setParameter(0, id).uniqueResult();
 		}finally {
 			HibernateUtil.close(session);
 		}	
-		return u;
+		return users;
 	}
 
 	@Override
@@ -109,8 +111,8 @@ public class UserDAOImpl implements UserDAO {
 			HibernateUtil.close(session);
 		}
 	}
-
-	@Transactional(readOnly = true)
+	
+	@Override
 	public Users findByUserName(String username) {
 		startOperation();
 		Users users = new Users();
@@ -137,22 +139,30 @@ public class UserDAOImpl implements UserDAO {
 		startOperation();
 		List<UserTable> users = new ArrayList<UserTable>();
 		try {
-			String strSQL = "SELECT u.id, u.fname, u.lname, u.role, d.division_name, d.division_code, d.organization FROM users u, divisions d WHERE u.division = d.division_code";
+			String strSQL = "SELECT u.id, u.fname, u.lname, u.role, d.division_name, d.division_code, g.group_name, u.prefix FROM users u LEFT JOIN divisions d ON u.division = d.division_code LEFT JOIN groups g ON u.group_id = g.group_id";
 			SQLQuery query = session.createSQLQuery(strSQL);
 			List<?> list = query.list();
 			Iterator<?> it = list.iterator();
 			int i = 1;
+			Map<String, String> roles = Constants.getRoles(); 
 			while(it.hasNext()){
 				Object[] row = (Object[]) it.next();
 				UserTable t = new UserTable();
 				t.setSeq(i);
 				t.setId(Integer.parseInt((row[0] == null) ? "" : row[0].toString()));
-				t.setFname((row[1] == null) ? "" : row[1].toString());
+				String s = "";
+				if(row[7] != null){
+					s += row[7];
+				}
+				if(row[1] != null){
+					s += row[1];
+				}
+				t.setFname(s);
 				t.setLname((row[2] == null) ? "" : row[2].toString());
-				t.setRole((row[3] == null) ? "" : row[3].toString());
+				t.setRole((row[3] == null) ? "" : roles.get(row[3].toString()));
 				t.setDivisionName((row[4] == null) ? "" : row[4].toString());
 				t.setDivisionCode((row[5] == null) ? "" : row[5].toString());
-				t.setOrganization((row[6] == null) ? "" : row[6].toString());
+				t.setGroupName((row[6] == null) ? "" : row[6].toString());
 				t.setButton("<button type='button' class='btn btn-warning' onclick='editUser(" + row[0].toString() + ");'><span class='glyphicon glyphicon-edit' aria-hidden='true'></span> แก้ไข</button> <button type='button' class='btn btn-danger' onclick='deleteUser(" + row[0].toString() + ");'><span class='glyphicon glyphicon-trash' aria-hidden='true'></span> ลบ</button>");
 				users.add(t);
 				i++;
@@ -173,7 +183,7 @@ public class UserDAOImpl implements UserDAO {
 		UserTable result = new UserTable();
 		startOperation();
 		try {
-			String strSQL = "SELECT u.id, u.fname, u.lname, u.role, d.division_name, d.division_code, d.organization, u.username, u.password FROM users u, divisions d WHERE u.division = d.division_code AND u.id = " + id;
+			String strSQL = "SELECT u.id, u.fname, u.lname, u.role, d.division_name, d.division_code, d.organization, u.username, u.password, u.group_id, g.group_name, u.prefix FROM users u LEFT JOIN divisions d ON u.division = d.division_code LEFT JOIN groups g ON u.group_id = g.group_id WHERE u.id = " + id;
 			SQLQuery query = session.createSQLQuery(strSQL);
 			List<?> list = query.list();
 			Iterator<?> it = list.iterator();
@@ -188,7 +198,10 @@ public class UserDAOImpl implements UserDAO {
 				result.setOrganization((row[6] == null) ? "" : row[6].toString());
 				result.setUsername(row[7] == null ? "" : row[7].toString());
 				result.setPassword(row[8] == null ? "" : row[8].toString());
-				result.setButton("<button type='button' class='btn btn-warning' onclick='editUser(" + row[0].toString() + ");'><span class='glyphicon glyphicon-edit' aria-hidden='true'></span> แก้ไข</button> <button type='button' class='btn btn-danger' onclick='deleteUser(" + row[0].toString() + ");'><span class='glyphicon glyphicon-trash' aria-hidden='true'></span> ลบ</button>");
+				result.setGroupId(row[9] == null ? null : Integer.parseInt(row[9].toString()));
+				result.setGroupName(row[10] == null ? "" : row[10].toString());
+				result.setPrefix(row[11] == null ? "" : row[11].toString());
+				result.setButton("<button type='button' class='btn btn-warning' onclick='editUser(" + row[0].toString() + ");'><span class='glyphicon glyphicon-edit' aria-hidden='true'></span> เน�เธ�เน�เน�เธ�</button> <button type='button' class='btn btn-danger' onclick='deleteUser(" + row[0].toString() + ");'><span class='glyphicon glyphicon-trash' aria-hidden='true'></span> เธฅเธ�</button>");
 			}
 		}catch(HibernateException ex){
 			logger.error("getFindUserById HibernateException : " , ex); 
@@ -205,4 +218,48 @@ public class UserDAOImpl implements UserDAO {
         session = HibernateUtil.openSession();
         tx = session.beginTransaction();
     }
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Groups> getGroupFromDivision(String divisionCode) {
+		startOperation();
+		List<Groups> group = null;
+		try {
+			group = session.createQuery("from Groups where divisionCode=?").setParameter(0, divisionCode).list();
+		}catch(Exception ex){
+			logger.error("getGroupFromDivision Exception : " , ex); 
+		}finally {
+			HibernateUtil.close(session);
+		}	
+		return group;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Users> getUserFromGroup(String groupId) {
+		startOperation();
+		List<Users> users = null;
+		try {
+			users = session.createQuery("from Users where groupId=? and role='USER'").setParameter(0, Integer.parseInt(groupId)).list();
+		}catch(Exception ex){
+			logger.error("getUserFromGroup Exception : " , ex); 
+		}finally {
+			HibernateUtil.close(session);
+		}	
+		return users;
+	}
+	
+	@Override
+	public Groups getGroupName(String groupId) {
+		startOperation();
+		Groups group = null;
+		try {
+			group = (Groups) session.createQuery("from Groups where groupId=?").setParameter(0, Integer.parseInt(groupId)).uniqueResult();
+		}catch(Exception ex){
+			logger.error("getGroupName Exception : " , ex); 
+		}finally {
+			HibernateUtil.close(session);
+		}	
+		return group;
+	}
 }

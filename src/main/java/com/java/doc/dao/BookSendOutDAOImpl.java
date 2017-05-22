@@ -20,12 +20,13 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
 import com.java.doc.hibernate.HibernateUtil;
+import com.java.doc.model.BookReciveOut;
 import com.java.doc.model.BookSendOut;
 import com.java.doc.model.BookSendOutTable;
 import com.java.doc.util.TableSorter;
 import com.mysql.jdbc.StringUtils;
 
-@Repository
+@Repository("bookSendOutDao")
 public class BookSendOutDAOImpl implements BookSendOutDAO {
 
 	protected Session session;
@@ -200,11 +201,12 @@ public class BookSendOutDAOImpl implements BookSendOutDAO {
 		try {
 			Query query = session.createQuery("from BookSendOut where bsYear = :bsYear order by bsNum desc");
 			query.setParameter("bsYear", bsYear);
-			BookSendOut bookSendOut = (BookSendOut) query.list().get(0);
-			bsNum = bookSendOut.getBsNum() + 1;
+			if(query.list().size() > 0){
+				BookSendOut bookSendOut = (BookSendOut) query.list().get(0);
+				bsNum = (bookSendOut.getBsNum() == null) ? 1 : bookSendOut.getBsNum() + 1;	
+			}
 		} catch (Exception ex) {
 			logger.error("getNextBsNum : ", ex);
-			bsNum = 1;
 		}finally{
 			HibernateUtil.close(session);
 		}
@@ -249,4 +251,140 @@ public class BookSendOutDAOImpl implements BookSendOutDAO {
         tx = session.beginTransaction();
     }
 
+	@Override
+	public int getCountDataBookRecive(int year) {
+		startOperation();
+		int rs = 0;
+		try{
+			rs = ((Long) session.createCriteria(BookSendOut.class).add(Restrictions.eq("bsYear", year)).setProjection(Projections.rowCount()).uniqueResult()).intValue();
+		}catch (Exception ex) {
+			logger.error("getCountDataBookRecive : ", ex);
+			ex.printStackTrace();
+		}finally{
+			HibernateUtil.close(session);
+		}
+		return rs;
+	}
+	
+	@Override
+	public BookSendOut getLastRowOfYear(int bsYear) {
+		BookSendOut bookSendOut = null;
+		startOperation();
+		try {
+			Query query = session.createQuery("from BookSendOut where bsYear = :bsYear order by bsNum desc");
+			query.setParameter("bsYear", bsYear);
+			bookSendOut = (BookSendOut) query.setMaxResults(1).uniqueResult();
+		} catch (Exception ex) { 
+			logger.error("getLastRowOfYear : ", ex);
+		}finally{
+			HibernateUtil.close(session);
+		}
+		return bookSendOut;
+	}
+
+	@Override
+	public int updateSendOut(BookSendOut sendout) {
+		int result = 0;
+		startOperation();
+		try {
+			String sql = "UPDATE BOOK_SEND_OUT SET BS_TYPE_QUICK = :bsTypeQuick, BS_TYPE_SECRET = :bsTypeSecret, ";
+			sql += "BS_YEAR = :bsYear, BS_RDATE = :bsRdate, BS_PLACE = :bsPlace, BS_DATE = :bsDate, BS_FROM = :bsFrom, ";
+			sql += "BS_TO = :bsTo, BS_SUBJECT = :bsSubject, BS_REMARK = :bsRemark, BS_STATUS = :bsStatus, DIVISION = :division, UPDATED_BY = :updatedBy, UPDATED_DATE = SYSDATE() ";
+			sql += "WHERE BS_ID = :bsId";
+			Query query = session.createSQLQuery(sql);
+			query.setParameter("bsTypeQuick", sendout.getBsTypeQuick());
+			query.setParameter("bsTypeSecret", sendout.getBsTypeSecret());
+			query.setParameter("bsYear", sendout.getBsYear());
+			query.setParameter("bsRdate", sendout.getBsRdate());
+			query.setParameter("bsPlace", sendout.getBsPlace());
+			query.setParameter("bsDate", sendout.getBsDate());
+			query.setParameter("bsFrom", sendout.getBsFrom());
+			query.setParameter("bsTo", sendout.getBsTo());
+			query.setParameter("bsSubject", sendout.getBsSubject());
+			query.setParameter("bsRemark", sendout.getBsRemark());
+			query.setParameter("bsStatus", sendout.getBsStatus());
+			query.setParameter("division", sendout.getDivision());
+			query.setParameter("updatedBy", sendout.getUpdatedBy());
+			query.setParameter("bsId", sendout.getBsId());
+			result = query.executeUpdate();
+		}catch(Exception ex){
+			logger.error("updateSendOut : ", ex);
+		}finally{
+			HibernateUtil.close(session);
+		}
+		return result;
+	}
+
+	@Override
+	public List<BookSendOut> listSendOutByYearAndBsNum(int year, int bsNum) {
+		startOperation();
+		List<BookSendOut> list = null;
+		try {
+			String sql = "SELECT a.BS_ID,";
+			sql	+= "a.BS_NUM,";
+			sql += "a.BS_YEAR,";
+			sql += "a.BS_RDATE,";
+			sql += "a.BS_TYPE_QUICK,";
+			sql += "a.BS_TYPE_SECRET,";
+			sql += "a.BS_PLACE,";
+			sql += "a.BS_DATE,";
+			sql += "a.BS_FROM,";
+			sql += "a.BS_TO,";
+			sql += "a.BS_SUBJECT,";
+			sql += "a.BS_REMARK,";
+			sql += "a.BS_DIVISION,";
+			sql += "a.BS_PCODE,";
+			sql += "a.BS_STATUS,";
+			sql += "a.BS_IMAGE,";
+			sql += "a.CREATED_BY,";
+			sql += "a.CREATED_DATE,";
+			sql += "a.DIVISION,";
+			sql += "a.UPDATED_BY,";
+			sql += "a.UPDATED_DATE";
+			sql += " FROM BOOK_SEND_OUT a ";
+			sql += " WHERE a.BS_YEAR = '" + year + "'";
+			sql += " AND a.BS_NUM > " + bsNum;
+			sql += " ORDER BY a.BS_ID ASC";
+			list = session.createSQLQuery(sql).addEntity(BookSendOut.class).list();			
+		}finally{
+			HibernateUtil.close(session);
+		}
+		return list;
+	}
+
+	@Override
+	public List<BookSendOut> listSendOutByYear(int year) {
+		startOperation();
+		List<BookSendOut> list = null;
+		try {
+			String sql = "SELECT a.BS_ID,";
+			sql	+= "a.BS_NUM,";
+			sql += "a.BS_YEAR,";
+			sql += "a.BS_RDATE,";
+			sql += "a.BS_TYPE_QUICK,";
+			sql += "a.BS_TYPE_SECRET,";
+			sql += "a.BS_PLACE,";
+			sql += "a.BS_DATE,";
+			sql += "a.BS_FROM,";
+			sql += "a.BS_TO,";
+			sql += "a.BS_SUBJECT,";
+			sql += "a.BS_REMARK,";
+			sql += "a.BS_DIVISION,";
+			sql += "a.BS_PCODE,";
+			sql += "a.BS_STATUS,";
+			sql += "a.BS_IMAGE,";
+			sql += "a.CREATED_BY,";
+			sql += "a.CREATED_DATE,";
+			sql += "a.DIVISION,";
+			sql += "a.UPDATED_BY,";
+			sql += "a.UPDATED_DATE";
+			sql += " FROM BOOK_SEND_OUT a ";
+			sql += " WHERE a.BS_YEAR = '" + year + "'";
+			sql += " ORDER BY a.BS_ID ASC";
+			list = session.createSQLQuery(sql).addEntity(BookSendOut.class).list();			
+		}finally{
+			HibernateUtil.close(session);
+		}
+		return list;
+	}
 }

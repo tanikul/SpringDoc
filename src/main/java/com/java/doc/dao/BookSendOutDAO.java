@@ -19,4 +19,9 @@ public interface BookSendOutDAO {
 	public Integer getNextBsNum(int bsYear);
 	public List<Integer> getYear();
 	public String delete(int id);
+	public int getCountDataBookRecive(int year);
+	public BookSendOut getLastRowOfYear(int bsYear);
+	public int updateSendOut(BookSendOut sendout);
+	public List<BookSendOut> listSendOutByYearAndBsNum(int year, int bsNum);
+	public List<BookSendOut> listSendOutByYear(int year);
 }

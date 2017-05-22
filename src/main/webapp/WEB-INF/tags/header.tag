@@ -41,7 +41,7 @@
 	                </a>
 	                <ul class="dropdown-menu">
 	                    <c:if test="${role == 'ADMIN'}">
-	                    	<li><a href="ManageAccount">จัดการผู้ใช้ระบบ</a></li>
+	                    	<li><a href="<c:url value="/ManageAccount" />">จัดการผู้ใช้ระบบ</a></li>
 	                    </c:if>
 	                    <li><a href="javascript:formSubmit()">ออกจากระบบ</a></li>
 	                </ul>

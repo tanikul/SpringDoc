@@ -9,4 +9,5 @@ public interface DivisionDAO {
 
 	public List<Divisions> listDivision();
 	public Map<Integer, String> selectDivision();
+	public Divisions getDivisionByCode(String code);
 }

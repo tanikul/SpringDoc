@@ -17,6 +17,7 @@
 						<div class="widget_inside">	
 	      <springForm:form id="sendOutForm" action="" method="POST" commandName="sendOut" cssClass="form-horizontal">
 	      	<input type="hidden" id="attachmentIdList" name="attachmentIdList" value=""/>
+	      	<input type="hidden" id="mode" name="mode" value="${mode}"/>
 	      <div class="col-md-7">
 			  <div class="form-group" style="color: red">
 			    <label class="col-sm-2 control-label">ขั้นความเร็ว</label>

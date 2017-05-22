@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="document_" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="bcb760e5-8177-418a-b572-c4214b93e893">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<field name="brNum" class="java.lang.String"/>
+	<field name="brYear" class="java.lang.String"/>
+	<field name="brRdateStr" class="java.lang.String"/>
+	<field name="brPlace" class="java.lang.String"/>
+	<field name="brDateStr" class="java.lang.String"/>
+	<field name="brFrom" class="java.lang.String"/>
+	<field name="brTo" class="java.lang.String"/>
+	<field name="brSubject" class="java.lang.String"/>
+	<field name="brRemark" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="57" splitType="Stretch">
+			<staticText>
+				<reportElement x="159" y="0" width="232" height="55" uuid="59c7645e-b9b0-4ec6-9eb3-76d1d1414fed"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH Sarabun New" size="24" isBold="true"/>
+				</textElement>
+				<text><![CDATA[รายงานการรับเข้า-ออกเอกสาร ]]></text>
+			</staticText>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="33" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="13" width="35" height="20" backcolor="#FFFFFF" uuid="5e9043da-b778-4c18-8412-981351069c2b"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH Sarabun New" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ปี]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement stretchType="RelativeToBandHeight" mode="Transparent" x="0" y="13" width="35" height="20" backcolor="#FFFFFF" uuid="6d88b7a5-d153-44ca-941f-fdc24fc81e41"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement stretchType="RelativeToBandHeight" x="35" y="13" width="50" height="20" uuid="2f2830bf-e2f2-4194-bbf0-f6b548caf430"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH Sarabun New" isBold="true"/>
+				</textElement>
+				<text><![CDATA[วันที่รับหนังสือ]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement stretchType="RelativeToBandHeight" mode="Transparent" x="35" y="13" width="50" height="20" uuid="28668441-082a-4015-a3b0-7d6d3c7722f0"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement stretchType="RelativeToBandHeight" x="85" y="13" width="50" height="20" uuid="cc5d0880-ae7a-4d04-9ab1-d1d3c24f0225"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH Sarabun New" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[เลขทะเบียนรับ]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement stretchType="RelativeToBandHeight" mode="Transparent" x="85" y="13" width="50" height="20" uuid="a7abbbd7-0d2f-4a61-b847-8c5a9d0970c0"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement stretchType="RelativeToBandHeight" x="135" y="13" width="60" height="20" uuid="0a24b30a-2eea-464e-979c-8da637404a84"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH Sarabun New" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ที่]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement mode="Transparent" x="135" y="13" width="60" height="20" uuid="babcf8ec-369b-4618-8cdc-ae13d4a7e666"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement stretchType="RelativeToBandHeight" x="195" y="13" width="50" height="20" uuid="7c50e946-f71c-458b-afae-831231b03b3a"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH Sarabun New" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ลงวันที่]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement stretchType="RelativeToBandHeight" mode="Transparent" x="195" y="13" width="50" height="20" uuid="e00d41d9-ebc3-4a0c-a763-e279ba81ee88"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement stretchType="RelativeToBandHeight" x="245" y="13" width="60" height="20" uuid="3f4406fb-acb9-4afc-a4d0-24beca355d9c"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH Sarabun New" isBold="true"/>
+				</textElement>
+				<text><![CDATA[จาก]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement stretchType="RelativeToBandHeight" mode="Transparent" x="245" y="13" width="60" height="20" uuid="b7a45b72-5847-4046-9885-b1312d13d0f6"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement stretchType="RelativeToBandHeight" x="305" y="13" width="60" height="20" uuid="2f59c73d-b038-41b9-b124-8ea4083a7387"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH Sarabun New" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ถึง]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement stretchType="RelativeToBandHeight" mode="Transparent" x="305" y="13" width="60" height="20" uuid="111aa712-8654-4e3a-ae7a-2b2f4860ec70"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement stretchType="RelativeToBandHeight" x="466" y="13" width="90" height="20" uuid="0d92421d-81be-44f4-a816-e6cbcc959e0a"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH Sarabun New" isBold="true"/>
+				</textElement>
+				<text><![CDATA[หมายเหตุ]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement stretchType="RelativeToBandHeight" mode="Transparent" x="465" y="13" width="90" height="20" uuid="c5a0fba4-89f9-46fd-b4f0-ad6c637bcba2"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement stretchType="RelativeToBandHeight" x="365" y="13" width="100" height="20" uuid="1eec2b46-ccc9-481c-b5cf-1292719172a3"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH Sarabun New" isBold="true"/>
+				</textElement>
+				<text><![CDATA[เรื่อง]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement stretchType="RelativeToBandHeight" mode="Transparent" x="365" y="13" width="100" height="20" uuid="ab70d159-e13e-45f2-bd25-c58b022f6ca3"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="35" height="20" uuid="c9963e2c-0ca9-4eba-a24c-552ab497b202"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH Sarabun New" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{brYear}]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement stretchType="RelativeToBandHeight" mode="Transparent" x="0" y="0" width="35" height="20" isPrintWhenDetailOverflows="true" uuid="d22f8483-7daf-4aba-b1a8-b6d1113cacc4"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="35" y="0" width="50" height="20" uuid="cd0c1059-4725-4454-89de-ec9b60b2d17c"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH Sarabun New" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{brRdateStr}]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement stretchType="RelativeToBandHeight" mode="Transparent" x="35" y="0" width="50" height="20" isPrintWhenDetailOverflows="true" uuid="8a4e1b0f-602b-4cc7-9d33-a06ed4ec114a"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="85" y="0" width="50" height="20" uuid="eb3049bb-3338-4212-b624-18c8120a82fe"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH Sarabun New" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{brNum}]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement stretchType="RelativeToBandHeight" mode="Transparent" x="85" y="0" width="50" height="20" isPrintWhenDetailOverflows="true" uuid="ec83436f-87bb-468c-a506-9d1462d83116"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="135" y="0" width="60" height="20" uuid="1bbdcb2a-8d2a-4685-9251-8e13a3d90b97"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH Sarabun New" size="9" isBold="false"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{brPlace}]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement stretchType="RelativeToBandHeight" mode="Transparent" x="135" y="0" width="60" height="20" isPrintWhenDetailOverflows="true" uuid="f3edae15-81da-48b1-9965-6325094f66ef"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="195" y="0" width="50" height="20" uuid="a8df61e7-7f90-4794-9388-4625ef2bdae9"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH Sarabun New" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{brDateStr}]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement stretchType="RelativeToBandHeight" mode="Transparent" x="195" y="0" width="50" height="20" isPrintWhenDetailOverflows="true" uuid="02596b69-3949-487f-920a-12e29b4daad6"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="245" y="0" width="60" height="20" uuid="d8d646e1-4cf1-4581-8829-1959bda3b4bc"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH Sarabun New" size="9"/>
+					<paragraph leftIndent="5" rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{brFrom}]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement stretchType="RelativeToBandHeight" mode="Transparent" x="245" y="0" width="60" height="20" isPrintWhenDetailOverflows="true" uuid="c98588f9-3263-49e2-9b03-336704538d7e"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="305" y="0" width="60" height="20" uuid="6fcc3315-767a-4681-889c-074628faf4c2"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH Sarabun New" size="9"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{brTo}]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement stretchType="RelativeToBandHeight" mode="Transparent" x="305" y="0" width="60" height="20" isPrintWhenDetailOverflows="true" uuid="368d62a9-b415-4f3a-9016-5c91280a8322"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="465" y="0" width="90" height="20" uuid="948f7fad-6590-4e1c-8077-a43b5f97f166"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH Sarabun New" size="9" isStrikeThrough="false"/>
+					<paragraph leftIndent="5" rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{brRemark}]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement stretchType="RelativeToBandHeight" mode="Transparent" x="465" y="0" width="90" height="20" isPrintWhenDetailOverflows="true" uuid="6e492f52-36b4-4f2a-acaa-10cef1eb550d"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="365" y="0" width="100" height="20" uuid="4ed4ede4-5b2d-45d7-b7ea-ae75b5cddb38"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None">
+					<font fontName="TH Sarabun New" size="9"/>
+					<paragraph leftIndent="5" rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{brSubject}]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement stretchType="RelativeToBandHeight" mode="Transparent" x="365" y="0" width="100" height="20" isPrintWhenDetailOverflows="true" uuid="d785f1a4-4dc4-48dc-83dc-339256758321"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="23" splitType="Stretch"/>
+	</pageFooter>
+</jasperReport>

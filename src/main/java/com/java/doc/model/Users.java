@@ -20,20 +20,24 @@ public class Users implements java.io.Serializable {
 	private Integer id;
 	private String username;
 	private String password;
+	private String prefix;
 	private String fname;
 	private String lname;
 	private String role;
 	private String division;
+	private Integer groupId;
 
 	public Users() {
 	}
 
-	public Users(String username, String password, String fname, String lname, String role, String division) {
+	public Users(String username, String password, String fname, String lname, String role, String division, Integer groupId, String prefix) {
 		this.username = username;
 		this.password = password;
 		this.fname = fname;
 		this.lname = lname;
 		this.role = role;
+		this.groupId = groupId;
+		this.prefix = prefix;
 	}
 
 	@Id
@@ -99,6 +103,24 @@ public class Users implements java.io.Serializable {
 
 	public void setDivision(String division) {
 		this.division = division;
+	}
+	
+	@Column(name = "group_id", length = 2)
+	public Integer getGroupId() {
+		return groupId;
+	}
+
+	public void setGroupId(Integer groupId) {
+		this.groupId = groupId;
+	}
+	
+	@Column(name = "prefix", length = 20)
+	public String getPrefix() {
+		return prefix;
+	}
+
+	public void setPrefix(String prefix) {
+		this.prefix = prefix;
 	}
 
 }

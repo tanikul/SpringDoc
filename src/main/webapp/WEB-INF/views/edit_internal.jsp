@@ -75,8 +75,8 @@
 			  <div class="form-group">
 			    <label class="col-sm-3 control-label">ถึง</label>
 			    <div class="col-sm-9">
-			      <springForm:input path="brTo" value="${obj.getBrTo()}" cssClass="form-control"/>
-			      <small class="help-block" style="color:red" id="err-brTo"></small>
+			      <springForm:input path="brToDepartment" value="${obj.getBrToDepartment()}" cssClass="form-control"/>
+			      <small class="help-block" style="color:red" id="err-brToDepartment"></small>
 			    </div>
 			  </div>
 			  <div class="form-group">

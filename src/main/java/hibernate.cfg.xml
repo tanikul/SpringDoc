@@ -52,7 +52,7 @@
 
     <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/document?autoReconnect=true</property>
     <property name="hibernate.connection.username">root</property>
-    <property name="hibernate.connection.password">root</property>
+    <property name="hibernate.connection.password"></property>
 
 
     <!-- <property name="hibernate.connection.pool_size">10</property> -->
@@ -66,9 +66,13 @@
   <mapping class="com.java.doc.model.Users"/>
   <mapping class="com.java.doc.model.Divisions"/>
   <mapping class="com.java.doc.model.BookReciveOut"/>
+  <mapping class="com.java.doc.model.BookRecieveDepartment"/>
+  <mapping class="com.java.doc.model.BookRecieveGroup"/>
+  <mapping class="com.java.doc.model.BookRecieveUser"/>
   <mapping class="com.java.doc.model.BookSendOut"/>
   <mapping class="com.java.doc.model.TypeQuick"/>
   <mapping class="com.java.doc.model.TypeSecret"/>
   <mapping class="com.java.doc.model.Attachment"/>
+  <mapping class="com.java.doc.model.Groups"/>
 </session-factory>
 </hibernate-configuration>
