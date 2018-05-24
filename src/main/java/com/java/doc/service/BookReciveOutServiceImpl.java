@@ -31,6 +31,7 @@ import com.java.doc.model.Users;
 import com.java.doc.util.Constants;
 import com.java.doc.util.TableSorter;
 import com.java.doc.util.UtilDateTime;
+import com.java.doc.util.Utility;
 import com.mysql.jdbc.StringUtils;
 
 @Service("bookReciveOutService")
@@ -163,13 +164,49 @@ public class BookReciveOutServiceImpl implements BookReciveOutService {
 	}
 
 	@Override
-	public String delete(int id) {
-		return reciveout.delete(id);
+	public String delete(BookReciveOut br) throws Exception {
+		boolean chk = false;
+		try {
+			Constants cons = new Constants();
+			String[] arrStr = cons.getProperty("excelRecievePath").split("\\.");
+			String fileName = cons.getProperty("excelRecievePath");
+			if(arrStr.length == 2){
+				fileName = arrStr[0] + br.getBrYear() + "." + arrStr[1];
+			}
+	    	File f = new File(fileName);
+	    	XSSFWorkbook workbook;
+	    	FileInputStream file = null;
+	    	XSSFSheet sheet = null;
+	    	int lastSheet = 0;
+	    	if(f.exists() && !f.isDirectory()){
+	    		file = new FileInputStream(new File(fileName));
+	            workbook = new XSSFWorkbook(file);
+	            lastSheet = workbook.getNumberOfSheets();
+	            for(int i = 0; i < lastSheet; i++){
+	            	sheet = workbook.getSheetAt(i);
+	            	int rowNumber = Utility.getRowNumberForDelete(sheet, br.getBrNum(), 2);
+	            	if(rowNumber > 0){
+	            		sheet.removeRow(sheet.getRow(rowNumber)); 
+	            		chk = true;
+	            		break;
+	            	}
+	            }
+	            file.close();
+            	FileOutputStream out = new FileOutputStream(new File(fileName));
+    			workbook.write(out);
+    			out.close();
+	    	}
+		}catch(Exception ex) {
+			logger.error("delete BrToExcel : ", ex);
+			throw ex;
+		}
+		return (chk) ? reciveout.delete(br.getBrId()) : "0";
 	}
 	
 	@Override
 	public boolean insertBrToExcel(BookReciveOut recive) {
-        
+		System.out.println("insertBrToExcel : " + recive.toString());
+		logger.info("insertBrToExcel : " + recive.toString());
 		try {
 			boolean chkExistFile = false;
 			Constants cons = new Constants();
@@ -283,6 +320,7 @@ public class BookReciveOutServiceImpl implements BookReciveOutService {
 			out.close();
         }catch(Exception ex){
         	logger.error("insertBrToExcel : ", ex);
+        	System.out.println("insertBrToExcel : " + ex.getMessage());
         }
             
         return true;
@@ -290,6 +328,8 @@ public class BookReciveOutServiceImpl implements BookReciveOutService {
 
 	public boolean updateBrToExcel(BookReciveOut recive) {
 		try {
+			System.out.println("updateBrToExcel : " + recive.toString());
+			logger.info("updateBrToExcel : " + recive.toString());
 			Constants cons = new Constants();
 			String[] arrStr = cons.getProperty("excelRecievePath").split("\\.");
 			String fileName = cons.getProperty("excelRecievePath");
@@ -373,6 +413,7 @@ public class BookReciveOutServiceImpl implements BookReciveOutService {
         	}
         }catch(Exception ex){
         	logger.error("updateBrToExcel : ", ex);
+        	System.out.println("updateBrToExcel : " + ex.getMessage());
         }
             
         return true;
@@ -382,6 +423,8 @@ public class BookReciveOutServiceImpl implements BookReciveOutService {
 	public int updateReciveOut(BookReciveOut recive, String role) {
 		int rs = 0;
 		try{
+			System.out.println("updateReciveOut : " + recive.toString() + ", role : " + role);
+			logger.info("updateReciveOut : " + recive.toString() + ", role : " + role);
 			if(role.equals("ADMIN")){
 				String brTo = recive.getBrToDepartment();
 				String brToNotIn = "\'\'";
@@ -617,6 +660,7 @@ public class BookReciveOutServiceImpl implements BookReciveOutService {
 			}
 		}catch(Exception ex){
         	logger.error("updateReciveOut : ", ex);
+			System.out.println("updateReciveOut : " + ex.getMessage());
         }
 		return rs;
 	}

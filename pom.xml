@@ -269,8 +269,22 @@
         <version>2.0</version>
         <scope>provided</scope>
     </dependency>
+    <dependency>
+	    <groupId>net.sf.jasperreports</groupId>
+	    <artifactId>jasperreports-fonts</artifactId>
+	    <version>6.0.0</version>
+	</dependency>
   </dependencies>
   <build>
-    <finalName>SpringDoc</finalName>
+      <finalName>SpringDoc</finalName>
+	  <plugins>
+	    <plugin>
+	      <artifactId>maven-compiler-plugin</artifactId>
+	        <configuration>
+	          <source>1.6</source>
+	          <target>1.6</target>
+	        </configuration>
+	    </plugin>
+	  </plugins>
   </build>
 </project>

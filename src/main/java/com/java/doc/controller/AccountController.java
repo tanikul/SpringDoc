@@ -539,6 +539,9 @@ public class AccountController {
             		}
                 }
         	}else{
+        		String x =  cons.getProperty("excelRecievePath").replaceAll("\\\\", "//");
+        		File g = new File(x);
+        		g.getParentFile().mkdirs(); 
         		List<BookReciveOut> list = bookReciveOutService.listReciveByYear(year);
         		for(BookReciveOut re : list){
         			bookReciveOutService.insertBrToExcel(re);
@@ -649,6 +652,9 @@ public class AccountController {
             		}
                 }
         	}else{
+        		String x =  cons.getProperty("excelSendOutPath").replaceAll("\\\\", "//");
+        		File g = new File(x);
+        		g.getParentFile().mkdirs(); 
         		List<BookSendOut> list = bookSendOutService.listSendOutByYear(year);
         		for(BookSendOut re : list){
         			bookSendOutService.insertBsToExcel(re);

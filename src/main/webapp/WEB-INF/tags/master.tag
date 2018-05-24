@@ -21,6 +21,7 @@
     <script src="<c:url value="/js/bootstrap-select.min.js" />"></script>
     <script src="<c:url value="/js/respond.js" />"></script>
     <script src="<c:url value="/js/dateFormat.js" />"></script>
+    <script src="<c:url value="/js/loadingoverlay.js" />"></script>
     <script src="<c:url value="/js/script.js" />"></script>
 </head>
   <body>

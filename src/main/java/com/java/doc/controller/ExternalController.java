@@ -160,10 +160,10 @@ public class ExternalController {
 		return model;
 	}
 	
-	@RequestMapping(value = "/external/edit", method = RequestMethod.POST)
+	@RequestMapping(value = "/external/edit", method = RequestMethod.POST, produces="application/json;charset=UTF-8",headers = {"Accept=text/xml, application/json"})
 	@PreAuthorize("isAuthenticated()")
-	public @ResponseBody boolean saveEdit(@ModelAttribute("sendOut") BookSendOut pet, HttpServletRequest request) {
-		boolean result = false;
+	public @ResponseBody String saveEdit(@ModelAttribute("sendOut") BookSendOut pet, HttpServletRequest request) {
+		String result = Constants.FAIL;
 		try{
 			Calendar cal = Calendar.getInstance(Locale.US);
 			cal.setTime(pet.getBsRdate());
@@ -192,7 +192,7 @@ public class ExternalController {
 				String attachmentIdList = request.getParameter("attachmentIdList");
 				int objectId = sendout.LastID();
 				attachmentService.updateObjectId(attachmentIdList, objectId, Constants.OBJECT_NAME_BOOK_SEND_OUT);
-				result = true;
+				result = Constants.SUCCESS;
 			}
 		}catch(Exception ex){
 			logger.error("saveEdit : " , ex);
@@ -200,10 +200,10 @@ public class ExternalController {
 		return result;
 	}
 	
-	@RequestMapping(value = "/saveSendOut", method = RequestMethod.POST)
+	@RequestMapping(value = "/saveSendOut", method = RequestMethod.POST, produces="application/json;charset=UTF-8",headers = {"Accept=text/xml, application/json"})
 	@PreAuthorize("isAuthenticated()")
-	public @ResponseBody boolean post(@ModelAttribute("sendOut") BookSendOut pet, HttpServletRequest request) {
-		boolean result = false;
+	public @ResponseBody String post(@ModelAttribute("sendOut") BookSendOut pet, HttpServletRequest request) {
+		String result = Constants.FAIL;
 		try{
 			Calendar cal = Calendar.getInstance(Locale.US);
 			cal.setTime(pet.getBsRdate());
@@ -233,7 +233,7 @@ public class ExternalController {
 				String attachmentIdList = request.getParameter("attachmentIdList");
 				int objectId = sendout.LastID();
 				attachmentService.updateObjectId(attachmentIdList, objectId, Constants.OBJECT_NAME_BOOK_SEND_OUT);
-				result = true;
+				result = Constants.SUCCESS;;
 			}
 		}catch(Exception ex){
 			logger.error("saveSendOut : " , ex);

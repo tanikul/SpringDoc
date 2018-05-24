@@ -1,5 +1,9 @@
 package com.java.doc.util;
 
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+
 import com.java.doc.model.BookReciveOut;
 import com.mysql.jdbc.StringUtils;
 
@@ -61,6 +65,20 @@ public class Utility {
 		}
 		
 		return str;
+	}
+	
+	public static int getRowNumberForDelete(XSSFSheet sheet, int num, int cellColumn) {
+		int result = 0;
+		for (Row row : sheet) {
+			if(row.getRowNum() == 0) continue;
+    		Cell cell = row.getCell(cellColumn);  
+    		cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+    		if (cell.getNumericCellValue() == num) {
+            	result = row.getRowNum();
+            	break;
+            }
+        }
+		return result;
 	}
 	
 }

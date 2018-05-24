@@ -461,14 +461,18 @@ setDDLYear = function(type){
     });
 }
 
-removeItem = function(id, type, obj){
+removeItem = function(id, type, obj, num){
 	if(confirm('คุณต้องการลบรายการนี้ ?') == true){
 		$.ajax({
 	        url: GetSiteRoot() + "/delete",
 	        type: "GET",
 	        cache: false,
-	        data: { 'id': id, 'type': type },
+	        data: { 'id': id, 'type': type, 'num': num },
+	        beforeSend: function (xhr) {
+				$.LoadingOverlay("show");
+			},
 	        success: function (response) {
+	        	$.LoadingOverlay("hide");
 	            if(response == 1){
 	            	$(obj).parent().parent().remove();
 	            }else{

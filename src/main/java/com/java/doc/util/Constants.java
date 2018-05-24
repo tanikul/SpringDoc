@@ -13,6 +13,8 @@ public class Constants {
 	public static Map<String, String> ROLES;
 	public final static String[] PREFIXS = {"นาย", "นาง", "นางสาว"};
 	public static Map<Integer, String> STATUS;
+	public static String SUCCESS = "SUCCESS";
+	public static String FAIL = "FAIL";
 	
 	public static Map<String, String> getRoles() {
 		ROLES = new HashMap<String, String>();

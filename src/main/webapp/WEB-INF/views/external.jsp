@@ -323,7 +323,22 @@
 		                console.log(attachmentIdList);
 		            },
 		            UploadComplete: function(up, files) {
-		        	   if(fileCnt > 0) location.reload(true);
+		            	var dialog = bootbox.alert({
+							message: "บันทึกข้อมูลสำเร็จ",
+						    size: 'small'
+						});
+		        	   if('${mode}' == 'add') {
+		        		   dialog.on('hidden.bs.modal', function () {
+								window.location.href = GetSiteRoot() + '/addexternal';
+							});	
+		        	   }else{
+		        		   dialog.on('hidden.bs.modal', function () {
+								location.reload(true);
+							});
+		        	   }
+		        	   setTimeout(function(){
+							dialog.modal('hide');
+						}, 1000);
 		            },
 		            FilesAdded: function(up, files) {
 		            	plupload.each(files, function(file) {

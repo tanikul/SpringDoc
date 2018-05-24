@@ -171,7 +171,9 @@ public class HomeController {
 			headers.add("ชั้นความลับ");
 			headers.add("หมายเหตุ");
 			headers.add("สถานะ");
-			if(table.getRole().equals("ADMIN") || table.getRole().equals("DEPARTMENT") || table.getRole().equals("GROUP")){
+			if(table.getRole().equals("ADMIN")){
+				headers.add("แก้ไข/ลบ");
+			}else if(table.getRole().equals("DEPARTMENT") || table.getRole().equals("GROUP")) {
 				headers.add("แก้ไข");
 			}else{
 				headers.add("ข้อมูล");
@@ -211,7 +213,14 @@ public class HomeController {
 						}
 						//row.put("สถานะ", "<a href=\"javascript:void(0);\" class=\"tooltips\" title=\"" + item.getBrId() + "\" style=\"text-decoration:none;\">สถานะ</a>");
 						//row.put("แก้ไข/ลบ", "<span class='glyphicon glyphicon-pencil' id='edit-"+item.getBrId()+"' style='padding-left:6px;cursor:pointer;' onclick='inter.editGet("+ item.getBrId() +");'></span>  <span class='glyphicon glyphicon-trash' style='padding-left:6px;cursor:pointer;' onclick='removeItem(" + item.getBrId() + ", 0, this)'></span>");
-						if(table.getRole().equals("ADMIN") || table.getRole().equals("DEPARTMENT") || table.getRole().equals("GROUP")){
+						/*if(table.getRole().equals("ADMIN") || table.getRole().equals("DEPARTMENT") || table.getRole().equals("GROUP")){
+							row.put("แก้ไข", "<a class='glyphicon glyphicon-pencil' id='edit-"+item.getBrId()+"' style='padding-left:6px;cursor:pointer;' href='internal/edit/?id="+ item.getBrId() + "'></a>");
+						}else{
+							row.put("ข้อมูล", "<a class='glyphicon glyphicon-search' id='edit-"+item.getBrId()+"' style='padding-left:6px;cursor:pointer;' href='internal/edit/?id="+ item.getBrId() + "'></a>");
+						}*/
+						if(table.getRole().equals("ADMIN")){
+							row.put("แก้ไข/ลบ", "<span class='glyphicon glyphicon-pencil' id='edit-"+item.getBrId()+"' style='padding-left:6px;cursor:pointer;' onclick='inter.editGet("+ item.getBrId() +");'></span>  <span class='glyphicon glyphicon-trash' style='padding-left:6px;cursor:pointer;' onclick='removeItem(" + item.getBrId() + ", 0, this, " + item.getBrNum() + ")'></span>");
+						}else if(table.getRole().equals("DEPARTMENT") || table.getRole().equals("GROUP")) {
 							row.put("แก้ไข", "<a class='glyphicon glyphicon-pencil' id='edit-"+item.getBrId()+"' style='padding-left:6px;cursor:pointer;' href='internal/edit/?id="+ item.getBrId() + "'></a>");
 						}else{
 							row.put("ข้อมูล", "<a class='glyphicon glyphicon-search' id='edit-"+item.getBrId()+"' style='padding-left:6px;cursor:pointer;' href='internal/edit/?id="+ item.getBrId() + "'></a>");
@@ -240,7 +249,8 @@ public class HomeController {
 						row.put("ชั้นความลับ", item.getBsTypeSecret() != null ? typeSecretService.getTypeSecretById(item.getBsTypeSecret()) : "");
 						row.put("หมายเหตุ", item.getBsRemark());
 						if(table.getRole().equals("ADMIN")){
-							row.put("แก้ไข", "<a target='_blank' class='glyphicon glyphicon-pencil' id='edit-"+item.getBsId()+"' style='padding-left:6px;cursor:pointer;' href='external/edit/?id="+ item.getBsId() + "'></a>");
+							row.put("แก้ไข/ลบ", "<span class='glyphicon glyphicon-pencil' id='edit-"+item.getBsId()+"' style='padding-left:6px;cursor:pointer;' onclick='ex.editGet("+ item.getBsId() +");'></span>  <span class='glyphicon glyphicon-trash' style='padding-left:6px;cursor:pointer;' onclick='removeItem(" + item.getBsId() + ", 1, this, " + item.getBsNum() + ");'></span>");
+							//row.put("แก้ไข", "<a target='_blank' class='glyphicon glyphicon-pencil' id='edit-"+item.getBsId()+"' style='padding-left:6px;cursor:pointer;' href='external/edit/?id="+ item.getBsId() + "'></a>");
 						}else{
 							row.put("ข้อมูล", "<a target='_blank' class='glyphicon glyphicon-search' id='edit-"+item.getBsId()+"' style='padding-left:6px;cursor:pointer;' href='external/edit/?id="+ item.getBsId() + "'></a>");
 						}
@@ -520,14 +530,23 @@ public class HomeController {
 	@RequestMapping(value = "/delete")
 	@PreAuthorize("isAuthenticated()")
 	public @ResponseBody String delete(@RequestParam(value = "id", required = true) int Id,
+			@RequestParam(value = "num", required = true) int num,
 			@RequestParam(value = "type", required = true) String type,
 			HttpServletResponse response) {
 		String rs = "0";
 		try {
 			if(type.equals("0")){
-				rs = reciveout.delete(Id);
+				BookReciveOut br = new BookReciveOut();
+				br.setBrNum(num);
+				br.setBrId(Id);
+				br.setBrYear(UtilDateTime.getCurrentYear());
+				rs = reciveout.delete(br);
 			}else{ 
-				rs = sendout.delete(Id);
+				BookSendOut bs = new BookSendOut();
+				bs.setBsNum(num);
+				bs.setBsId(Id);
+				bs.setBsYear(UtilDateTime.getCurrentYear());
+				rs = sendout.delete(bs);
 			}
 		}catch(Exception ex){
 			logger.error("delete : ", ex);

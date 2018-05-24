@@ -9,8 +9,6 @@ import com.java.doc.model.StatusDetail;
 import com.java.doc.model.Users;
 import com.java.doc.util.TableSorter;
 
-import net.sf.jasperreports.engine.JRDataSource;
-
 public interface BookReciveOutService {
 
 	public List<BookReciveOut> listReciveByYear(int year);
@@ -22,12 +20,12 @@ public interface BookReciveOutService {
 	public int LastID();
 	public Integer getNextBrNum(int brYear);
 	public List<Integer> getYear();
-	public String delete(int id);
-	public int updateReciveOut(BookReciveOut recive, String role);
+	public String delete(BookReciveOut br) throws Exception;
+	public int updateReciveOut(BookReciveOut recive, String role) throws Exception;
 	public int getCountDataBookReciveOut(int year);
 	public BookReciveOut getLastRowOfYear(int brYear);
 	public List<StatusDetail> getStatusDetail(String brId);
-	public boolean insertBrToExcel(BookReciveOut recive);
+	public boolean insertBrToExcel(BookReciveOut recive) throws Exception;
 	public List<BookReciveOut> listReciveByYearAndBrNum(int year, int brNum);
 	public void SaveReciveOutFromExcel(BookReciveOut recive);
 	public Map<String, List<String>> getGroupSelectedByAdmin(String departments);

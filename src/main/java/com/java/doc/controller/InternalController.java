@@ -184,10 +184,10 @@ public class InternalController {
 		return model;
 	}
 	
-	@RequestMapping(value = "/saveRecive", method = RequestMethod.POST)
+	@RequestMapping(value = "/saveRecive", method = RequestMethod.POST, produces="application/json;charset=UTF-8",headers = {"Accept=text/xml, application/json"})
 	@PreAuthorize("isAuthenticated()")
-	public @ResponseBody boolean post(@ModelAttribute("sendRecive") BookReciveOut pet, HttpServletRequest request) throws ServletException {
-		boolean result = false;
+	public @ResponseBody String post(@ModelAttribute("sendRecive") BookReciveOut pet, HttpServletRequest request) throws ServletException {
+		String result = Constants.FAIL;
 		try{
 			Calendar cal = Calendar.getInstance(Locale.US);
 			cal.setTime(pet.getBrRdate());
@@ -216,10 +216,10 @@ public class InternalController {
 			pet.setDivision(user.getDivision());
 			int id = reciveout.SaveReciveOut(pet);
 			if(id > 0){
-				result = true;
 				// Update Attachment
 				String attachmentIdList = request.getParameter("attachmentIdList");
 				attachmentService.updateObjectId(attachmentIdList, id, Constants.OBJECT_NAME_BOOK_RECIVE_OUT);
+				result = Constants.SUCCESS;
 			}	
 		}catch(Exception ex){
 			logger.error("saveRecive : ", ex);
@@ -229,12 +229,11 @@ public class InternalController {
 		return result;
 	}
 	
-	@RequestMapping(value = "/internal/edit", method = RequestMethod.POST)
+	@RequestMapping(value = "/internal/edit", method = RequestMethod.POST, produces="application/json;charset=UTF-8",headers = {"Accept=text/xml, application/json"})
 	@PreAuthorize("isAuthenticated()")
-	public @ResponseBody boolean Edit(@ModelAttribute("sendReciveForm") BookReciveOut recive, HttpServletRequest request) {
-		boolean result = false;
+	public @ResponseBody String Edit(@ModelAttribute("sendReciveForm") BookReciveOut recive, HttpServletRequest request) {
+		String result = Constants.FAIL;
 		try{
-			System.out.println("xxxx");
 			Users user = new Users();
 			if(request.getSession().getAttribute("user") == null){
 				user = userService.findByUserName(request.getUserPrincipal().getName());
@@ -260,12 +259,12 @@ public class InternalController {
 			}
 			recive.setUpdatedBy(user.getId().toString());
 			if(reciveout.updateReciveOut(recive, user.getRole()) == 1){
-				result = true;
 				if(user.getRole().equals("ADMIN")){
 					// Update Attachment
 					String attachmentIdList = request.getParameter("attachmentIdList");
 					attachmentService.updateObjectId(attachmentIdList, recive.getBrId(), Constants.OBJECT_NAME_BOOK_RECIVE_OUT);
 				}
+				result = Constants.SUCCESS;
 			}	
 		}catch(Exception ex){
 			logger.error("/internal/edit post : ", ex);

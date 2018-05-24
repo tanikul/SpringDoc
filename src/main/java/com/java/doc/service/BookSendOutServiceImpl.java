@@ -23,6 +23,7 @@ import com.java.doc.model.BookSendOutTable;
 import com.java.doc.util.Constants;
 import com.java.doc.util.TableSorter;
 import com.java.doc.util.UtilDateTime;
+import com.java.doc.util.Utility;
 import com.java.doc.validator.BookSendOutValidator;
 
 @Service("bookSendOutService")
@@ -109,8 +110,43 @@ public class BookSendOutServiceImpl implements BookSendOutService {
 	}
 
 	@Override
-	public String delete(int id) {
-		return sendout.delete(id);
+	public String delete(BookSendOut bs) throws Exception {
+		boolean chk = false;
+		try {
+			Constants cons = new Constants();
+			String[] arrStr = cons.getProperty("excelSendOutPath").split("\\.");
+			String fileName = cons.getProperty("excelSendOutPath");
+			if(arrStr.length == 2){
+				fileName = arrStr[0] + bs.getBsYear() + "." + arrStr[1];
+			}
+	    	File f = new File(fileName);
+	    	XSSFWorkbook workbook;
+	    	FileInputStream file = null;
+	    	XSSFSheet sheet = null;
+	    	int lastSheet = 0;
+	    	if(f.exists() && !f.isDirectory()){
+	    		file = new FileInputStream(new File(fileName));
+	            workbook = new XSSFWorkbook(file);
+	            lastSheet = workbook.getNumberOfSheets();
+	            for(int i = 0; i < lastSheet; i++){
+	            	sheet = workbook.getSheetAt(i);
+	            	int rowNumber = Utility.getRowNumberForDelete(sheet, bs.getBsNum(), 3);
+	            	if(rowNumber > 0){
+	            		sheet.removeRow(sheet.getRow(rowNumber)); 
+	            		chk = true;
+	            		break;
+	            	}
+	            }
+	            file.close();
+            	FileOutputStream out = new FileOutputStream(new File(fileName));
+    			workbook.write(out);
+    			out.close();
+	    	}
+		}catch(Exception ex) {
+			logger.error("delete BsToExcel : ", ex);
+			throw ex;
+		}
+		return (chk) ? sendout.delete(bs.getBsId()) : "0";
 	}
 
 	@Override
@@ -126,7 +162,7 @@ public class BookSendOutServiceImpl implements BookSendOutService {
 
 	@Override
 	public boolean insertBsToExcel(BookSendOut sendOut) {
-        
+		logger.info("insertBsToExcel : " + sendOut.toString());
 		try {
 			boolean chkExistFile = false;
 			Constants cons = new Constants();
@@ -253,6 +289,7 @@ public class BookSendOutServiceImpl implements BookSendOutService {
 	}
 	
 	public boolean updateBsToExcel(BookSendOut sendOut) {
+		logger.info("updateBsToExcel : " + sendOut.toString());
 		try {
 			Constants cons = new Constants();
 			String[] arrStr = cons.getProperty("excelSendOutPath").split("\\.");

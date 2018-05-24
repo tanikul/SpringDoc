@@ -20,7 +20,7 @@ public interface BookSendOutService {
 	public int LastID();
 	public Integer getNextBsNum(int bsYear);
 	public List<Integer> getYear();
-	public String delete(int id);
+	public String delete(BookSendOut bs) throws Exception;
 	public int getCountDataBookSendOut(int year);
 	public BookSendOut getLastRowOfYear(int bsYear);
 	public boolean updateBookOut(BookSendOut bookSendOut);
