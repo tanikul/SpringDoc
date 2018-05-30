@@ -202,10 +202,10 @@ public class BookReciveOutDAOImpl implements BookReciveOutDAO {
 			}
 			
 			if(!StringUtils.isNullOrEmpty(table.getSearch().getTo().trim())){
-				where.add("(b.br_To_Department_Name LIKE '%" + table.getSearch().getTo().trim() + "' or b.br_To_User_Name LIKE '%" + table.getSearch().getTo().trim() + "%' or b.br_To_Group_Name LIKE '%" + table.getSearch().getTo().trim() + "%' or b.br_To_Department_Short LIKE '%" + table.getSearch().getTo().trim() + "%' or b.br_To_Group_Short LIKE '%" + table.getSearch().getTo().trim() + "%'");
+				where.add("(b.br_To_Department_Name LIKE '%" + table.getSearch().getTo().trim() + "' or d.br_To_User_Name LIKE '%" + table.getSearch().getTo().trim() + "%' or c.br_To_Group_Name LIKE '%" + table.getSearch().getTo().trim() + "%' or b.br_To_Department_Short LIKE '%" + table.getSearch().getTo().trim() + "%')");
 			}
 			if(!StringUtils.isNullOrEmpty(table.getSearch().getNum().trim())){
-				where.add("a.br_Place LIKE '%" + table.getSearch().getNum().trim() + "'");
+				where.add("a.br_Place LIKE '%" + table.getSearch().getNum().trim() + "%'");
 			}
 			if(!StringUtils.isNullOrEmpty(table.getSearch().getRemark().trim())){
 				where.add("a.br_Remark LIKE '%" + table.getSearch().getRemark().trim() + "%'");
@@ -910,7 +910,7 @@ public class BookReciveOutDAOImpl implements BookReciveOutDAO {
 		try {
 			String sql = "SELECT b.division_name, c.group_name, a.id, a.prefix, a.fname, a.lname, a.division, a.group_id FROM users a ";
 			sql += " INNER JOIN divisions b ON a.division = b.division_code ";
-			sql += " INNER JOIN groups c ON a.group_id = c.group_id";
+			sql += " INNER JOIN groups c ON a.division = c.division_code and a.group_id = c.group_id";
 			sql += " WHERE a.group_id IN (" + groups + ")";
 			Query query = session.createSQLQuery(sql);
 			List<Object[]> rows = query.list();
