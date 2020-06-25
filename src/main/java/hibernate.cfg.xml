@@ -52,7 +52,7 @@
 
     <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/document?autoReconnect=true</property>
     <property name="hibernate.connection.username">root</property>
-    <property name="hibernate.connection.password"></property>
+    <property name="hibernate.connection.password">root</property>
 
 
     <!-- <property name="hibernate.connection.pool_size">10</property> -->
@@ -74,5 +74,6 @@
   <mapping class="com.java.doc.model.TypeSecret"/>
   <mapping class="com.java.doc.model.Attachment"/>
   <mapping class="com.java.doc.model.Groups"/>
+  <mapping class="com.java.doc.model.Sections"/>
 </session-factory>
 </hibernate-configuration>

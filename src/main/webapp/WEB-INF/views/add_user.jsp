@@ -44,10 +44,10 @@
 			    </div>
 			  </div>
 			  <div class="form-group">
-			    <label class="col-sm-3 control-label">กอง</label>
+			    <label class="col-sm-3 control-label">สำนัก</label>
 			    <div class="col-sm-9">
 			    	<springForm:select path="division" cssClass="form-control" value="${obj.getDivisionCode()}" onchange="changeDivisionToGroup(this);">
-			    		<springForm:option value="" label="--- เลือกกอง ---" />
+			    		<springForm:option value="" label="--- เลือกสำนัก ---" />
 			    		<springForm:options items="${divisions}" />
 			    	</springForm:select>   
 			    	<p class="help-block"></p>
@@ -58,6 +58,15 @@
 			    <div class="col-sm-9" id="group-box">
 			    	<springForm:select path="groupId" cssClass="form-control" value="${obj.getGroupId()}" disabled="true">
 			    		<springForm:option value="" label="--- เลือกฝ่าย ---" />
+			    	</springForm:select>   
+			    	<p class="help-block"></p>
+			    </div>
+			  </div>
+			  <div class="form-group">
+			    <label class="col-sm-3 control-label">กลุ่มงาน</label>
+			    <div class="col-sm-9" id="section-box">
+			    	<springForm:select path="sectionId" cssClass="form-control" value="${obj.getSectionId()}" disabled="true">
+			    		<springForm:option value="" label="--- เลือกกลุ่มงาน ---" />
 			    	</springForm:select>   
 			    	<p class="help-block"></p>
 			    </div>

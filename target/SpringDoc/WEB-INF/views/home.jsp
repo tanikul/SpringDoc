@@ -164,7 +164,10 @@
 												<th class="header">หมายเหตุ</th>
 												<th class="header">สถานะ</th>
 												<c:choose>
-											      <c:when test="${role == 'ADMIN' || role == 'DEPARTMENT' || role == 'GROUP'}">
+												  <c:when test="${role == 'ADMIN'}">
+											      	<th style="text-align:center;">แก้ไข/ลบ</th>
+											      </c:when>
+											      <c:when test="${role == 'DEPARTMENT' || role == 'GROUP'}">
 											      	<th class="header">แก้ไข</th>
 											      </c:when>
 											      <c:otherwise>
@@ -202,7 +205,10 @@
 										      <th style="text-align:center;">หมายเหตุ</th>
 										      <th style="text-align:center;">สถานะ</th>
 										      <c:choose>
-											      <c:when test="${role == 'ADMIN' || role == 'DEPARTMENT' || role == 'GROUP'}">
+										      	  <c:when test="${role == 'ADMIN'}">
+											      	<th style="text-align:center;">แก้ไข/ลบ</th>
+											      </c:when>
+											      <c:when test="${role == 'DEPARTMENT' || role == 'GROUP'}">
 											      	<th style="text-align:center;">แก้ไข</th>
 											      </c:when>
 											      <c:otherwise>
@@ -265,7 +271,10 @@
 										      <th style="text-align:center;">หมายเหตุ</th>
 										      <th style="text-align:center;">สถานะ</th>
 										      <c:choose>
-											      <c:when test="${role == 'ADMIN' || role == 'DEPARTMENT' || role == 'GROUP'}">
+										      	  <c:when test="${role == 'ADMIN'}">
+											      	<th style="text-align:center;">แก้ไข/ลบ</th>
+											      </c:when>
+											      <c:when test="${role == 'DEPARTMENT' || role == 'GROUP'}">
 											      	<th style="text-align:center;">แก้ไข</th>
 											      </c:when>
 											      <c:otherwise>
@@ -303,7 +312,10 @@
 										      <th style="text-align:center;">หมายเหตุ</th>
 										      <th style="text-align:center;">สถานะ</th>
 										      <c:choose>
-											      <c:when test="${role == 'ADMIN' || role == 'DEPARTMENT' || role == 'GROUP'}">
+											      <c:when test="${role == 'ADMIN'}">
+											      	<th style="text-align:center;">แก้ไข/ลบ</th>
+											      </c:when>
+											      <c:when test="${role == 'DEPARTMENT' || role == 'GROUP'}">
 											      	<th style="text-align:center;">แก้ไข</th>
 											      </c:when>
 											      <c:otherwise>

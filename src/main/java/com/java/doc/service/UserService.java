@@ -23,5 +23,7 @@ public interface UserService {
 	public Users getUserFromGroup(String groupId);
 	public Groups getGroupName(String groupId);
 	
+	public Map<Integer, String> getSectionFromGroupDropDown(String groupId);
+	
 	Users findByUserName(String username);
 }

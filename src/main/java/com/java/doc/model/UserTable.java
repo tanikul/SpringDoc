@@ -17,6 +17,8 @@ public class UserTable implements java.io.Serializable {
 	private int seq;
 	private Integer groupId;
 	private String groupName;
+	private Integer sectionId;
+	private String sectionName;
 	
 	public int getId() {
 		return id;
@@ -101,6 +103,18 @@ public class UserTable implements java.io.Serializable {
 	}
 	public void setPrefix(String prefix) {
 		this.prefix = prefix;
+	}
+	public Integer getSectionId() {
+		return sectionId;
+	}
+	public void setSectionId(Integer sectionId) {
+		this.sectionId = sectionId;
+	}
+	public String getSectionName() {
+		return sectionName;
+	}
+	public void setSectionName(String sectionName) {
+		this.sectionName = sectionName;
 	}
 	
 }

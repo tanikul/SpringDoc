@@ -41,10 +41,10 @@
 			    </div>
 			  </div>
 			  <div class="form-group">
-			    <label class="col-sm-3 control-label">กอง</label>
+			    <label class="col-sm-3 control-label">สำนัก</label>
 			    <div class="col-sm-9">
 			    	<springForm:select path="divisionCode" cssClass="form-control" onchange="changeDivisionToGroup(this);">
-			    		<springForm:option value="" label="--- เลือกกอง ---" />
+			    		<springForm:option value="" label="--- เลือกสำนัก ---" />
 			    		<springForm:options items="${divisions}" />
 			    	</springForm:select>   
 			    </div>
@@ -55,6 +55,16 @@
 			    	<springForm:select path="groupId" cssClass="form-control">
 			    		<springForm:option value="" label="--- เลือกฝ่าย ---" />
 			    		<springForm:options items="${groups}" />
+			    	</springForm:select>   
+			    	<p class="help-block"></p>
+			    </div>
+			  </div>
+			  <div class="form-group">
+			    <label class="col-sm-3 control-label">กลุ่มงาน</label>
+			    <div class="col-sm-9" id="section-box">
+			    	<springForm:select path="sectionId" cssClass="form-control">
+			    		<springForm:option value="" label="--- เลือกกลุ่มงาน ---" />
+			    		<springForm:options items="${section}" />
 			    	</springForm:select>   
 			    	<p class="help-block"></p>
 			    </div>

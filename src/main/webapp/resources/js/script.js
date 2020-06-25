@@ -427,13 +427,14 @@ saveAddUser = function(){
 		var username = $('#username').val();
 		var password = $('#password').val();
 		var groupId = $('#groupId').val();
+		var sectionId = $('#sectionId').val();
 		var prefix = $('#prefix').val();
 		var role = $('#role').val();
 		$.ajax({
 	        url: GetSiteRoot() + "/addUser",
 	        type: "POST",
 	        cache: false,
-	        data: { 'username': username, 'password': password,'fname': fname, 'lname' : lname, 'division' : division, 'groupId' : groupId, 'prefix' : prefix, 'role' : role },
+	        data: { 'username': username, 'password': password,'fname': fname, 'lname' : lname, 'division' : division, 'groupId' : groupId, 'prefix' : prefix, 'role' : role, 'sectionId': sectionId },
 	        success: function (response) {
 	        	if(response == 'success'){
 	        		table.ajax.reload();
@@ -636,10 +637,32 @@ function changeDivisionToGroup(obj){
         		str += '<option value="' + x + '">' + response[x] + '</option>';
         	}
         	if(str != ''){
-        		str = '<select id="groupId" name="groupId" class="form-control"><option value="">--- เลือกฝ่าย ---</option>' + str + '</select>';
+        		str = '<select id="groupId" name="groupId" class="form-control" onchange="changeGroupToSection(this);"><option value="">--- เลือกฝ่าย ---</option>' + str + '</select>';
         		$('#group-box').html(str);
         	}else{
         		$('#groupId').val('').attr('disabled', true);
+        	}
+        }
+    });
+}
+
+function changeGroupToSection(obj){
+	$.ajax({
+        url: GetSiteRoot() + "/account/getSection",
+        type: "POST",
+        cache: false,
+        dataType : "json",
+        data: { 'groupId': $(obj).val() },
+        success: function (response) {
+        	var str = '';
+        	for(var x in response){
+        		str += '<option value="' + x + '">' + response[x] + '</option>';
+        	}
+        	if(str != ''){
+        		str = '<select id="sectionId" name="sectionId" class="form-control"><option value="">--- เลือกกลุ่มงาน ---</option>' + str + '</select>';
+        		$('#section-box').html(str);
+        	}else{
+        		$('#sectionId').val('').attr('disabled', true);
         	}
         }
     });

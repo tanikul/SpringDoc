@@ -44,7 +44,8 @@ public interface BookReciveOutDAO {
 	public List<StatusDetail> getStatusDetail(String brId);
 	public List<BookReciveOut> listReciveByYearAndBrNum(int year, int brNum);
 	public Map<String, List<String>> getGroupSelectedByAdmin(String departments);
-	public Map<String, List<String>> getUserSelectedByAdmin(String groups);
+	public Map<String, List<String>> getSectionSelectedByAdmin(String groups);
+	public Map<String, List<String>> getUserSelectedByAdmin(String groups, String sections);
 	public List<BookRecieveDepartment> getBookRecieveOutDepartment(int brId);
 	public List<BookRecieveGroup> getBookRecieveOutGroup(int brId, String brToDepartment);
 	public List<BookRecieveUser> getBookRecieveOutUser(int brId, String brToDepartment, String brToGroup);

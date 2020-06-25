@@ -111,6 +111,7 @@ public class InternalController {
 				}
 			}
 			model.addObject("groups", new HashMap<Integer, String>());
+			model.addObject("sections", new HashMap<Integer, String>());
 			model.addObject("userGroups", new HashMap<Integer, String>());
 			model.addObject("BrToMode", "N");
 			model.addObject("role", user.getRole());
@@ -316,12 +317,24 @@ public class InternalController {
 		return message;
 	}
 	
-	@RequestMapping(value = "/getUserSelectedByAdmin", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@RequestMapping(value = "/getSectionSelectedByAdmin", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	@PreAuthorize("isAuthenticated()")
-	public @ResponseBody Map<String, List<String>> getUserSelectedByAdmin(@RequestParam("groups") String groups) {
+	public @ResponseBody Map<String, List<String>> getSectionSelectedByAdmin(@RequestParam("groups") String groups) {
 		Map<String, List<String>> message = null;
 		try{
-			message = reciveout.getUserSelectedByAdmin(groups);
+			message = reciveout.getSectionSelectedByAdmin(groups);
+		}catch(Exception ex){
+			logger.error("/getSectionSelectedByAdmin : ", ex);
+		}
+		return message;
+	}
+	
+	@RequestMapping(value = "/getUserSelectedByAdmin", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@PreAuthorize("isAuthenticated()")
+	public @ResponseBody Map<String, List<String>> getUserSelectedByAdmin(@RequestParam("groups") String groups, @RequestParam("sections") String sections) {
+		Map<String, List<String>> message = null;
+		try{
+			message = reciveout.getUserSelectedByAdmin(groups, sections);
 		}catch(Exception ex){
 			logger.error("/getUserSelectedByAdmin : ", ex);
 		}

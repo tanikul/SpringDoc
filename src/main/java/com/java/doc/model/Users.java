@@ -26,6 +26,7 @@ public class Users implements java.io.Serializable {
 	private String role;
 	private String division;
 	private Integer groupId;
+	private Integer sectionId;
 
 	public Users() {
 	}
@@ -121,6 +122,15 @@ public class Users implements java.io.Serializable {
 
 	public void setPrefix(String prefix) {
 		this.prefix = prefix;
+	}
+	
+	@Column(name = "section_id", length = 2)
+	public Integer getSectionId() {
+		return groupId;
+	}
+
+	public void setSectionId(Integer sectionId) {
+		this.sectionId = sectionId;
 	}
 
 }

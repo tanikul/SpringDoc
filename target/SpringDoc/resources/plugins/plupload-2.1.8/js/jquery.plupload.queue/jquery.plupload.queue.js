@@ -319,7 +319,7 @@ used as it is.
 							data['brRemark'] = $('#brRemark').val();
 							if(!inter.checkValidateSendOut(data)) return false;
 							var url = (data['mode'] == 'add') ? '/saveRecive' : '/internal/edit';
-							$.post(GetSiteRoot() + url, $('#sendReciveForm').serialize(), function(response) {
+							/*$.post(GetSiteRoot() + url, $('#sendReciveForm').serialize(), function(response) {
 								$form.find('.control-group').removeClass('error');
 								$form.find('.help-block').empty();
 								$form.find('.alert').remove();
@@ -334,14 +334,61 @@ used as it is.
 									if (!$(this).hasClass('plupload_disabled')) {
 										uploader.start();
 									}
-									/*bootbox.alert('บันทึกข้อมูลสำเร็จ', function() {
+									bootbox.alert('บันทึกข้อมูลสำเร็จ', function() {
 										window.location.href = GetSiteRoot() + '/home?type=IN';
-									});*/
+									});
 									if(fileCnt < 1){
 										location.reload(true);
 									}
 								}
-							}, 'json');
+							}, 'json');*/
+							$.ajax({
+								url: GetSiteRoot() + url,
+								method: "POST",
+								dataType: "text",
+								data: $('#sendReciveForm').serialize(),
+								//contentType: "application/json; charset=utf-8",
+								beforeSend: function (xhr) {
+									$.LoadingOverlay("show");
+								},
+								cache: false,
+								success: function (response) {
+									$.LoadingOverlay("hide");
+									if (response == 'FAIL') {
+										bootbox.alert('<div style="color:red;">ไม่สามารถบันทึกข้อมูลได้ !!</div>', function() {
+											//$.LoadingOverlay("hide");
+										});
+									} else {
+										if (fileCnt > 0) {
+											uploader.start();
+										}else{
+											var dialog = bootbox.alert({
+												message: "บันทึกข้อมูลสำเร็จ",
+											    size: 'small'
+											});
+											if(data['mode'] == 'add'){
+												dialog.on('hidden.bs.modal', function () {
+													window.location.href = GetSiteRoot() + '/addinternal';
+												});
+											}else{
+												dialog.on('hidden.bs.modal', function () {
+													location.reload(true);
+												});
+											}
+											setTimeout(function(){
+												dialog.modal('hide');
+											}, 1000);
+										}
+									}
+								},
+								error: function (jqXHR, textStatus, errorThrown) {
+									if(jqXHR.status !== 200){
+										bootbox.alert('ไม่สามารถบันทึกข้อมูลได้', function() {
+											$.LoadingOverlay("hide");
+										});
+									}
+								}
+							});
 						}else if(settings.flagType == 'OUT'){
 							var $form = $('#sendOutForm');
 							var $inputs = $form.find('input');
@@ -350,7 +397,7 @@ used as it is.
 							data['bsRemark'] = $('#bsRemark').val();
 							if(!ex.checkValidateSendOut(data)) return false;
 							var url = (data['mode'] == 'add') ? '/saveSendOut' : '/external/edit';
-							$.post(GetSiteRoot() + url, $('#sendOutForm').serialize(), function(response) {
+							/*$.post(GetSiteRoot() + url, $('#sendOutForm').serialize(), function(response) {
 								$form.find('.control-group').removeClass('error');
 								$form.find('.help-block').empty();
 								$form.find('.alert').remove();
@@ -366,14 +413,61 @@ used as it is.
 									if (!$(this).hasClass('plupload_disabled')) {
 										uploader.start();
 									}
-									/*bootbox.alert('บันทึกข้อมูลสำเร็จ', function() {
+									bootbox.alert('บันทึกข้อมูลสำเร็จ', function() {
 										window.location.href = GetSiteRoot() + '/home?type=OUT';
-									});*/
+									});
 									if(fileCnt < 1){
 										location.reload(true);
 									}
 								}
-							}, 'json');
+							}, 'json');*/
+							$.ajax({
+								url: GetSiteRoot() + url,
+								method: "POST",
+								dataType: "text",
+								data: $('#sendOutForm').serialize(),
+								//contentType: "application/json; charset=utf-8",
+								beforeSend: function (xhr) {
+									$.LoadingOverlay("show");
+								},
+								cache: false,
+								success: function (response) {
+									$.LoadingOverlay("hide");
+									if (response == 'FAIL') {
+										bootbox.alert('<div style="color:red;">ไม่สามารถบันทึกข้อมูลได้ !!</div>', function() {
+											//$.LoadingOverlay("hide");
+										});
+									} else {
+										if (fileCnt > 0) {
+											uploader.start();
+										}else{
+											var dialog = bootbox.alert({
+												message: "บันทึกข้อมูลสำเร็จ",
+											    size: 'small'
+											});
+											if(data['mode'] == 'add'){
+												dialog.on('hidden.bs.modal', function () {
+													window.location.href = GetSiteRoot() + '/addexternal';
+												});
+											}else{
+												dialog.on('hidden.bs.modal', function () {
+													location.reload(true);
+												});
+											}
+											setTimeout(function(){
+												dialog.modal('hide');
+											}, 1000);
+										}
+									}
+								},
+								error: function (jqXHR, textStatus, errorThrown) {
+									if(jqXHR.status !== 200){
+										bootbox.alert('ไม่สามารถบันทึกข้อมูลได้', function() {
+											$.LoadingOverlay("hide");
+										});
+									}
+								}
+							});
 						}
 						e.preventDefault();
 					});

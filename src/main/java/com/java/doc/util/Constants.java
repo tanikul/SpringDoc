@@ -18,9 +18,10 @@ public class Constants {
 	
 	public static Map<String, String> getRoles() {
 		ROLES = new HashMap<String, String>();
-		ROLES.put("ADMIN", "ผู้ดูแลระบบ");
-		ROLES.put("DEPARTMENT", "ผู้จ่ายงานกอง");
-		ROLES.put("GROUP", "ผู้จ่ายงานฝ่าย");
+		ROLES.put("ADMIN", "เจ้าหน้าที่ดูแลระบบ");
+		ROLES.put("DEPARTMENT", "เจ้าหน้าที่รับ-ส่งหนังสือ ของสำนัก");
+		ROLES.put("GROUP", "เจ้าหน้าที่รับ-ส่งหนังสือ ของฝ่าย");
+		ROLES.put("SECTION", "เจ้าหน้าที่รับ-ส่งหนังสือ ของกลุ่มงาน");
 		ROLES.put("USER", "คนรับมอบงาน");
 		return ROLES;
 	}

@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.java.doc.dao.UserDAO;
 import com.java.doc.model.DataTable;
 import com.java.doc.model.Groups;
+import com.java.doc.model.Sections;
 import com.java.doc.model.UserTable;
 import com.java.doc.model.Users;
 
@@ -116,6 +117,24 @@ public class UserServiceImpl implements UserService {
 	public Groups getGroupName(String groupId) {
 		// TODO Auto-generated method stub
 		return userDao.getGroupName(groupId);
+	}
+
+	@Override
+	public Map<Integer, String> getSectionFromGroupDropDown(String groupId) {
+		Map<Integer, String> map = null;
+		try{
+			map = new HashMap<Integer, String>();
+			List<Sections> sections = userDao.getSectionFromGroupDropDown(groupId);
+			if(sections != null){
+				for(Sections item : sections){
+					map.put(item.getId(), item.getSectionName());
+				}
+			}
+		}catch(Exception ex){
+			logger.error("getSectionFromGroupDropDown : " + ex.getMessage());
+		}
+		
+		return map;
 	}
 
 }

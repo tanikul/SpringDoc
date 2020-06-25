@@ -222,6 +222,7 @@ public class AccountController {
 			model.addObject("divisions", divisionService.selectDivision());
 			model.addObject("roles", Constants.getRoles());
 			model.addObject("groups", userService.getGroupFromDivisionDropDown(user.getDivisionCode()));
+			model.addObject("sections", userService.getSectionFromGroupDropDown(user.getGroupId().toString()));
 			model.addObject("prefixs", Constants.PREFIXS);
 			model.setViewName("edit_user");
 		}catch(Exception ex){
@@ -240,7 +241,8 @@ public class AccountController {
 			@RequestParam("divisionCode") String divisionCode,
 			@RequestParam("role") String role,
 			@RequestParam("groupId") Integer groupId,
-			@RequestParam("prefix") String prefix) {
+			@RequestParam("prefix") String prefix,
+			@RequestParam("sectionId") Integer sectionId) {
 		try{
 			Users user = userService.getUserById(id);
 			user.setFname(fname);
@@ -255,6 +257,7 @@ public class AccountController {
 			user.setDivision(divisionCode);
 			user.setGroupId(groupId);
 			user.setPrefix(prefix);
+			user.setSectionId(sectionId);
 			userService.updateUser(user);
 		}catch(Exception ex){
 			logger.error("Edit : ", ex);
@@ -300,7 +303,8 @@ public class AccountController {
 			@RequestParam("division") String division,
 			@RequestParam("role") String role,
 			@RequestParam("groupId") Integer groupId,
-			@RequestParam("prefix") String prefix) {
+			@RequestParam("prefix") String prefix,
+			@RequestParam("sectionId") Integer sectionId) {
 		try {
 			Users user = new Users();
 			user.setUsername(username);
@@ -327,6 +331,19 @@ public class AccountController {
 		String mapAsJson = null;
 		try {
 			 mapAsJson = new ObjectMapper().writeValueAsString(userService.getGroupFromDivisionDropDown(divisionCode));
+		}catch(Exception ex){
+			logger.error("getGroup : ", ex);
+			return ex.getMessage();
+		}
+		return mapAsJson;
+	}
+	
+	@RequestMapping(value = "/account/getSection", method = RequestMethod.POST, headers = {"Accept=text/xml, application/json;charset=UTF-8"}, produces = "application/json")
+	@PreAuthorize("isAuthenticated()")
+	public @ResponseBody String getSection(@RequestParam("groupId") String groupId) {
+		String mapAsJson = null;
+		try {
+			 mapAsJson = new ObjectMapper().writeValueAsString(userService.getSectionFromGroupDropDown(groupId));
 		}catch(Exception ex){
 			logger.error("getGroup : ", ex);
 			return ex.getMessage();

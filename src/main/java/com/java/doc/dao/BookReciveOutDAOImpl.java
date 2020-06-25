@@ -904,30 +904,44 @@ public class BookReciveOutDAOImpl implements BookReciveOutDAO {
 	}
 
 	@Override
-	public Map<String, List<String>> getUserSelectedByAdmin(String groups) {
+	public Map<String, List<String>> getUserSelectedByAdmin(String groups, String sections) {
 		Map<String, List<String>> map = null;
 		startOperation();
 		try {
-			String sql = "SELECT b.division_name, c.group_name, a.id, a.prefix, a.fname, a.lname, a.division, a.group_id FROM users a ";
+			String sql = "SELECT b.division_name, c.group_name, a.id, a.prefix, a.fname, a.lname, a.division, a.group_id";
+			if(!StringUtils.isNullOrEmpty(sections)){
+				sql += " , s.id section_id, s.section_name";
+			}
+			sql += " FROM users a ";
 			sql += " INNER JOIN divisions b ON a.division = b.division_code ";
 			sql += " INNER JOIN groups c ON a.division = c.division_code and a.group_id = c.group_id";
+			if(!StringUtils.isNullOrEmpty(sections)){
+				sql += " INNER JOIN sections s ON c.group_id = s.group_id"; 
+			}
+			
 			sql += " WHERE a.group_id IN (" + groups + ")";
 			Query query = session.createSQLQuery(sql);
 			List<Object[]> rows = query.list();
-			map = new HashMap<String, List<String>>();
-			String chk = "";
-			List<String> users = new ArrayList<String>();
-			for(Object[] row : rows){
-				if(StringUtils.isNullOrEmpty(chk)){
-					chk = row[0].toString();
-				}else if(!chk.equals(row[0].toString())){
-					map.put(chk, users);
-					users = new ArrayList<String>();
-					chk = row[0].toString();
+			if(!rows.isEmpty()){
+				map = new HashMap<String, List<String>>();
+				String chk = "";
+				List<String> users = new ArrayList<String>();
+				for(Object[] row : rows){
+					if(StringUtils.isNullOrEmpty(chk)){
+						chk = row[0].toString();
+					}else if(!chk.equals(row[0].toString())){
+						map.put(chk, users);
+						users = new ArrayList<String>();
+						chk = row[0].toString();
+					}
+					if(!StringUtils.isNullOrEmpty(sections)){
+						users.add(row[6] + "xx##xx" + row[7] + "xx##xx" + row[2] + "xx#xx" + row[8] + "xx#xx" + row[9] + "xx#xx" + row[3] + row[4] + " " + row[5] + " (" + row[1] + ")");
+					}else{
+						users.add(row[6] + "xx##xx" + row[7] + "xx##xx" + row[2] + "xx#xx" + row[3] + row[4] + " " + row[5] + " (" + row[1] + ")");
+					}
 				}
-				users.add(row[6] + "xx##xx" + row[7] + "xx##xx" + row[2] + "xx#xx" + row[3] + row[4] + " " + row[5] + " (" + row[1] + ")");
+				map.put(chk, users);
 			}
-			map.put(chk, users);
 		} catch (Exception ex) { 
 			logger.error("getUserSelectedByAdmin : ", ex);
 		}finally{
@@ -982,5 +996,37 @@ public class BookReciveOutDAOImpl implements BookReciveOutDAO {
 			HibernateUtil.close(session);
 		}
 		return data;
+	}
+
+	@Override
+	public Map<String, List<String>> getSectionSelectedByAdmin(String groups) {
+		Map<String, List<String>> map = null;
+		startOperation();
+		try {
+			String sql = "SELECT b.group_name, a.id, a.section_name, a.group_id FROM sections a INNER JOIN groups b ON a.group_id = b.group_id WHERE a.group_id IN (" + groups + ")";
+			Query query = session.createSQLQuery(sql);
+			List<Object[]> rows = query.list();
+			if(!rows.isEmpty()){
+				map = new HashMap<String, List<String>>();
+				String chk = "";
+				List<String> sections = new ArrayList<String>();
+				for(Object[] row : rows){
+					if(StringUtils.isNullOrEmpty(chk)){
+						chk = row[0].toString();
+					}else if(!chk.equals(row[0].toString())){
+						map.put(chk, sections);
+						sections = new ArrayList<String>();
+						chk = row[0].toString();
+					}
+					sections.add(row[3] + "xx##xx" + row[1] + "xx#xx" + row[2]);
+				}
+				map.put(chk, sections);
+			}
+		} catch (Exception ex) { 
+			logger.error("getSectionSelectedByAdmin : ", ex);
+		}finally{
+			HibernateUtil.close(session);
+		}
+		return map;
 	}
 }

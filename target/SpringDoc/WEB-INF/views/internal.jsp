@@ -106,7 +106,7 @@
 			  <c:choose>
 			  	<c:when test="${role == 'ADMIN'}">
 				  <div class="form-group">
-				    <label class="col-sm-3 control-label">ถึงกอง</label>
+				    <label class="col-sm-3 control-label">ถึงสำนัก</label>
 				    <div class="col-sm-9">
 			    		<springForm:select path="brToDepartment" cssClass="form-control selectpicker" multiple="true" >
 				    		<springForm:options items="${divisions}" />
@@ -122,7 +122,15 @@
 				    </div>
 				  </div>
 				  <div class="form-group">
-				    <label class="col-sm-3 control-label">ถึง</label>
+				    <label class="col-sm-3 control-label">ถึงกลุ่มงาน</label>
+				    <div class="col-sm-9" id="admin-section">
+				    	<springForm:select path="brToSection" cssClass="form-control selectpicker" multiple="true" >
+				    		<springForm:options items="${sections}" />
+				    	</springForm:select>   
+				    </div>
+				  </div>
+				  <div class="form-group">
+				    <label class="col-sm-3 control-label">ถึงบุคคล</label>
 				    <div class="col-sm-9" id="admin-user">
 				    	<springForm:select path="brToUser" cssClass="form-control selectpicker" multiple="true" >
 				    		<springForm:options items="${userGroups}" />
@@ -305,6 +313,11 @@
 						$(item).attr('selected', 'selected');	
 					}
 				});	
+				$("#brToSection option").each(function(i, item){
+					if(arrBrTo.indexOf(item.value) > -1){
+						$(item).attr('selected', 'selected');	
+					}
+				});	
 				$("#brToUser option").each(function(i, item){
 					if(arrBrTo.indexOf(item.value) > -1){
 						$(item).attr('selected', 'selected');	
@@ -363,7 +376,8 @@
 			        		$('#brToGroup').selectpicker('refresh');
 			        		$('#brToUser').selectpicker('refresh');
 			        		$('#brToGroup').on('changed.bs.select', function (event, clickedIndex, newValue, oldValue) {
-   								if(groupTmp.hasOwnProperty('x' + clickedIndex)){
+   								
+			        			if(groupTmp.hasOwnProperty('x' + clickedIndex)){
    									delete groupTmp['x' + clickedIndex];
    								}else{
    									var b = $("#brToGroup option").eq(clickedIndex).val();
@@ -379,29 +393,104 @@
    								}else{
    									str = "'" + "'";
    								}
+   								var strGroup = str;
    								$.ajax({
-   							        url: GetSiteRoot() + "/getUserSelectedByAdmin",
+   							        url: GetSiteRoot() + "/getSectionSelectedByAdmin",
    							        type: "POST",
    							        cache: false,
    							        dataType : "json",
-   							        data: { 'groups': str },
+   							        data: { 'groups': strGroup },
    							        success: function (response) {
-   							        	var s = '';
-   							        	for(var x in response){
-   							        		s += '<optgroup label="' + x + '">';
-   							        		for(var y in response[x]){
-   							        			var t = response[x][y].split('xx#xx');
-   							        			s += '<option value="' + t[0] + '">' + t[1] + '</option>'; 
+   							        	if(response != null){
+   							        		var s = '';
+   	   							        	for(var x in response){
+   	   							        		s += '<optgroup label="' + x + '">';
+   	   							        		for(var y in response[x]){
+   	   							        			var t = response[x][y].split('xx#xx');
+   	   							        			console.log(t);
+   	   							        			s += '<option value="' + t[0] + '">' + t[1] + '</option>'; 
+   	   							        		}
+   	   							        		s += '</optgroup>';			        	  
+   	   							        	}
+   	   							        	var strs = '';
+   	   							        	if(s != ''){
+   	   							        		strs = '<select class="form-control selectpicker" id="brToSection" name="brToSection" multiple="true">';
+   	   							        		strs += s;
+   	   							        		strs += '</select>';
+   	   							        		$('#admin-section').html(strs);
+   	   							        		$('#brToSection').selectpicker('refresh');
+	   	   							        	$('#brToSection').on('changed.bs.select', function (event, clickedIndex, newValue, oldValue) {
+		   	   		   								if(groupTmp.hasOwnProperty('x' + clickedIndex)){
+		   	   		   									delete groupTmp['x' + clickedIndex];
+		   	   		   								}else{
+		   	   		   									var b = $("#brToGroup option").eq(clickedIndex).val();
+		   	   		   									var af = b.split('xx##xx');
+		   	   		   									groupTmp['x' + clickedIndex] = af[1];		
+		   	   		   								}
+		   	   		   								var str = '';
+		   	   		   								for(var x in groupTmp){
+		   	   		   									str += "'" + groupTmp[x] + "',";
+		   	   		   								}
+		   	   		   								if(str.length > 0){
+		   	   		   									str = str.substring(0, str.length - 1);
+		   	   		   								}else{
+		   	   		   									str = "'" + "'";
+		   	   		   								}
+				   	   		   						$.ajax({
+				   	   							        url: GetSiteRoot() + "/getUserSelectedByAdmin",
+				   	   							        type: "POST",
+				   	   							        cache: false,
+				   	   							        dataType : "json",
+				   	   							        data: { 'groups': strGroup, 'sections': str },
+				   	   							        success: function (response) {
+				   	   							        	var s = '';
+				   	   							        	for(var x in response){
+				   	   							        		s += '<optgroup label="' + x + '">';
+				   	   							        		for(var y in response[x]){
+				   	   							        			var t = response[x][y].split('xx#xx');
+				   	   							        			s += '<option value="' + t[0] + '">' + t[1] + '</option>'; 
+				   	   							        		}
+				   	   							        		s += '</optgroup>';			        	  
+				   	   							        	}
+				   	   							        	var strs = '';
+				   	   							        	if(s != ''){
+				   	   							        		strs = '<select class="form-control selectpicker" id="brToUser" name="brToUser" multiple="true">';
+				   	   							        		strs += s;
+				   	   							        		strs += '</select>';
+				   	   							        		$('#admin-user').html(strs);
+				   	   							        		$('#brToUser').selectpicker('refresh');
+				   	   							        	}
+				   	   							        }
+				   	   							    });
+	   	   							        	});
    							        		}
-   							        		s += '</optgroup>';			        	  
-   							        	}
-   							        	var strs = '';
-   							        	if(s != ''){
-   							        		strs = '<select class="form-control selectpicker" id="brToUser" name="brToUser" multiple="true">';
-   							        		strs += s;
-   							        		strs += '</select>';
-   							        		$('#admin-user').html(strs);
-   							        		$('#brToUser').selectpicker('refresh');
+   							        	}else{
+   							        		$.ajax({
+   			   							        url: GetSiteRoot() + "/getUserSelectedByAdmin",
+   			   							        type: "POST",
+   			   							        cache: false,
+   			   							        dataType : "json",
+   			   							        data: { 'groups': strGroup, 'sections': null },
+   			   							        success: function (response) {
+   			   							        	var s = '';
+   			   							        	for(var x in response){
+   			   							        		s += '<optgroup label="' + x + '">';
+   			   							        		for(var y in response[x]){
+   			   							        			var t = response[x][y].split('xx#xx');
+   			   							        			s += '<option value="' + t[0] + '">' + t[1] + '</option>'; 
+   			   							        		}
+   			   							        		s += '</optgroup>';			        	  
+   			   							        	}
+   			   							        	var strs = '';
+   			   							        	if(s != ''){
+   			   							        		strs = '<select class="form-control selectpicker" id="brToUser" name="brToUser" multiple="true">';
+   			   							        		strs += s;
+   			   							        		strs += '</select>';
+   			   							        		$('#admin-user').html(strs);
+   			   							        		$('#brToUser').selectpicker('refresh');
+   			   							        	}
+   			   							        }
+   			   							    });
    							        	}
    							        }
    							    });
@@ -638,7 +727,22 @@
 		                $("#attachmentIdList").val(attachmentIdList);
 		            },
 		           UploadComplete: function(up, files) {
-		        	   if(fileCnt > 0) location.reload(true);
+		        	   var dialog = bootbox.alert({
+							message: "บันทึกข้อมูลสำเร็จ",
+						    size: 'small'
+						});
+		        	   if('${mode}' == 'add') {
+		        		   dialog.on('hidden.bs.modal', function () {
+								window.location.href = GetSiteRoot() + '/addinternal';
+							});	
+		        	   }else{
+		        		   dialog.on('hidden.bs.modal', function () {
+								location.reload(true);
+							});
+		        	   }
+		        	   setTimeout(function(){
+							dialog.modal('hide');
+						}, 1000);
 		            },
 		           FilesAdded: function(up, files) {
 		        	   plupload.each(files, function(file) {

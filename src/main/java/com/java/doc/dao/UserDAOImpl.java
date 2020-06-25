@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.java.doc.hibernate.HibernateUtil;
 import com.java.doc.model.DataTable;
 import com.java.doc.model.Groups;
+import com.java.doc.model.Sections;
 import com.java.doc.model.UserTable;
 import com.java.doc.model.Users;
 import com.java.doc.util.Constants;
@@ -139,7 +140,7 @@ public class UserDAOImpl implements UserDAO {
 		startOperation();
 		List<UserTable> users = new ArrayList<UserTable>();
 		try {
-			String strSQL = "SELECT u.id, u.fname, u.lname, u.role, d.division_name, d.division_code, g.group_name, u.prefix FROM users u LEFT JOIN divisions d ON u.division = d.division_code LEFT JOIN groups g ON u.group_id = g.group_id";
+			String strSQL = "SELECT u.id, u.fname, u.lname, u.role, d.division_name, d.division_code, g.group_name, u.prefix, s.section_name FROM users u LEFT JOIN divisions d ON u.division = d.division_code LEFT JOIN groups g ON u.group_id = g.group_id LEFT JOIN sections s ON u.section_id = s.id";
 			SQLQuery query = session.createSQLQuery(strSQL);
 			List<?> list = query.list();
 			Iterator<?> it = list.iterator();
@@ -163,6 +164,7 @@ public class UserDAOImpl implements UserDAO {
 				t.setDivisionName((row[4] == null) ? "" : row[4].toString());
 				t.setDivisionCode((row[5] == null) ? "" : row[5].toString());
 				t.setGroupName((row[6] == null) ? "" : row[6].toString());
+				t.setSectionName((row[8] == null) ? "" : row[8].toString());
 				t.setButton("<button type='button' class='btn btn-warning' onclick='editUser(" + row[0].toString() + ");'><span class='glyphicon glyphicon-edit' aria-hidden='true'></span> แก้ไข</button> <button type='button' class='btn btn-danger' onclick='deleteUser(" + row[0].toString() + ");'><span class='glyphicon glyphicon-trash' aria-hidden='true'></span> ลบ</button>");
 				users.add(t);
 				i++;
@@ -183,7 +185,7 @@ public class UserDAOImpl implements UserDAO {
 		UserTable result = new UserTable();
 		startOperation();
 		try {
-			String strSQL = "SELECT u.id, u.fname, u.lname, u.role, d.division_name, d.division_code, d.organization, u.username, u.password, u.group_id, g.group_name, u.prefix FROM users u LEFT JOIN divisions d ON u.division = d.division_code LEFT JOIN groups g ON u.group_id = g.group_id WHERE u.id = " + id;
+			String strSQL = "SELECT u.id, u.fname, u.lname, u.role, d.division_name, d.division_code, d.organization, u.username, u.password, u.group_id, g.group_name, u.prefix, s.id section_id, s.section_name FROM users u LEFT JOIN divisions d ON u.division = d.division_code LEFT JOIN groups g ON u.group_id = g.group_id LEFT JOIN sections s ON g.group_id = s.group_id WHERE u.id = " + id;
 			SQLQuery query = session.createSQLQuery(strSQL);
 			List<?> list = query.list();
 			Iterator<?> it = list.iterator();
@@ -201,6 +203,8 @@ public class UserDAOImpl implements UserDAO {
 				result.setGroupId(row[9] == null ? null : Integer.parseInt(row[9].toString()));
 				result.setGroupName(row[10] == null ? "" : row[10].toString());
 				result.setPrefix(row[11] == null ? "" : row[11].toString());
+				result.setSectionId(row[12] == null ? null : Integer.parseInt(row[12].toString()));
+				result.setSectionName(row[13] == null ? "" : row[13].toString());
 				result.setButton("<button type='button' class='btn btn-warning' onclick='editUser(" + row[0].toString() + ");'><span class='glyphicon glyphicon-edit' aria-hidden='true'></span> เน�เธ�เน�เน�เธ�</button> <button type='button' class='btn btn-danger' onclick='deleteUser(" + row[0].toString() + ");'><span class='glyphicon glyphicon-trash' aria-hidden='true'></span> เธฅเธ�</button>");
 			}
 		}catch(HibernateException ex){
@@ -261,5 +265,20 @@ public class UserDAOImpl implements UserDAO {
 			HibernateUtil.close(session);
 		}	
 		return group;
+	}
+
+	@Override
+	public List<Sections> getSectionFromGroupDropDown(String groupId) {
+		startOperation();
+		List<Sections> sections = null;
+		try {
+			//System.out.println(groupId);
+			sections = session.createQuery("from Sections where groupId=?").setParameter(0, Integer.parseInt(groupId)).list();
+		}catch(Exception ex){
+			logger.error("getSectionFromGroupDropDown Exception : " , ex); 
+		}finally {
+			HibernateUtil.close(session);
+		}	
+		return sections;
 	}
 }

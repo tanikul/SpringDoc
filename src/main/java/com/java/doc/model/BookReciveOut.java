@@ -32,10 +32,12 @@ public class BookReciveOut implements java.io.Serializable {
 	private String brFrom;
 	private String brToDepartment;
 	private String brToGroup;
+	private String brToSection;
 	private String brToUser;
 	private String brTo;
 	private String brToDepartmentShort;
 	private String brToDepartmentName;
+	private String brToSectionName;
 	private String brToGroupName;
 	private String brToUserName;
 	private String brSubject;
@@ -81,7 +83,7 @@ public class BookReciveOut implements java.io.Serializable {
 	
 	public BookReciveOut(Integer brYear, Date brRdate, Integer brNum,
 			String brPlace, Date brDate, String brFrom, String brToDepartment,
-			String brToGroup, String brToDepartmentShort, String brToUser, String brSubject, String brRemark) {
+			String brToGroup, String brToDepartmentShort, String brToUser, String brSubject, String brRemark, String brToSection) {
 		this.brNum = brNum;
 		this.brYear = brYear;
 		this.brRdate = brRdate;
@@ -94,13 +96,14 @@ public class BookReciveOut implements java.io.Serializable {
 		this.brToUser = brToUser;
 		this.brSubject = brSubject;
 		this.brRemark = brRemark;
+		this.brToSection = brToSection;
 	}
 	
 	public BookReciveOut(Integer brNum, Integer brYear, Date brRdate,
 			Integer brTypeQuick, Integer brTypeSecret, String field1,
 			String brPlace, Date brDate, String brFrom, String brToDepartment, String brToGroup, String brToUser,
 			String brSubject, String brRemark, String brDivision, String brToDepartmentShort,
-			String brPcode, String brStatus, String brImage, String brTo) {
+			String brPcode, String brStatus, String brImage, String brTo, String brToSection) {
 		this.brNum = brNum;
 		this.brYear = brYear;
 		this.brRdate = brRdate;
@@ -120,6 +123,7 @@ public class BookReciveOut implements java.io.Serializable {
 		this.brPcode = brPcode;
 		this.brStatus = brStatus;
 		this.brImage = brImage;
+		this.brToSection = brToSection;
 	}
 
 	@Id
@@ -394,6 +398,24 @@ public class BookReciveOut implements java.io.Serializable {
 
 	public void setBrToDepartmentShort(String brToDepartmentShort) {
 		this.brToDepartmentShort = brToDepartmentShort;
+	}
+
+	@Column(name = "BR_TO_SECTION")
+	public String getBrToSection() {
+		return brToSection;
+	}
+
+	public void setBrToSection(String brToSection) {
+		this.brToSection = brToSection;
+	}
+
+	@Column(name = "BR_TO_SECTION_NAME")
+	public String getBrToSectionName() {
+		return brToSectionName;
+	}
+
+	public void setBrToSectionName(String brToSectionName) {
+		this.brToSectionName = brToSectionName;
 	}
 	
 }

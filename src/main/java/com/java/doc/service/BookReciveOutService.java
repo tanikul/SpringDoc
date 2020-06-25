@@ -29,5 +29,6 @@ public interface BookReciveOutService {
 	public List<BookReciveOut> listReciveByYearAndBrNum(int year, int brNum);
 	public void SaveReciveOutFromExcel(BookReciveOut recive);
 	public Map<String, List<String>> getGroupSelectedByAdmin(String departments);
-	public Map<String, List<String>> getUserSelectedByAdmin(String groups);
+	public Map<String, List<String>> getSectionSelectedByAdmin(String groups);
+	public Map<String, List<String>> getUserSelectedByAdmin(String groups, String sections);
 }

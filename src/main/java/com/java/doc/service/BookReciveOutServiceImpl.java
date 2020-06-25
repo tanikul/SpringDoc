@@ -759,10 +759,21 @@ public class BookReciveOutServiceImpl implements BookReciveOutService {
 	}
 
 	@Override
-	public Map<String, List<String>> getUserSelectedByAdmin(String groups) {
+	public Map<String, List<String>> getSectionSelectedByAdmin(String groups) {
 		Map<String, List<String>> map = null;
 		try {
-			map = reciveout.getUserSelectedByAdmin(groups);
+			map = reciveout.getSectionSelectedByAdmin(groups);
+		}catch(Exception ex){
+			logger.error("getSectionSelectedByAdmin : ", ex);
+		}
+		return map;
+	}
+
+	@Override
+	public Map<String, List<String>> getUserSelectedByAdmin(String groups, String sections) {
+		Map<String, List<String>> map = null;
+		try {
+			map = reciveout.getUserSelectedByAdmin(groups, sections);
 		}catch(Exception ex){
 			logger.error("getGroupSelectedByAdmin : ", ex);
 		}
