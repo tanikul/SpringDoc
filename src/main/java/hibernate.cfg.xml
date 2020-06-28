@@ -60,7 +60,7 @@
     <!-- <property name="show_sql">false</property> -->
     <property name="dialect">org.hibernate.dialect.MySQLDialect</property>
     <!-- <property name="hibernate.hbm2ddl.auto">update</property> -->
-    <property name="current_session_context_class">thread</property>
+    <property name="hibernate.current_session_context_class">thread</property>
 
     <!-- Mapping files -->
   <mapping class="com.java.doc.model.Users"/>
@@ -68,6 +68,7 @@
   <mapping class="com.java.doc.model.BookReciveOut"/>
   <mapping class="com.java.doc.model.BookRecieveDepartment"/>
   <mapping class="com.java.doc.model.BookRecieveGroup"/>
+  <mapping class="com.java.doc.model.BookRecieveSection"/>
   <mapping class="com.java.doc.model.BookRecieveUser"/>
   <mapping class="com.java.doc.model.BookSendOut"/>
   <mapping class="com.java.doc.model.TypeQuick"/>

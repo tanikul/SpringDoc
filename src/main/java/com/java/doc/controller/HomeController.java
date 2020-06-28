@@ -146,7 +146,9 @@ public class HomeController {
 			table.setDivision(user.getDivision());
 			table.setUserId(user.getId().toString());
 			table.setRole(user.getRole());
-			table.setGroupId(user.getGroupId());
+			if(user.getGroupId() != null) {
+				table.setGroupId(user.getGroupId());
+			}
 			List<HashMap<String, String>> rows = new ArrayList<HashMap<String, String>>();
 			List<String> headers = new ArrayList<String>();
 			headers.add("ปี");

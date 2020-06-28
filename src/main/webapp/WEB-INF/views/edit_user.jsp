@@ -64,7 +64,7 @@
 			    <div class="col-sm-9" id="section-box">
 			    	<springForm:select path="sectionId" cssClass="form-control">
 			    		<springForm:option value="" label="--- เลือกกลุ่มงาน ---" />
-			    		<springForm:options items="${section}" />
+			    		<springForm:options items="${sections}" />
 			    	</springForm:select>   
 			    	<p class="help-block"></p>
 			    </div>

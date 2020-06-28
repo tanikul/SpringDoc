@@ -38,7 +38,7 @@ public class BookSendOutServiceImpl implements BookSendOutService {
 	@Override
 	public boolean saveBookOut(BookSendOut sendout) {
 		if(this.merge(sendout)){
-			insertBsToExcel(sendout);
+			//insertBsToExcel(sendout);
 		}
 		return true;
 	}

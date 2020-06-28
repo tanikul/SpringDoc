@@ -5,9 +5,11 @@ import java.util.Map;
 
 import com.java.doc.model.BookRecieveDepartment;
 import com.java.doc.model.BookRecieveGroup;
+import com.java.doc.model.BookRecieveSection;
 import com.java.doc.model.BookRecieveUser;
 import com.java.doc.model.BookReciveOut;
 import com.java.doc.model.BookReciveOutTable;
+import com.java.doc.model.Sections;
 import com.java.doc.model.StatusDetail;
 import com.java.doc.model.Users;
 import com.java.doc.util.TableSorter;
@@ -39,8 +41,10 @@ public interface BookReciveOutDAO {
 	public String deleteRecieveGroup(BookRecieveDepartment bookRecieveDepartment, String brToNotIn);
 	public String deleteRecieveUser(BookRecieveGroup bookRecieveGroup, String brToNotIn);
 	public String deleteRecieveUserByBrId(int brId);
+	public String deleteRecieveSectionByBrId(int brId);
 	int insertRecieveUser(BookRecieveUser recive) throws Exception;
 	int insertRecieveGroup(BookRecieveGroup recive) throws Exception;
+	int insertRecieveSection(BookRecieveSection recive) throws Exception;
 	public List<StatusDetail> getStatusDetail(String brId);
 	public List<BookReciveOut> listReciveByYearAndBrNum(int year, int brNum);
 	public Map<String, List<String>> getGroupSelectedByAdmin(String departments);
@@ -49,4 +53,5 @@ public interface BookReciveOutDAO {
 	public List<BookRecieveDepartment> getBookRecieveOutDepartment(int brId);
 	public List<BookRecieveGroup> getBookRecieveOutGroup(int brId, String brToDepartment);
 	public List<BookRecieveUser> getBookRecieveOutUser(int brId, String brToDepartment, String brToGroup);
+	public Sections getSectionById(Integer id);
 }

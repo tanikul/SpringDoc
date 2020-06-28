@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.java.doc.model.DataTable;
 import com.java.doc.model.Groups;
+import com.java.doc.model.Sections;
 import com.java.doc.model.UserTable;
 import com.java.doc.model.Users;
 
@@ -22,7 +23,7 @@ public interface UserService {
 	public Map<Integer, String> getUserFromGroupDropDown(String groupId);
 	public Users getUserFromGroup(String groupId);
 	public Groups getGroupName(String groupId);
-	
+	public Sections getSectionName(String sectionId);
 	public Map<Integer, String> getSectionFromGroupDropDown(String groupId);
 	
 	Users findByUserName(String username);

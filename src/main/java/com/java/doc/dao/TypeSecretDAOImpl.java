@@ -16,8 +16,8 @@ import com.java.doc.model.TypeSecret;
 @Repository("typeSecretDao")
 public class TypeSecretDAOImpl implements TypeSecretDAO {
 
-	protected Session session;
-    protected Transaction tx;
+	//protected Session session;
+    //protected Transaction tx;
 
     public TypeSecretDAOImpl() {
         HibernateUtil.buildIfNeeded();
@@ -26,7 +26,7 @@ public class TypeSecretDAOImpl implements TypeSecretDAO {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<TypeSecret> listTypeSecret() throws Exception {
-		startOperation();
+		Session session = OpenSession();
 		List<TypeSecret> list = null;
 		try{
 			list = session.createQuery("from TypeSecret where ACTIVE = 'Y'").list();
@@ -39,7 +39,7 @@ public class TypeSecretDAOImpl implements TypeSecretDAO {
 	@SuppressWarnings("unchecked")
 	@Override
 	public HashMap<Integer, String> SelectSecret() throws Exception {
-		startOperation();
+		Session session = OpenSession();
 		HashMap<Integer, String> list = null;
 		try{
 			List<TypeQuick> type = session.createQuery("from TypeQuick where ACTIVE = 'Y'").list();
@@ -57,7 +57,7 @@ public class TypeSecretDAOImpl implements TypeSecretDAO {
 	
 	@Override
 	public String getTypeSecretById(Integer id) throws Exception {
-		startOperation();
+		Session session = OpenSession();
 		TypeSecret type = null;
 		try{
 			type = (TypeSecret) session.get(TypeSecret.class, id);
@@ -67,8 +67,13 @@ public class TypeSecretDAOImpl implements TypeSecretDAO {
 		return type.getTypeSecret();
 	}
 	
-	protected void startOperation() throws HibernateException {
+	/*protected void startOperation() throws HibernateException {
         session = HibernateUtil.openSession();
         tx = session.beginTransaction();
-    }
+    }*/
+	
+	private Session OpenSession() {
+		Session session = HibernateUtil.openSession();
+		return session;
+	}
 }

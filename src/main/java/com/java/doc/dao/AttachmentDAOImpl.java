@@ -18,8 +18,8 @@ import com.java.doc.model.Attachment;
 @Repository("attachmentDao")
 public class AttachmentDAOImpl implements AttachmentDAO {
 
-	protected Session session;
-    protected Transaction tx;
+	//protected Session session;
+    //protected Transaction tx;
     private static final Logger logger = Logger.getLogger(AttachmentDAOImpl.class);
     public AttachmentDAOImpl() {
         HibernateUtil.buildIfNeeded();
@@ -28,7 +28,7 @@ public class AttachmentDAOImpl implements AttachmentDAO {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Attachment> listAttachment(int objectId, String objectName) {
-		startOperation();
+		Session session = OpenSession();
 		List<Attachment> list = new ArrayList<Attachment>();
 		try {
 			Criteria query = session.createCriteria(Attachment.class)
@@ -45,7 +45,8 @@ public class AttachmentDAOImpl implements AttachmentDAO {
 
 	@Override
 	public int save(Attachment attachment) {
-		startOperation();
+		Session session = OpenSession();
+		Transaction tx = session.beginTransaction();
 		try{
 			session.save(attachment);
 			tx.commit();
@@ -62,7 +63,7 @@ public class AttachmentDAOImpl implements AttachmentDAO {
 
 	@Override
 	public Attachment getAttachment(int attachmentId) {
-		startOperation();
+		Session session = OpenSession();
 		Attachment data = null;
 		try{
 			data = (Attachment) session.get(Attachment.class, attachmentId);
@@ -74,9 +75,10 @@ public class AttachmentDAOImpl implements AttachmentDAO {
 
 	@Override
 	public boolean delete(int attachmentId) {
+		Session session = OpenSession();
+		Transaction tx = session.beginTransaction();
 		try {
 			Attachment attachment = this.getAttachment(attachmentId);
-			startOperation();
 			session.delete(attachment);
 			tx.commit();
 			return true;
@@ -92,7 +94,7 @@ public class AttachmentDAOImpl implements AttachmentDAO {
 
 	@Override
 	public void updateObjectId(String attachmentList, int objectId, String objectName) {
-		startOperation();
+		Session session = OpenSession();
 		try {
 			if(attachmentList != null && !"".equals(attachmentList)) {
 				Query query = session.createQuery("update Attachment set objectId = :objectId where attachmentId in (" + attachmentList + ") and objectName = :objectName ");
@@ -107,9 +109,13 @@ public class AttachmentDAOImpl implements AttachmentDAO {
 		}
 	}
 	
-	protected void startOperation() throws HibernateException {
+	/*protected void startOperation() throws HibernateException {
         session = HibernateUtil.openSession();
         tx = session.beginTransaction();
-    }
+    }*/
 
+	private Session OpenSession() {
+		Session session = HibernateUtil.openSession();
+		return session;
+	}
 }

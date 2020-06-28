@@ -25,6 +25,7 @@ public class BookRecieveUser implements java.io.Serializable {
 	private String status;
 	private String updatedBy;
 	private Date updatedDate;
+	private String brToSection;
 	
 	public BookRecieveUser() {
 	}
@@ -110,6 +111,15 @@ public class BookRecieveUser implements java.io.Serializable {
 
 	public void setBrToUserName(String brToUserName) {
 		this.brToUserName = brToUserName;
+	}
+	
+	@Column(name = "BR_TO_SECTION")
+	public String getBrToSection() {
+		return brToSection;
+	}
+
+	public void setBrToSection(String brToSection) {
+		this.brToSection = brToSection;
 	}
 
 	@Column(name = "STATUS")

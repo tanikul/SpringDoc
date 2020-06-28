@@ -137,4 +137,9 @@ public class UserServiceImpl implements UserService {
 		return map;
 	}
 
+	@Override
+	public Sections getSectionName(String sectionId) {
+		return userDao.getSectionName(sectionId);
+	}
+
 }

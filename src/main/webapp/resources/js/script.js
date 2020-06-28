@@ -343,11 +343,12 @@ saveEditUser = function(id){
 	var prefix = $('#prefix').val();
 	var username = $('#username').val();
 	var password = $('#password').val();
+	var sectionId = $('#sectionId').val();
 	$.ajax({
         url: GetSiteRoot() + "/saveEditUser",
         type: "POST",
         cache: false,
-        data: { 'id': id,'fname': fname, 'lname' : lname, 'divisionCode' : divisionCode, 'groupId' : groupId, 'role' : role, 'prefix' : prefix, 'password' : password, 'username' : username },
+        data: { 'id': id,'fname': fname, 'lname' : lname, 'divisionCode' : divisionCode, 'groupId' : groupId, 'role' : role, 'prefix' : prefix, 'password' : password, 'username' : username , 'sectionId': sectionId},
         success: function (response) {
         	if(response == 'success'){
         		table.ajax.reload();

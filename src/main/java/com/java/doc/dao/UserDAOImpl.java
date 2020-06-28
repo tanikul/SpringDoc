@@ -24,9 +24,6 @@ import com.java.doc.util.Constants;
 @Repository("userDao")
 public class UserDAOImpl implements UserDAO {
 
-
-	protected Session session;
-    protected Transaction tx;
     public UserDAOImpl() {
         HibernateUtil.buildIfNeeded();
     }
@@ -34,7 +31,8 @@ public class UserDAOImpl implements UserDAO {
 	
 	@Override
 	public void addUser(Users u) {
-		startOperation();
+		Session session = OpenSession();
+		Transaction tx = session.beginTransaction();
 		try {
 			session.merge(u);
 			tx.commit();
@@ -52,7 +50,8 @@ public class UserDAOImpl implements UserDAO {
 
 	@Override
 	public void updateUser(Users u) {
-		startOperation();
+		Session session = OpenSession();
+		Transaction tx = session.beginTransaction();
 		try {
 			session.update(u);
 			tx.commit();
@@ -71,7 +70,7 @@ public class UserDAOImpl implements UserDAO {
 	@Override
 	@Transactional(readOnly = true)
 	public List<Users> listUser() {
-		startOperation();
+		Session session = OpenSession();
 		List<Users> user = null;
 		try {
 			user = session.createQuery("from Users").list();
@@ -83,7 +82,7 @@ public class UserDAOImpl implements UserDAO {
 
 	@Override
 	public Users getUserById(int id) {
-		startOperation();
+		Session session = OpenSession();
 		Users users = null;
 		try {
 			users = (Users) session.createQuery("from Users where id=?").setParameter(0, id).uniqueResult();
@@ -95,7 +94,8 @@ public class UserDAOImpl implements UserDAO {
 
 	@Override
 	public void removeUser(int id) {
-		startOperation();
+		Session session = OpenSession();
+		Transaction tx = session.beginTransaction();
 		try {
 			Users u = (Users) session.get(Users.class, new Integer(id));
 			if (u != null) {
@@ -115,7 +115,7 @@ public class UserDAOImpl implements UserDAO {
 	
 	@Override
 	public Users findByUserName(String username) {
-		startOperation();
+		Session session = OpenSession();
 		Users users = new Users();
 		try {
 			users = (Users) session.createQuery("from Users where username=?").setParameter(0, username).uniqueResult();
@@ -137,7 +137,7 @@ public class UserDAOImpl implements UserDAO {
 	@Override
 	@Transactional(readOnly = true)
 	public List<UserTable> getSearchUser(DataTable data) {
-		startOperation();
+		Session session = OpenSession();
 		List<UserTable> users = new ArrayList<UserTable>();
 		try {
 			String strSQL = "SELECT u.id, u.fname, u.lname, u.role, d.division_name, d.division_code, g.group_name, u.prefix, s.section_name FROM users u LEFT JOIN divisions d ON u.division = d.division_code LEFT JOIN groups g ON u.group_id = g.group_id LEFT JOIN sections s ON u.section_id = s.id";
@@ -183,7 +183,7 @@ public class UserDAOImpl implements UserDAO {
 	@Override
 	public UserTable getFindUserById(int id) {
 		UserTable result = new UserTable();
-		startOperation();
+		Session session = OpenSession();
 		try {
 			String strSQL = "SELECT u.id, u.fname, u.lname, u.role, d.division_name, d.division_code, d.organization, u.username, u.password, u.group_id, g.group_name, u.prefix, s.id section_id, s.section_name FROM users u LEFT JOIN divisions d ON u.division = d.division_code LEFT JOIN groups g ON u.group_id = g.group_id LEFT JOIN sections s ON g.group_id = s.group_id WHERE u.id = " + id;
 			SQLQuery query = session.createSQLQuery(strSQL);
@@ -217,16 +217,10 @@ public class UserDAOImpl implements UserDAO {
 		
 		return result;
 	}
-	
-	protected void startOperation() throws HibernateException {
-        session = HibernateUtil.openSession();
-        tx = session.beginTransaction();
-    }
-
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Groups> getGroupFromDivision(String divisionCode) {
-		startOperation();
+		Session session = OpenSession();
 		List<Groups> group = null;
 		try {
 			group = session.createQuery("from Groups where divisionCode=?").setParameter(0, divisionCode).list();
@@ -241,7 +235,7 @@ public class UserDAOImpl implements UserDAO {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Users> getUserFromGroup(String groupId) {
-		startOperation();
+		Session session = OpenSession();
 		List<Users> users = null;
 		try {
 			users = session.createQuery("from Users where groupId=? and role='USER'").setParameter(0, Integer.parseInt(groupId)).list();
@@ -255,7 +249,7 @@ public class UserDAOImpl implements UserDAO {
 	
 	@Override
 	public Groups getGroupName(String groupId) {
-		startOperation();
+		Session session = OpenSession();
 		Groups group = null;
 		try {
 			group = (Groups) session.createQuery("from Groups where groupId=?").setParameter(0, Integer.parseInt(groupId)).uniqueResult();
@@ -269,7 +263,7 @@ public class UserDAOImpl implements UserDAO {
 
 	@Override
 	public List<Sections> getSectionFromGroupDropDown(String groupId) {
-		startOperation();
+		Session session = OpenSession();
 		List<Sections> sections = null;
 		try {
 			//System.out.println(groupId);
@@ -280,5 +274,24 @@ public class UserDAOImpl implements UserDAO {
 			HibernateUtil.close(session);
 		}	
 		return sections;
+	}
+
+	@Override
+	public Sections getSectionName(String sectionId) {
+		Session session = OpenSession();
+		Sections section = null;
+		try {
+			section = (Sections) session.createQuery("from Sections where id=?").setParameter(0, Integer.parseInt(sectionId)).uniqueResult();
+		}catch(Exception ex){
+			logger.error("getSectionName Exception : " , ex); 
+		}finally {
+			HibernateUtil.close(session);
+		}	
+		return section;
+	}
+	
+	private Session OpenSession() {
+		Session session = HibernateUtil.openSession();
+		return session;
 	}
 }

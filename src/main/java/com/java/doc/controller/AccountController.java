@@ -159,9 +159,9 @@ public class AccountController {
 			}else{
 				Users user = new Users();
 				user = userService.findByUserName(login.getUsername());
-				if(user.getRole().equals("ADMIN")){
+				/*if(user.getRole().equals("ADMIN")){
 					CompareDataLogin(user);
-				}
+				}*/
 				session.setAttribute("typeQuick", this.typeQuickService.SelectQuick());
 				session.setAttribute("typeSecret", this.typeSecretService.SelectSecret());
 			}
@@ -242,7 +242,7 @@ public class AccountController {
 			@RequestParam("role") String role,
 			@RequestParam("groupId") Integer groupId,
 			@RequestParam("prefix") String prefix,
-			@RequestParam("sectionId") Integer sectionId) {
+			@RequestParam(value = "sectionId", required=false) Integer sectionId) {
 		try{
 			Users user = userService.getUserById(id);
 			user.setFname(fname);
@@ -257,7 +257,7 @@ public class AccountController {
 			user.setDivision(divisionCode);
 			user.setGroupId(groupId);
 			user.setPrefix(prefix);
-			user.setSectionId(sectionId);
+			user.setSectionId((sectionId == null) ? 0 : sectionId);
 			userService.updateUser(user);
 		}catch(Exception ex){
 			logger.error("Edit : ", ex);

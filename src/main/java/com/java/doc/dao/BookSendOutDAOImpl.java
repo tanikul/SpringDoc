@@ -29,8 +29,8 @@ import com.mysql.jdbc.StringUtils;
 @Repository("bookSendOutDao")
 public class BookSendOutDAOImpl implements BookSendOutDAO {
 
-	protected Session session;
-    protected Transaction tx;
+	//protected Session session;
+    //protected Transaction tx;
     public BookSendOutDAOImpl() {
         HibernateUtil.buildIfNeeded();
     }
@@ -39,7 +39,7 @@ public class BookSendOutDAOImpl implements BookSendOutDAO {
 	
 	@Override
 	public void save(BookSendOut sendout) {
-		startOperation();
+		Session session = OpenSession();
 		try{
 			session.save(sendout);
 		}finally{
@@ -50,7 +50,7 @@ public class BookSendOutDAOImpl implements BookSendOutDAO {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<BookSendOut> listSendOut() {
-		startOperation();
+		Session session = OpenSession();
 		List<BookSendOut> list = null;
 		try{
 			list = session.createQuery("from BookSendOut").list();
@@ -63,7 +63,7 @@ public class BookSendOutDAOImpl implements BookSendOutDAO {
 	@SuppressWarnings("unchecked")
 	@Override
 	public BookSendOutTable ListPageSendOut(TableSorter table) {
-		startOperation();
+		Session session = OpenSession();
 		BookSendOutTable listTable = new BookSendOutTable();
 		try {
 			int idx = table.getSortList().get(0).get(0);
@@ -133,7 +133,7 @@ public class BookSendOutDAOImpl implements BookSendOutDAO {
 
 	@Override
 	public int LastID() {
-		startOperation();
+		Session session = OpenSession();
 		BookSendOut query = null;
 		try{
 			query = (BookSendOut) session.createQuery("from BookSendOut order by bsId desc").setMaxResults(1).uniqueResult();
@@ -146,7 +146,7 @@ public class BookSendOutDAOImpl implements BookSendOutDAO {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Integer> getYear() {
-		startOperation();
+		Session session = OpenSession();
 		Criteria criteria = null;
 		List<Integer> years = new ArrayList<Integer>();
 		try {
@@ -164,7 +164,8 @@ public class BookSendOutDAOImpl implements BookSendOutDAO {
 
 	@Override
 	public boolean saveOrUpdate(BookSendOut recive) {
-		startOperation();
+		Session session = OpenSession();
+		Transaction tx = session.beginTransaction();
 		try{
 			session.saveOrUpdate(recive);
 			tx.commit();
@@ -180,7 +181,8 @@ public class BookSendOutDAOImpl implements BookSendOutDAO {
 
 	@Override
 	public boolean merge(BookSendOut recive) {
-		startOperation();
+		Session session = OpenSession();
+		Transaction tx = session.beginTransaction();
 		try{
 			session.merge(recive);
 			tx.commit();
@@ -196,7 +198,7 @@ public class BookSendOutDAOImpl implements BookSendOutDAO {
 
 	@Override
 	public Integer getNextBsNum(int bsYear) {
-		startOperation();
+		Session session = OpenSession();
 		Integer bsNum = 1;
 		try {
 			Query query = session.createQuery("from BookSendOut where bsYear = :bsYear order by bsNum desc");
@@ -215,7 +217,7 @@ public class BookSendOutDAOImpl implements BookSendOutDAO {
 
 	@Override
 	public BookSendOut getDataFromId(int id) {
-		startOperation();
+		Session session = OpenSession();
 		BookSendOut data = null;
 		try{
 			data = (BookSendOut) session.get(BookSendOut.class, id);
@@ -227,7 +229,7 @@ public class BookSendOutDAOImpl implements BookSendOutDAO {
 
 	@Override
 	public String delete(int id) {
-		startOperation();
+		Session session = OpenSession();
 		String rs = "0";
 		try{
 			Query query = session.createQuery("delete BookSendOut where bsId = :ID");
@@ -246,14 +248,14 @@ public class BookSendOutDAOImpl implements BookSendOutDAO {
 		return rs;
 	}
 	
-	protected void startOperation() throws HibernateException {
+	/*protected void startOperation() throws HibernateException {
         session = HibernateUtil.openSession();
         tx = session.beginTransaction();
-    }
+    }*/
 
 	@Override
 	public int getCountDataBookRecive(int year) {
-		startOperation();
+		Session session = OpenSession();
 		int rs = 0;
 		try{
 			rs = ((Long) session.createCriteria(BookSendOut.class).add(Restrictions.eq("bsYear", year)).setProjection(Projections.rowCount()).uniqueResult()).intValue();
@@ -269,7 +271,7 @@ public class BookSendOutDAOImpl implements BookSendOutDAO {
 	@Override
 	public BookSendOut getLastRowOfYear(int bsYear) {
 		BookSendOut bookSendOut = null;
-		startOperation();
+		Session session = OpenSession();
 		try {
 			Query query = session.createQuery("from BookSendOut where bsYear = :bsYear order by bsNum desc");
 			query.setParameter("bsYear", bsYear);
@@ -285,7 +287,7 @@ public class BookSendOutDAOImpl implements BookSendOutDAO {
 	@Override
 	public int updateSendOut(BookSendOut sendout) {
 		int result = 0;
-		startOperation();
+		Session session = OpenSession();
 		try {
 			String sql = "UPDATE BOOK_SEND_OUT SET BS_TYPE_QUICK = :bsTypeQuick, BS_TYPE_SECRET = :bsTypeSecret, ";
 			sql += "BS_YEAR = :bsYear, BS_RDATE = :bsRdate, BS_PLACE = :bsPlace, BS_DATE = :bsDate, BS_FROM = :bsFrom, ";
@@ -317,7 +319,7 @@ public class BookSendOutDAOImpl implements BookSendOutDAO {
 
 	@Override
 	public List<BookSendOut> listSendOutByYearAndBsNum(int year, int bsNum) {
-		startOperation();
+		Session session = OpenSession();
 		List<BookSendOut> list = null;
 		try {
 			String sql = "SELECT a.BS_ID,";
@@ -354,7 +356,7 @@ public class BookSendOutDAOImpl implements BookSendOutDAO {
 
 	@Override
 	public List<BookSendOut> listSendOutByYear(int year) {
-		startOperation();
+		Session session = OpenSession();
 		List<BookSendOut> list = null;
 		try {
 			String sql = "SELECT a.BS_ID,";
@@ -386,5 +388,10 @@ public class BookSendOutDAOImpl implements BookSendOutDAO {
 			HibernateUtil.close(session);
 		}
 		return list;
+	}
+	
+	private Session OpenSession() {
+		Session session = HibernateUtil.openSession();
+		return session;
 	}
 }

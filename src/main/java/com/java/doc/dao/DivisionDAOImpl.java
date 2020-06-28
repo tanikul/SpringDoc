@@ -18,8 +18,8 @@ import com.java.doc.model.Divisions;
 @Repository("divisionDao")
 public class DivisionDAOImpl implements DivisionDAO {
 
-	protected Session session;
-    protected Transaction tx;
+	//protected Session session;
+    //protected Transaction tx;
     private static final Logger logger = Logger.getLogger(DivisionDAOImpl.class);
     public DivisionDAOImpl() {
         HibernateUtil.buildIfNeeded();
@@ -28,7 +28,8 @@ public class DivisionDAOImpl implements DivisionDAO {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Divisions> listDivision() {
-		startOperation();
+		Session session = OpenSession();
+		Transaction tx = session.beginTransaction();
 		List<Divisions> list = null;
 		try{
 			list = session.createQuery("from Divisions order by divisionCode asc").list();
@@ -53,14 +54,15 @@ public class DivisionDAOImpl implements DivisionDAO {
 		return sortedMap;
 	}
 	
-	protected void startOperation() throws HibernateException {
+	/*protected void startOperation() throws HibernateException {
         session = HibernateUtil.openSession();
         tx = session.beginTransaction();
-    }
+    }*/
 
 	@Override
 	public Divisions getDivisionByCode(String code) {
-		startOperation();
+		Session session = OpenSession();
+		Transaction tx = session.beginTransaction();
 		Divisions list = null;
 		try{
 			list = (Divisions) session.createQuery("from Divisions where divisionCode=?").setParameter(0, Integer.parseInt(code)).uniqueResult();
@@ -71,5 +73,10 @@ public class DivisionDAOImpl implements DivisionDAO {
 			HibernateUtil.close(session);
 		}
 		return list;
+	}
+	
+	private Session OpenSession() {
+		Session session = HibernateUtil.openSession();
+		return session;
 	}
 }

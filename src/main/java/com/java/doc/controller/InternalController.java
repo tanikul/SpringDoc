@@ -168,13 +168,22 @@ public class InternalController {
 				model.addObject("divisions", this.divisions.selectDivision());
 				model.addObject("brTo", sendRecive.getBrToDepartment());
 				model.addObject("brToGroup", sendRecive.getBrToGroup());
+				model.addObject("brToSection", sendRecive.getBrToSection());
 				model.addObject("brToUser", sendRecive.getBrToUser());
 			}else if(user.getRole().equals("DEPARTMENT")){
 				model.addObject("groups", userService.getGroupFromDivisionDropDown(sendRecive.getBrToDepartment()));
 				model.addObject("brTo", sendRecive.getBrToGroup());
+				model.addObject("brToUser", sendRecive.getBrToUser());
 			}else if(user.getRole().equals("GROUP")){
 				model.addObject("userGroups", userService.getUserFromGroupDropDown(sendRecive.getBrToGroup()));
+				model.addObject("brToSection", sendRecive.getBrToSection());
 				model.addObject("brTo", sendRecive.getBrToUser());
+				model.addObject("brToUser", sendRecive.getBrToUser());
+				model.addObject("brToGroup", sendRecive.getBrToGroup());
+			}else if(user.getRole().equals("SECTION")){
+				model.addObject("userGroups", userService.getSectionFromGroupDropDown(sendRecive.getBrToSection()));
+				model.addObject("brTo", sendRecive.getBrToUser());	
+				model.addObject("brToSection", sendRecive.getBrToSection());
 				model.addObject("brToUser", sendRecive.getBrToUser());
 			}
 			model.addObject("attachments", this.attachmentService.listAttachment(id, Constants.OBJECT_NAME_BOOK_RECIVE_OUT));

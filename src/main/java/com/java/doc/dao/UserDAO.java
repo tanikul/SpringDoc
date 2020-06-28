@@ -21,6 +21,6 @@ public interface UserDAO {
 	public List<Users> getUserFromGroup(String groupId);
 	public Groups getGroupName(String groupId);
 	public List<Sections> getSectionFromGroupDropDown(String groupId);
-	
+	public Sections getSectionName(String sectionId);
 	public Users findByUserName(String username);
 }

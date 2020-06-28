@@ -9,6 +9,8 @@ public class StatusDetail {
 	private String brToGroupName;
 	private String brToUserName;
 	private String Status;
+	private String brToSection;
+	private String brToSectionName;
 	
 	public String getBrToDepartment() {
 		return brToDepartment;
@@ -51,6 +53,18 @@ public class StatusDetail {
 	}
 	public void setStatus(String status) {
 		Status = status;
+	}
+	public String getBrToSection() {
+		return brToSection;
+	}
+	public void setBrToSection(String brToSection) {
+		this.brToSection = brToSection;
+	}
+	public String getBrToSectionName() {
+		return brToSectionName;
+	}
+	public void setBrToSectionName(String brToSectionName) {
+		this.brToSectionName = brToSectionName;
 	}
 	
 }

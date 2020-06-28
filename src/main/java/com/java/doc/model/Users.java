@@ -126,7 +126,7 @@ public class Users implements java.io.Serializable {
 	
 	@Column(name = "section_id", length = 2)
 	public Integer getSectionId() {
-		return groupId;
+		return sectionId;
 	}
 
 	public void setSectionId(Integer sectionId) {

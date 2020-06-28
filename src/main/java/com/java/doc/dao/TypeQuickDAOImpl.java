@@ -15,8 +15,8 @@ import com.java.doc.model.TypeQuick;
 @Repository("typeQuickDao")
 public class TypeQuickDAOImpl implements TypeQuickDAO {
 	
-	protected Session session;
-    protected Transaction tx;
+	//protected Session session;
+    //protected Transaction tx;
     
     public TypeQuickDAOImpl() {
         HibernateUtil.buildIfNeeded();
@@ -25,7 +25,7 @@ public class TypeQuickDAOImpl implements TypeQuickDAO {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<TypeQuick> listTypeQuick() throws Exception {
-		startOperation();
+		Session session = OpenSession();
 		List<TypeQuick> type = null;
 		try{
 			type = session.createQuery("from TypeQuick where ACTIVE = 'Y'").list();
@@ -38,7 +38,7 @@ public class TypeQuickDAOImpl implements TypeQuickDAO {
 	@SuppressWarnings("unchecked")
 	@Override
 	public HashMap<Integer, String> SelectQuick() throws Exception {
-		startOperation();
+		Session session = OpenSession();
 		List<TypeQuick> type = null;
 		HashMap<Integer, String> list = null;
 		try{
@@ -57,7 +57,7 @@ public class TypeQuickDAOImpl implements TypeQuickDAO {
 	
 	@Override
 	public String getTypeQuickById(Integer id) throws Exception {
-		startOperation();
+		Session session = OpenSession();
 		TypeQuick type = null;
 		try{
 			type = (TypeQuick) session.get(TypeQuick.class, id);
@@ -67,8 +67,13 @@ public class TypeQuickDAOImpl implements TypeQuickDAO {
 		return type.getTypeQuick();
 	}
 	
-	protected void startOperation() throws HibernateException {
+	/*protected void startOperation() throws HibernateException {
         session = HibernateUtil.openSession();
         tx = session.beginTransaction();
-    }
+    }*/
+	
+	private Session OpenSession() {
+		Session session = HibernateUtil.openSession();
+		return session;
+	}
 }
