@@ -113,15 +113,15 @@
 				    	</springForm:select>	    	
 				    </div>
 				  </div>
-				  <div class="form-group">
-				    <label class="col-sm-3 control-label">ถึงฝ่าย</label>
+				  <!-- <div class="form-group">
+				    <label class="col-sm-3 control-label">ถึงฝ่าย/ส่วน</label>
 				    <div class="col-sm-9" id="admin-group">
 				    	<springForm:select path="brToGroup" cssClass="form-control selectpicker" multiple="true" >
 				    		<springForm:options items="${groups}" />
 				    	</springForm:select>   
 				    </div>
 				  </div>
-				  <div class="form-group">
+				   <div class="form-group">
 				    <label class="col-sm-3 control-label">ถึงกลุ่มงาน</label>
 				    <div class="col-sm-9" id="admin-section">
 				    	<springForm:select path="brToSection" cssClass="form-control selectpicker" multiple="true" >
@@ -136,11 +136,11 @@
 				    		<springForm:options items="${userGroups}" />
 				    	</springForm:select>   
 				    </div>
-				  </div>
+				  </div>-->
 				</c:when>
 				<c:when test="${role == 'DEPARTMENT'}">
 				  <div class="form-group">
-				    <label class="col-sm-3 control-label">ถึงฝ่าย</label>
+				    <label class="col-sm-3 control-label">ถึงฝ่าย/ส่วน</label>
 				    <div class="col-sm-9">
 				    	<springForm:select path="brToGroup" cssClass="form-control selectpicker" multiple="true" >
 				    		<springForm:options items="${groups}" />

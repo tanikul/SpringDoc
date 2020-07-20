@@ -20,8 +20,8 @@ public class Constants {
 		ROLES = new HashMap<String, String>();
 		ROLES.put("ADMIN", "เจ้าหน้าที่ดูแลระบบ");
 		ROLES.put("DEPARTMENT", "เจ้าหน้าที่รับ-ส่งหนังสือ ของสำนัก");
-		ROLES.put("GROUP", "เจ้าหน้าที่รับ-ส่งหนังสือ ของฝ่าย");
-		ROLES.put("SECTION", "เจ้าหน้าที่รับ-ส่งหนังสือ ของกลุ่มงาน");
+		ROLES.put("GROUP", "เจ้าหน้าที่รับ-ส่งหนังสือ ของฝ่าย/กลุ่มงาน");
+		//ROLES.put("SECTION", "เจ้าหน้าที่รับ-ส่งหนังสือ ของกลุ่มงาน");
 		ROLES.put("USER", "คนรับมอบงาน");
 		return ROLES;
 	}
