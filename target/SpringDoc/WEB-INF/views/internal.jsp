@@ -106,26 +106,55 @@
 			  <c:choose>
 			  	<c:when test="${role == 'ADMIN'}">
 				  <div class="form-group">
-				    <label class="col-sm-3 control-label">ถึงสำนัก</label>
+				    <label class="col-sm-3 control-label">ถึงส่วนราชการ</label>
 				    <div class="col-sm-9">
 			    		<springForm:select path="brToDepartment" cssClass="form-control selectpicker" multiple="true" >
 				    		<springForm:options items="${divisions}" />
 				    	</springForm:select>	    	
 				    </div>
 				  </div>
-				  <div class="form-group">
-				    <label class="col-sm-3 control-label">ถึงฝ่าย</label>
+				  <!-- <div class="form-group">
+				    <label class="col-sm-3 control-label">ถึงฝ่าย/ส่วน</label>
 				    <div class="col-sm-9" id="admin-group">
 				    	<springForm:select path="brToGroup" cssClass="form-control selectpicker" multiple="true" >
 				    		<springForm:options items="${groups}" />
 				    	</springForm:select>   
 				    </div>
 				  </div>
+				   <div class="form-group">
+				    <label class="col-sm-3 control-label">ถึงกลุ่มงาน</label>
+				    <div class="col-sm-9" id="admin-section">
+				    	<springForm:select path="brToSection" cssClass="form-control selectpicker" multiple="true" >
+				    		<springForm:options items="${sectionsId}" />
+				    	</springForm:select>   
+				    </div>
+				  </div>
+				  <div class="form-group">
+				    <label class="col-sm-3 control-label">ถึงบุคคล</label>
+				    <div class="col-sm-9" id="admin-user">
+				    	<springForm:select path="brToUser" cssClass="form-control selectpicker" multiple="true" >
+				    		<springForm:options items="${userGroups}" />
+				    	</springForm:select>   
+				    </div>
+				  </div>-->
+				</c:when>
+				<c:when test="${role == 'DEPARTMENT'}">
+				  <div class="form-group">
+				    <label class="col-sm-3 control-label">ถึงฝ่าย/ส่วน</label>
+				    <div class="col-sm-9">
+				    	<springForm:select path="brToGroup" cssClass="form-control selectpicker" multiple="true" >
+				    		<springForm:options items="${groups}" />
+				    	</springForm:select>   
+				    </div>
+				  </div>
+				  <springForm:hidden path="brToDepartment"/>
+				</c:when>
+				<c:when test="${role == 'GROUP'}">
 				  <div class="form-group">
 				    <label class="col-sm-3 control-label">ถึงกลุ่มงาน</label>
 				    <div class="col-sm-9" id="admin-section">
 				    	<springForm:select path="brToSection" cssClass="form-control selectpicker" multiple="true" >
-				    		<springForm:options items="${sections}" />
+				    		<springForm:options items="${sectionsId}" />
 				    	</springForm:select>   
 				    </div>
 				  </div>
@@ -137,29 +166,9 @@
 				    	</springForm:select>   
 				    </div>
 				  </div>
-				</c:when>
-				<c:when test="${role == 'DEPARTMENT'}">
-				  <div class="form-group">
-				    <label class="col-sm-3 control-label">ถึงฝ่าย</label>
-				    <div class="col-sm-9">
-				    	<springForm:select path="brToGroup" cssClass="form-control selectpicker" multiple="true" >
-				    		<springForm:options items="${groups}" />
-				    	</springForm:select>   
-				    </div>
-				  </div>
-				  <springForm:hidden path="brToDepartment"/>
-				</c:when>
-				<c:when test="${role == 'GROUP'}">
-				  <div class="form-group">
-				    <label class="col-sm-3 control-label">ถึง</label>
-				    <div class="col-sm-9">
-				    	<springForm:select path="brToUser" cssClass="form-control selectpicker" multiple="true" >
-				    		<springForm:options items="${userGroups}" />
-				    	</springForm:select>   
-				    </div>
-				  </div>
 				  <springForm:hidden path="brToGroup"/>
 				  <springForm:hidden path="brToDepartment"/>
+				  <springForm:hidden path="brToSection"/>
 				</c:when>
 				<c:when test="${role == 'USER'}">
 					<springForm:hidden path="brToGroup"/>
@@ -331,10 +340,66 @@
 						$('#brStatus1').attr('checked', true).attr('disabled', 'disabled');	
 					}
 				}
+			}else if(role == 'GROUP'){
+				var strGroup = "${brToGroup}";
+				var sectionTmp = [];
+
+				var brToSection = "${brToSection}";
+				getUser(strGroup, brToSection, "${brToUser}");
+				getSectionEditMode(strGroup, brToSection)
+				/*$.ajax({
+			        url: GetSiteRoot() + "/getSectionSelectedByAdmin",
+			        type: "POST",
+			        cache: false,
+			        dataType : "json",
+			        data: { 'groups': strGroup },
+			        success: function (response) {
+			        	console.log(response);
+        				var s = '';
+			        	for(var x in response){
+			        		s += '<optgroup label="' + x + '">';
+			        		for(var y in response[x]){
+			        			var t = response[x][y].split('xx#xx');
+			        			s += '<option value="' + t[0] + '">' + t[1] + '</option>'; 
+			        		}
+			        		s += '</optgroup>';			        	  
+			        	}
+			        	var strs = '';
+				        if(s != ''){
+				        	strs = '<select class="form-control selectpicker" id="brToSection" name="brToSection" multiple="true">';
+				        	strs += s;
+				        	strs += '</select>';
+				        	$('#admin-section').html(strs);
+				        	$('#brToSection').selectpicker('refresh');
+				        	$('#brToSection').on('changed.bs.select', function (event, clickedIndex, newValue, oldValue) {
+				        		resetUserSelect();
+				        		if(sectionTmp.hasOwnProperty('x' + clickedIndex)){
+   									delete sectionTmp['x' + clickedIndex];
+   								}else{
+   									var b = $("#brToSection option").eq(clickedIndex).val();
+   									var af = b.split('xx##xx');
+   									sectionTmp['x' + clickedIndex] = af[1];		
+   								}
+   								var str = '';
+   								for(var x in sectionTmp){
+   									str += "'" + sectionTmp[x] + "',";
+   								}
+   								if(str.length > 0){
+   									str = str.substring(0, str.length - 1);
+   								}
+   								getUser(strGroup, str);
+				        	});
+			        	}
+			        }
+			    });*/
 			}else if(role == 'ADMIN'){
 				var departmentTmp = [];
 				var groupTmp = [];
+				var sectionTmp = [];
 				$('#brToDepartment').on('changed.bs.select', function (event, clickedIndex, newValue, oldValue) {
+					resetGroupSelect();
+					resetSectionSelect();
+					resetUserSelect();
 					if(departmentTmp.hasOwnProperty('x' + clickedIndex)){
 						delete departmentTmp['x' + clickedIndex];
 					}else{
@@ -376,7 +441,8 @@
 			        		$('#brToGroup').selectpicker('refresh');
 			        		$('#brToUser').selectpicker('refresh');
 			        		$('#brToGroup').on('changed.bs.select', function (event, clickedIndex, newValue, oldValue) {
-   								
+			        			resetSectionSelect();
+			        			resetUserSelect();
 			        			if(groupTmp.hasOwnProperty('x' + clickedIndex)){
    									delete groupTmp['x' + clickedIndex];
    								}else{
@@ -394,6 +460,7 @@
    									str = "'" + "'";
    								}
    								var strGroup = str;
+   								getUser(strGroup);
    								$.ajax({
    							        url: GetSiteRoot() + "/getSectionSelectedByAdmin",
    							        type: "POST",
@@ -401,97 +468,41 @@
    							        dataType : "json",
    							        data: { 'groups': strGroup },
    							        success: function (response) {
-   							        	if(response != null){
-   							        		var s = '';
-   	   							        	for(var x in response){
-   	   							        		s += '<optgroup label="' + x + '">';
-   	   							        		for(var y in response[x]){
-   	   							        			var t = response[x][y].split('xx#xx');
-   	   							        			console.log(t);
-   	   							        			s += '<option value="' + t[0] + '">' + t[1] + '</option>'; 
-   	   							        		}
-   	   							        		s += '</optgroup>';			        	  
-   	   							        	}
-   	   							        	var strs = '';
-   	   							        	if(s != ''){
-   	   							        		strs = '<select class="form-control selectpicker" id="brToSection" name="brToSection" multiple="true">';
-   	   							        		strs += s;
-   	   							        		strs += '</select>';
-   	   							        		$('#admin-section').html(strs);
-   	   							        		$('#brToSection').selectpicker('refresh');
-	   	   							        	$('#brToSection').on('changed.bs.select', function (event, clickedIndex, newValue, oldValue) {
-		   	   		   								if(groupTmp.hasOwnProperty('x' + clickedIndex)){
-		   	   		   									delete groupTmp['x' + clickedIndex];
-		   	   		   								}else{
-		   	   		   									var b = $("#brToGroup option").eq(clickedIndex).val();
-		   	   		   									var af = b.split('xx##xx');
-		   	   		   									groupTmp['x' + clickedIndex] = af[1];		
-		   	   		   								}
-		   	   		   								var str = '';
-		   	   		   								for(var x in groupTmp){
-		   	   		   									str += "'" + groupTmp[x] + "',";
-		   	   		   								}
-		   	   		   								if(str.length > 0){
-		   	   		   									str = str.substring(0, str.length - 1);
-		   	   		   								}else{
-		   	   		   									str = "'" + "'";
-		   	   		   								}
-				   	   		   						$.ajax({
-				   	   							        url: GetSiteRoot() + "/getUserSelectedByAdmin",
-				   	   							        type: "POST",
-				   	   							        cache: false,
-				   	   							        dataType : "json",
-				   	   							        data: { 'groups': strGroup, 'sections': str },
-				   	   							        success: function (response) {
-				   	   							        	var s = '';
-				   	   							        	for(var x in response){
-				   	   							        		s += '<optgroup label="' + x + '">';
-				   	   							        		for(var y in response[x]){
-				   	   							        			var t = response[x][y].split('xx#xx');
-				   	   							        			s += '<option value="' + t[0] + '">' + t[1] + '</option>'; 
-				   	   							        		}
-				   	   							        		s += '</optgroup>';			        	  
-				   	   							        	}
-				   	   							        	var strs = '';
-				   	   							        	if(s != ''){
-				   	   							        		strs = '<select class="form-control selectpicker" id="brToUser" name="brToUser" multiple="true">';
-				   	   							        		strs += s;
-				   	   							        		strs += '</select>';
-				   	   							        		$('#admin-user').html(strs);
-				   	   							        		$('#brToUser').selectpicker('refresh');
-				   	   							        	}
-				   	   							        }
-				   	   							    });
-	   	   							        	});
-   							        		}
-   							        	}else{
-   							        		$.ajax({
-   			   							        url: GetSiteRoot() + "/getUserSelectedByAdmin",
-   			   							        type: "POST",
-   			   							        cache: false,
-   			   							        dataType : "json",
-   			   							        data: { 'groups': strGroup, 'sections': null },
-   			   							        success: function (response) {
-   			   							        	var s = '';
-   			   							        	for(var x in response){
-   			   							        		s += '<optgroup label="' + x + '">';
-   			   							        		for(var y in response[x]){
-   			   							        			var t = response[x][y].split('xx#xx');
-   			   							        			s += '<option value="' + t[0] + '">' + t[1] + '</option>'; 
-   			   							        		}
-   			   							        		s += '</optgroup>';			        	  
-   			   							        	}
-   			   							        	var strs = '';
-   			   							        	if(s != ''){
-   			   							        		strs = '<select class="form-control selectpicker" id="brToUser" name="brToUser" multiple="true">';
-   			   							        		strs += s;
-   			   							        		strs += '</select>';
-   			   							        		$('#admin-user').html(strs);
-   			   							        		$('#brToUser').selectpicker('refresh');
-   			   							        	}
-   			   							        }
-   			   							    });
-   							        	}
+					        			var s = '';
+  							        	for(var x in response){
+  							        		s += '<optgroup label="' + x + '">';
+  							        		for(var y in response[x]){
+  							        			var t = response[x][y].split('xx#xx');
+  							        			s += '<option value="' + t[0] + '">' + t[1] + '</option>'; 
+  							        		}
+  							        		s += '</optgroup>';			        	  
+  							        	}
+  							        	var strs = '';
+  	   							        if(s != ''){
+  	   							        	strs = '<select class="form-control selectpicker" id="brToSection" name="brToSection" multiple="true">';
+  	   							        	strs += s;
+  	   							        	strs += '</select>';
+  	   							        	$('#admin-section').html(strs);
+  	   							        	$('#brToSection').selectpicker('refresh');
+   	   							        	$('#brToSection').on('changed.bs.select', function (event, clickedIndex, newValue, oldValue) {
+   	   							        		resetUserSelect();
+   	   							        		if(sectionTmp.hasOwnProperty('x' + clickedIndex)){
+	   	   		   									delete sectionTmp['x' + clickedIndex];
+	   	   		   								}else{
+	   	   		   									var b = $("#brToSection option").eq(clickedIndex).val();
+	   	   		   									var af = b.split('xx##xx');
+	   	   		   									sectionTmp['x' + clickedIndex] = af[1];		
+	   	   		   								}
+	   	   		   								var str = '';
+	   	   		   								for(var x in sectionTmp){
+	   	   		   									str += "'" + sectionTmp[x] + "',";
+	   	   		   								}
+	   	   		   								if(str.length > 0){
+	   	   		   									str = str.substring(0, str.length - 1);
+	   	   		   								}
+	   	   		   								getUser(strGroup, str);
+   	   							        	});
+  							        	}
    							        }
    							    });
    							});
@@ -560,7 +571,10 @@
 			        		$('#admin-user').html(strs);
 			        		$('#brToGroup').selectpicker('refresh');
 			        		$('#brToUser').selectpicker('refresh');
+			        		$('#brToSection').selectpicker('refresh');
 			        		$('#brToGroup').on('changed.bs.select', function (event, clickedIndex, newValue, oldValue) {
+			        			resetSectionSelect();
+			        			resetUserSelect();
    								if(groupTmp.hasOwnProperty('x' + clickedIndex)){
    									delete groupTmp['x' + clickedIndex];
    								}else{
@@ -577,30 +591,56 @@
    								}else{
    									str = "'" + "'";
    								}
+   								/*var brToUser = "${brToUser}";
+   								var brToSection = "${brToSection}";
+   								var brToGroup = "${brToGroup}";
+   								getSectionEditMode(brToGroup, brToSection);
+   								getUser(brToGroup, brToSection, brToUser);
+   								*/
+   								var strGroup = str;
+   								getUser(strGroup);
    								$.ajax({
-   							        url: GetSiteRoot() + "/getUserSelectedByAdmin",
+   							        url: GetSiteRoot() + "/getSectionSelectedByAdmin",
    							        type: "POST",
    							        cache: false,
    							        dataType : "json",
-   							        data: { 'groups': str },
+   							        data: { 'groups': strGroup },
    							        success: function (response) {
-   							        	var s = '';
-   							        	for(var x in response){
-   							        		s += '<optgroup label="' + x + '">';
-   							        		for(var y in response[x]){
-   							        			var t = response[x][y].split('xx#xx');
-   							        			s += '<option value="' + t[0] + '">' + t[1] + '</option>'; 
-   							        		}
-   							        		s += '</optgroup>';			        	  
-   							        	}
-   							        	var strs = '';
-   							        	if(s != ''){
-   							        		strs = '<select class="form-control selectpicker" id="brToUser" name="brToUser" multiple="true">';
-   							        		strs += s;
-   							        		strs += '</select>';
-   							        		$('#admin-user').html(strs);
-   							        		$('#brToUser').selectpicker('refresh');
-   							        	}
+					        			var s = '';
+  							        	for(var x in response){
+  							        		s += '<optgroup label="' + x + '">';
+  							        		for(var y in response[x]){
+  							        			var t = response[x][y].split('xx#xx');
+  							        			s += '<option value="' + t[0] + '">' + t[1] + '</option>'; 
+  							        		}
+  							        		s += '</optgroup>';			        	  
+  							        	}
+  							        	var strs = '';
+  	   							        if(s != ''){
+  	   							        	strs = '<select class="form-control selectpicker" id="brToSection" name="brToSection" multiple="true">';
+  	   							        	strs += s;
+  	   							        	strs += '</select>';
+  	   							        	$('#admin-section').html(strs);
+  	   							        	$('#brToSection').selectpicker('refresh');
+   	   							        	$('#brToSection').on('changed.bs.select', function (event, clickedIndex, newValue, oldValue) {
+   	   							        		resetUserSelect();
+   	   							        		if(sectionTmp.hasOwnProperty('x' + clickedIndex)){
+	   	   		   									delete sectionTmp['x' + clickedIndex];
+	   	   		   								}else{
+	   	   		   									var b = $("#brToSection option").eq(clickedIndex).val();
+	   	   		   									var af = b.split('xx##xx');
+	   	   		   									sectionTmp['x' + clickedIndex] = af[1];		
+	   	   		   								}
+	   	   		   								var str = '';
+	   	   		   								for(var x in sectionTmp){
+	   	   		   									str += "'" + sectionTmp[x] + "',";
+	   	   		   								}
+	   	   		   								if(str.length > 0){
+	   	   		   									str = str.substring(0, str.length - 1);
+	   	   		   								}
+	   	   		   								getUser(strGroup, str);
+   	   							        	});
+  							        	}
    							        }
    							    });
    							});
@@ -614,39 +654,17 @@
 							}else{
 								str = "'" + "'";
 							}
+							//var brToUser = "${brToUser}";
+							//var brToSection = "${brToSection}";
+							//var brToGroup = "${brToGroup}";
+							//brToUser = brToUser.split(',');
+							//getSectionEditMode(brToGroup, brToSection);
+							//getUser(str, brToSection, brToUser);
 							var brToUser = "${brToUser}";
-							brToUser = brToUser.split(',');
-							$.ajax({
-						        url: GetSiteRoot() + "/getUserSelectedByAdmin",
-						        type: "POST",
-						        cache: false,
-						        dataType : "json",
-						        data: { 'groups': str },
-						        success: function (response) {
-						        	var s = '';
-						        	for(var x in response){
-						        		s += '<optgroup label="' + x + '">';
-						        		for(var y in response[x]){
-						        			var t = response[x][y].split('xx#xx');
-						        			var p = t[0].split('xx##xx');
-						        			if(brToUser.indexOf(p[2]) > -1){
-						        				s += '<option value="' + t[0] + '" selected>' + t[1] + '</option>'; 	
-						        			}else{
-						        				s += '<option value="' + t[0] + '">' + t[1] + '</option>'; 
-						        			} 
-						        		}
-						        		s += '</optgroup>';			        	  
-						        	}
-						        	var strs = '';
-						        	if(s != ''){
-						        		strs = '<select class="form-control selectpicker" id="brToUser" name="brToUser" multiple="true">';
-						        		strs += s;
-						        		strs += '</select>';
-						        		$('#admin-user').html(strs);
-						        		$('#brToUser').selectpicker('refresh');
-						        	}
-						        }
-						    });
+							var brToSection = "${brToSection}";
+							var brToGroup = "${brToGroup}";
+							getSectionEditMode(brToGroup, brToSection);
+							getUser(brToGroup, brToSection, brToUser);
 				        }
 					});
 		        }	    
@@ -777,7 +795,143 @@
 					}
 				});
 			 });
+			 function getUser(strGroup, sections, brToUser){
+				 
+				 if(typeof sections == 'undefined'){
+					 sections = null;
+				 }
+				 if(typeof brToUser == 'undefined'){
+					 brToUser = null;
+				 }
+				 
+				 $.ajax({
+			        url: GetSiteRoot() + "/getUserSelectedByAdmin",
+			        type: "POST",
+			        cache: false,
+			        dataType : "json",
+			        data: { 'groups': strGroup, 'sections': sections },
+			        success: function (response) {
+			        	var s = '';
+	        			if(brToUser != '' && brToUser != null){
+	        				brToUser = brToUser.split(',');
+						}console.log(brToUser);
+			        	for(var x in response){
+			        		//s += '<optgroup label="' + x + '">';
+			        		//var subject;
+			        		for(var y in response[x]){
+			        			var t = response[x][y].split('xx#xx');
+			        			if(brToUser != null && brToUser.indexOf(t[2]) > -1){
+			        				if(t.length == 6){
+				        				s += '<option value="' + t[0] + 'xx##xx' + t[1] + 'xx##xx' + t[2] + 'xx##xx' + t[3] + '" selected>' + t[5] + '</option>'; 
+				        			}else if(t.length == 4){
+				        				s += '<option value="' + t[0] + 'xx##xx' + t[1] + 'xx##xx' + t[2] + '" selected>' + t[3] + '</option>'; 
+				        			}	
+			        			}else{
+			        				if(t.length == 6){
+				        				s += '<option value="' + t[0] + 'xx##xx' + t[1] + 'xx##xx' + t[2] + 'xx##xx' + t[3] + '">' + t[5] + '</option>'; 
+				        			}else if(t.length == 4){
+				        				s += '<option value="' + t[0] + 'xx##xx' + t[1] + 'xx##xx' + t[2] + '">' + t[3] + '</option>'; 
+				        			}
+			        			}
+			        		}
+			        		s = '<optgroup label="">' +  s + '</optgroup>';			        	  
+			        	}
+			        	var strs = '';
+			        	if(s != ''){
+			        		strs = '<select class="form-control selectpicker" id="brToUser" name="brToUser" multiple="true">';
+			        		strs += s;
+			        		strs += '</select>';
+			        		$('#admin-user').html(strs);
+			        		$('#brToUser').selectpicker('refresh');
+			        	}
+			        }
+			    });
+			 }
 			 
+			 
+			 function getSectionEditMode(strGroup, brToSection){
+				 $.ajax({
+			        url: GetSiteRoot() + "/getSectionSelectedByAdmin",
+			        type: "POST",
+			        cache: false,
+			        dataType : "json",
+			        data: { 'groups': strGroup },
+			        success: function (response) {
+	        			var s = '';
+	        			if(brToSection != '' && brToSection != null){
+							brToSection = brToSection.split(',');
+						}
+	        			console.log(brToSection);
+			        	for(var x in response){
+
+			        		s += '<optgroup label="' + x + '">';
+			        		for(var x in response){
+				        		s += '<optgroup label="' + x + '">';
+				        		for(var y in response[x]){
+				        			var t = response[x][y].split('xx#xx');
+				        			var o = t[0].split('xx##xx');
+				        			console.log(t);
+									if(brToSection.indexOf(o[1]) > -1){
+				        				s += '<option value="' + t[0] + '" selected>' + t[1] + '</option>'; 	
+				        			}else{
+				        				s += '<option value="' + t[0] + '">' + t[1] + '</option>'; 
+				        			}
+				        			
+				        		}
+				        		s += '</optgroup>';			        	  
+				        	}
+			        		s += '</optgroup>';			        	  
+			        	}
+			        	var strs = '';
+					        if(s != ''){
+					        	strs = '<select class="form-control selectpicker" id="brToSection" name="brToSection" multiple="true">';
+					        	strs += s;
+					        	strs += '</select>';
+					        	$('#admin-section').html(strs);
+					        	$('#brToSection').selectpicker('refresh');
+					        	$('#brToSection').on('changed.bs.select', function (event, clickedIndex, newValue, oldValue) {
+					        		resetUserSelect();
+					        		if(sectionTmp.hasOwnProperty('x' + clickedIndex)){
+	   									delete sectionTmp['x' + clickedIndex];
+	   								}else{
+	   									var b = $("#brToSection option").eq(clickedIndex).val();
+	   									var af = b.split('xx##xx');
+	   									sectionTmp['x' + clickedIndex] = af[1];		
+	   								}
+	   								var str = '';
+	   								for(var x in sectionTmp){
+	   									str += "'" + sectionTmp[x] + "',";
+	   								}
+	   								if(str.length > 0){
+	   									str = str.substring(0, str.length - 1);
+	   								}
+	   								getUser(strGroup, str);
+					        	});
+			        	}
+			        }
+			    });
+			 }
+			 
+			 function resetGroupSelect(){
+				var strs = '<select class="form-control selectpicker" id="brToGroup" name="brToGroup" multiple="true">';
+	        	strs += '</select>';
+	        	$('#admin-group').html(strs);
+        		$('#brToGroup').selectpicker('refresh');
+			 }
+			 
+			 function resetSectionSelect(){
+				var strs = '<select class="form-control selectpicker" id="brToSection" name="brToSection" multiple="true">';
+	        	strs += '</select>';
+	        	$('#admin-section').html(strs);
+        		$('#brToSection').selectpicker('refresh');
+			 }
+			 
+			 function resetUserSelect(){
+				var strs = '<select class="form-control selectpicker" id="brToUser" name="brToUser" multiple="true">';
+	        	strs += '</select>';
+	        	$('#admin-user').html(strs);
+        		$('#brToUser').selectpicker('refresh');
+			 }
 		});
 	</script> 
 	</jsp:body>

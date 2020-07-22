@@ -3,6 +3,7 @@ package com.java.doc.util;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
 
@@ -10,14 +11,14 @@ public class Constants {
 	
 	public final static String OBJECT_NAME_BOOK_RECIVE_OUT = "BOOK_RECIVE_OUT";
 	public final static String OBJECT_NAME_BOOK_SEND_OUT = "BOOK_SEND_OUT";
-	public static Map<String, String> ROLES;
+	public static LinkedHashMap<String, String> ROLES;
 	public final static String[] PREFIXS = {"นาย", "นาง", "นางสาว"};
 	public static Map<Integer, String> STATUS;
 	public static String SUCCESS = "SUCCESS";
 	public static String FAIL = "FAIL";
 	
-	public static Map<String, String> getRoles() {
-		ROLES = new HashMap<String, String>();
+	public static LinkedHashMap<String, String> getRoles() {
+		ROLES = new LinkedHashMap<String, String>();
 		ROLES.put("ADMIN", "เจ้าหน้าที่ดูแลระบบ");
 		ROLES.put("DEPARTMENT", "เจ้าหน้าที่รับ-ส่งหนังสือ ของสำนัก");
 		ROLES.put("GROUP", "เจ้าหน้าที่รับ-ส่งหนังสือ ของฝ่าย/กลุ่มงาน");

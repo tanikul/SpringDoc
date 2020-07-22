@@ -106,7 +106,7 @@
 			  <c:choose>
 			  	<c:when test="${role == 'ADMIN'}">
 				  <div class="form-group">
-				    <label class="col-sm-3 control-label">ถึงสำนัก</label>
+				    <label class="col-sm-3 control-label">ถึงส่วนราชการ</label>
 				    <div class="col-sm-9">
 			    		<springForm:select path="brToDepartment" cssClass="form-control selectpicker" multiple="true" >
 				    		<springForm:options items="${divisions}" />
