@@ -437,7 +437,6 @@ saveAddUser = function(){
 	        cache: false,
 	        data: { 'username': username, 'password': password,'fname': fname, 'lname' : lname, 'division' : division, 'groupId' : groupId, 'prefix' : prefix, 'role' : role, 'sectionId': sectionId },
 	        success: function (response) {
-			alert(response);
 	        	if(response == 'success'){
 	        		table.ajax.reload();
 	        		$('#form-modal').modal('hide');

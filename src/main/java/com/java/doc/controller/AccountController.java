@@ -346,7 +346,7 @@ public class AccountController {
 			if(r) {
 				rs = "success";
 			}else {
-				rs = "success";
+				rs = "fail";
 			}
 		}catch(Exception ex){
 			logger.error("AddUser_POST : ", ex);
