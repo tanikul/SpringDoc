@@ -13,15 +13,22 @@
 			  <div class="form-group">
 			    <label class="col-sm-3 control-label">Username</label>
 			    <div class="col-sm-9">
-			    	<springForm:input path="username" cssClass="form-control"/>
+			    	<springForm:input path="username" cssClass="form-control"disabled="true"/>
 			    </div>
 			  </div>
-			  <div class="form-group">
-			    <label class="col-sm-3 control-label">Password</label>
-			    <div class="col-sm-9">
-			    	<springForm:password path="password" cssClass="form-control"/>
-			    </div>
-			  </div>
+			  <c:choose>
+				  <c:when test="${role != 'ADMIN'}">
+					  <div class="form-group">
+					    <label class="col-sm-3 control-label">Password</label>
+					    <div class="col-sm-9">
+					    	<springForm:password path="password" cssClass="form-control"/>
+					    </div>
+					  </div>
+				  </c:when>
+				  <c:otherwise>
+				  	 <springForm:hidden path="password"/>
+				  </c:otherwise>
+			  </c:choose>
 			  <div class="form-group">
 			    <label class="col-sm-3 control-label">ชื่อ</label>
 			    <div class="col-sm-3">
@@ -41,7 +48,7 @@
 			    </div>
 			  </div>
 			  <div class="form-group">
-			    <label class="col-sm-3 control-label">สำนัก</label>
+			    <label class="col-sm-3 control-label">ส่วนราชการ</label>
 			    <div class="col-sm-9">
 			    	<springForm:select path="divisionCode" cssClass="form-control" onchange="changeDivisionToGroup(this);">
 			    		<springForm:option value="" label="--- เลือกสำนัก ---" />
@@ -50,9 +57,9 @@
 			    </div>
 			  </div>
 			  <div class="form-group">
-			    <label class="col-sm-3 control-label">ฝ่าย</label>
+			    <label class="col-sm-3 control-label">ฝ่าย/ส่วนงาน</label>
 			    <div class="col-sm-9" id="group-box">
-			    	<springForm:select path="groupId" cssClass="form-control">
+			    	<springForm:select path="groupId" cssClass="form-control" onchange="changeGroupToSection(this);">
 			    		<springForm:option value="" label="--- เลือกฝ่าย ---" />
 			    		<springForm:options items="${groups}" />
 			    	</springForm:select>   

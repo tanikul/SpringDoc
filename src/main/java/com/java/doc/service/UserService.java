@@ -11,7 +11,7 @@ import com.java.doc.model.Users;
 
 public interface UserService {
 	
-	public void addUser(Users u);
+	public boolean addUser(Users u);
 	public void updateUser(Users u);
 	public List<Users> listUser();
 	public Users getUserById(int id);

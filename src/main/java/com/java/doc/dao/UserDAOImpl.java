@@ -116,7 +116,7 @@ public class UserDAOImpl implements UserDAO {
 	@Override
 	public Users findByUserName(String username) {
 		Session session = OpenSession();
-		Users users = new Users();
+		Users users = null;
 		try {
 			users = (Users) session.createQuery("from Users where username=?").setParameter(0, username).uniqueResult();
 			/*Criteria query = session.createCriteria(Users.class);

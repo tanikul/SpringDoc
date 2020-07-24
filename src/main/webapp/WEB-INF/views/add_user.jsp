@@ -44,7 +44,7 @@
 			    </div>
 			  </div>
 			  <div class="form-group">
-			    <label class="col-sm-3 control-label">สำนัก</label>
+			    <label class="col-sm-3 control-label">ส่วนราชการ</label>
 			    <div class="col-sm-9">
 			    	<springForm:select path="division" cssClass="form-control" value="${obj.getDivisionCode()}" onchange="changeDivisionToGroup(this);">
 			    		<springForm:option value="" label="--- เลือกสำนัก ---" />
@@ -54,9 +54,9 @@
 			    </div>
 			  </div>
 			  <div class="form-group">
-			    <label class="col-sm-3 control-label">ฝ่าย</label>
+			    <label class="col-sm-3 control-label">ฝ่าย/ส่วนงาน</label>
 			    <div class="col-sm-9" id="group-box">
-			    	<springForm:select path="groupId" cssClass="form-control" value="${obj.getGroupId()}" disabled="true">
+			    	<springForm:select path="groupId" cssClass="form-control" value="${obj.getGroupId()}" disabled="true" onchange="changeGroupToSection(this);">
 			    		<springForm:option value="" label="--- เลือกฝ่าย ---" />
 			    	</springForm:select>   
 			    	<p class="help-block"></p>

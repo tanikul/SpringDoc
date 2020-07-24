@@ -437,10 +437,13 @@ saveAddUser = function(){
 	        cache: false,
 	        data: { 'username': username, 'password': password,'fname': fname, 'lname' : lname, 'division' : division, 'groupId' : groupId, 'prefix' : prefix, 'role' : role, 'sectionId': sectionId },
 	        success: function (response) {
+			alert(response);
 	        	if(response == 'success'){
 	        		table.ajax.reload();
 	        		$('#form-modal').modal('hide');
-	        	}
+	        	}else{
+					alert("Username ซ้ำกับที่มีอยู่ในระบบ กรุณาระบุใหม่");
+				}
 	        }
 	    });
 	}
@@ -640,9 +643,10 @@ function changeDivisionToGroup(obj){
         	if(str != ''){
         		str = '<select id="groupId" name="groupId" class="form-control" onchange="changeGroupToSection(this);"><option value="">--- เลือกฝ่าย ---</option>' + str + '</select>';
         		$('#group-box').html(str);
-        	}else{
+	    	}else{
         		$('#groupId').val('').attr('disabled', true);
         	}
+			$('#sectionId').val('');
         }
     });
 }

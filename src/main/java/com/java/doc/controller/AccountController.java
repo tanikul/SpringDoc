@@ -214,15 +214,27 @@ public class AccountController {
 	
 	@RequestMapping(value = "/editUser", method = RequestMethod.POST)
 	@PreAuthorize("isAuthenticated()")
-	public ModelAndView Edit(@RequestParam("id")int id ) {
+	public ModelAndView Edit(@RequestParam("id")int id, HttpServletRequest request) {
 		ModelAndView model = new ModelAndView();
 		try{
+			Users users = new Users();
+			if(request.getSession().getAttribute("user") == null){
+				users = userService.findByUserName(request.getUserPrincipal().getName());
+				request.getSession().setAttribute("user", users);
+			}else{
+				users = (Users) request.getSession().getAttribute("user");
+				if(!users.getUsername().equals(request.getUserPrincipal().getName())){
+					users = userService.findByUserName(request.getUserPrincipal().getName());
+					request.getSession().setAttribute("user", users);
+				}
+			}
+			model.addObject("role", users.getRole());
 			UserTable user = userService.findUserById(id); 
 			model.addObject("users", user);
 			model.addObject("divisions", divisionService.selectDivision());
 			model.addObject("roles", Constants.getRoles());
 			model.addObject("groups", userService.getGroupFromDivisionDropDown(user.getDivisionCode()));
-			model.addObject("sections", userService.getSectionFromGroupDropDown(user.getGroupId().toString()));
+			model.addObject("sections", (user.getGroupId() == null) ? null : userService.getSectionFromGroupDropDown(user.getGroupId().toString()));
 			model.addObject("prefixs", Constants.PREFIXS);
 			model.setViewName("edit_user");
 		}catch(Exception ex){
@@ -242,14 +254,26 @@ public class AccountController {
 			@RequestParam("role") String role,
 			@RequestParam("groupId") Integer groupId,
 			@RequestParam("prefix") String prefix,
-			@RequestParam(value = "sectionId", required=false) Integer sectionId) {
+			@RequestParam(value = "sectionId", required=false) Integer sectionId,
+			HttpServletRequest request) {
 		try{
 			Users user = userService.getUserById(id);
 			user.setFname(fname);
 			user.setLname(lname);
 			user.setRole(role);
 			user.setUsername(username);
-			if(!StringUtils.isNullOrEmpty(password)){
+			Users users = new Users();
+			if(request.getSession().getAttribute("user") == null){
+				users = userService.findByUserName(request.getUserPrincipal().getName());
+				request.getSession().setAttribute("user", users);
+			}else{
+				users = (Users) request.getSession().getAttribute("user");
+				if(!users.getUsername().equals(request.getUserPrincipal().getName())){
+					users = userService.findByUserName(request.getUserPrincipal().getName());
+					request.getSession().setAttribute("user", users);
+				}
+			}
+			if(!StringUtils.isNullOrEmpty(password) && !users.getRole().equals("ADMIN")){
 				BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 				String hashedPassword = passwordEncoder.encode(password);
 				user.setPassword(hashedPassword);
@@ -305,6 +329,7 @@ public class AccountController {
 			@RequestParam("groupId") Integer groupId,
 			@RequestParam("prefix") String prefix,
 			@RequestParam("sectionId") Integer sectionId) {
+		String rs = "";
 		try {
 			Users user = new Users();
 			user.setUsername(username);
@@ -317,12 +342,17 @@ public class AccountController {
 			user.setRole(role);
 			user.setGroupId(groupId);
 			user.setPrefix(prefix);
-			userService.addUser(user);
+			boolean r = userService.addUser(user);
+			if(r) {
+				rs = "success";
+			}else {
+				rs = "success";
+			}
 		}catch(Exception ex){
 			logger.error("AddUser_POST : ", ex);
 			return ex.getMessage();
 		}
-		return "success";
+		return rs;
 	}
 	
 	@RequestMapping(value = "/account/getGroup", method = RequestMethod.POST, headers = {"Accept=text/xml, application/json;charset=UTF-8"}, produces = "application/json")

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import com.java.doc.dao.UserDAO;
 import com.java.doc.model.DataTable;
@@ -28,8 +29,13 @@ public class UserServiceImpl implements UserService {
 	
 	@Override
 	@Transactional
-	public void addUser(Users u) {
+	public boolean addUser(Users u) {
+		Users user = userDao.findByUserName(u.getUsername());
+		if(user != null) {
+			return false;
+		}
 		this.userDao.addUser(u);
+		return true;
 	}
 
 	@Override
@@ -121,6 +127,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public Map<Integer, String> getSectionFromGroupDropDown(String groupId) {
+		if(StringUtils.isEmpty(groupId)) return null;
 		Map<Integer, String> map = null;
 		try{
 			map = new HashMap<Integer, String>();
@@ -139,6 +146,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public Sections getSectionName(String sectionId) {
+		if(StringUtils.isEmpty(sectionId)) return null;
 		return userDao.getSectionName(sectionId);
 	}
 

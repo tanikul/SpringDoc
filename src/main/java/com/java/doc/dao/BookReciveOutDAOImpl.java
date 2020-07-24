@@ -954,6 +954,9 @@ public class BookReciveOutDAOImpl implements BookReciveOutDAO {
 		try {
 			String[] arrSections = null;
 			String sql = "";
+			if(StringUtils.isNullOrEmpty((groups))) {
+				groups = "''";
+			}
 			if(!StringUtils.isNullOrEmpty(sections)) {
 				sections = sections.replaceAll("'",  "");
 				arrSections = sections.split(",");
@@ -1121,6 +1124,9 @@ public class BookReciveOutDAOImpl implements BookReciveOutDAO {
 	public Map<String, List<String>> getSectionSelectedByAdmin(String groups) {
 		Map<String, List<String>> map = null;
 		Session session = OpenSession();
+		if(StringUtils.isNullOrEmpty((groups))) {
+			groups = "''";
+		}
 		try {
 			String sql = "SELECT b.group_name, a.id, a.section_name, a.group_id FROM sections a INNER JOIN groups b ON a.group_id = b.group_id WHERE a.group_id IN (" + groups + ")";
 			Query query = session.createSQLQuery(sql);
