@@ -97,7 +97,7 @@ public class InternalController {
 			sendRecive.setBrTypeQuick(1);
 			sendRecive.setBrTypeSecret(1);
 			sendRecive.setBrToDepartment("-1");
-			sendRecive.setBrTo("สำนักผังเมือง");
+			sendRecive.setBrTo("สำนักการวางผังและพัฒนาเมือง");
 			
 			Users user = new Users();
 			if(request.getSession().getAttribute("user") == null){

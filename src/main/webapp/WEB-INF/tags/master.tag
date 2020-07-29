@@ -26,7 +26,7 @@
 </head>
   <body>
  	<nav class="navbar navbar-default navbar-fixed-top" role="navigation" style="min-height:65px;">
-    <a class="navbar-brand" href="#"><img src="<c:url value="/img/HL-02.jpg" />"/></a>
+    <a class="navbar-brand" href="#"><img src="<c:url value="/img/HL-WebApp-2019.jpg" />"/></a>
     	
 	</nav>
 	<sec:authorize access="isAuthenticated()">

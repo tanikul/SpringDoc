@@ -657,7 +657,7 @@ public class BookReciveOutServiceImpl implements BookReciveOutService {
 				bookRecieveGroup.setBrToDepartment(recive.getBrToDepartment());
 				rs = reciveout.updateReciveOutGroup(bookRecieveGroup);
 				String brToNotIn = "\'\'";
-				Map<Integer, String> arr = new HashMap<>();
+				Map<Integer, String> arr = new HashMap<Integer, String>();
 				if(!StringUtils.isNullOrEmpty(brTo)){
 					String[] arrTmp = (brTo.indexOf(",") > -1) ? brTo.split(",") : new String[]{brTo};
 					if(arrTmp.length > 0){
