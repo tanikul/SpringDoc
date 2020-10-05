@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:sec="http://www.springframework.org/schema/security"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:p="http://www.springframework.org/schema/p" 
+	xmlns:mvc="http://www.springframework.org/schema/mvc" 
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context-3.0.xsd
+	http://www.springframework.org/schema/mvc
+	http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
+	http://www.springframework.org/schema/security
+	http://www.springframework.org/schema/security/spring-security-3.2.xsd
+	http://www.springframework.org/schema/aop
+    http://www.springframework.org/schema/aop/spring-aop-3.2.xsd">
+	
+	<sec:global-method-security pre-post-annotations="enabled"/>
+	<mvc:annotation-driven />
+
+	<!-- Handles HTTP GET requests for /resources/** by efficiently serving up static resources in the ${webappRoot}/resources directory -->
+	<mvc:resources mapping="/css/**" location="/resources/css/" />
+	<mvc:resources mapping="/js/**" location="/resources/js/" />
+	<mvc:resources mapping="/img/**" location="/resources/css/img/" />
+	<mvc:resources mapping="/images/**" location="/resources/css/images/" />
+	<mvc:resources mapping="/fonts/**" location="/resources/css/fonts/" />
+	<mvc:resources mapping="/plugins/**" location="/resources/plugins/" />
+	
+	<!-- Resolves views selected for rendering by @Controllers to .jsp resources in the /WEB-INF/views directory -->
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/WEB-INF/views/" />
+		<property name="suffix" value=".jsp" />
+	</bean>
+		<bean id="ExcelRevenueSummary"
+		class="com.java.doc.view.ExcelRevenueReportView">
+	</bean>
+
+ 	
+ 	<bean id="LoginValidator" class="com.java.doc.validator.LoginValidator" />
+ 	
+ 	
+ 	<bean id="messageSource"
+        class="org.springframework.context.support.ResourceBundleMessageSource">
+        <property name="basename" value="messages" />
+        <property name="defaultEncoding" value="UTF-8" />
+    </bean>
+ 
+    <import resource="jasper-views.xml" />
+    <bean class="org.springframework.web.servlet.view.XmlViewResolver"
+			p:location="/WEB-INF/spring/appServlet/jasper-views.xml"  p:order="0" />
+
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+         <!-- setting maximum upload size -->
+        <property name="maxUploadSize" value="99999999" />
+    </bean>
+    <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+		<property name="messageConverters">
+			<array>
+				<bean class="org.springframework.http.converter.StringHttpMessageConverter">
+					<property name="supportedMediaTypes" value="text/html;charset=UTF-8" />
+				</bean>
+			</array>
+		</property>
+	</bean>
+	<context:component-scan base-package="com.java.doc.controller, com.java.doc.dao, com.java.doc.service" />
+</beans>
