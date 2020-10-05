@@ -180,7 +180,9 @@ public class BookReciveOutDAOImpl implements BookReciveOutDAO {
 			sql += "a.UPDATED_BY,";
 			sql += "a.UPDATED_DATE,";
 			sql += "a.BR_TO_SECTION,";
-			sql += "a.BR_TO_SECTION_NAME";
+			sql += "a.BR_TO_SECTION_NAME, ";
+			sql += "b.RUNNING_NO RUNNING_NO_DEPARTMENT, ";
+			sql += " NULL BR_REMARK_DEPARTMENT, NULL BR_REMARK_GROUP, NULL BR_REMARK_SECTION, NULL BR_REMARK_USER";
 			sql += " FROM BOOK_RECIVE_OUT a LEFT JOIN BOOK_RECIEVE_DEPARTMENT b ON a.br_id = b.br_id ";
 			sql += " LEFT JOIN BOOK_RECIEVE_GROUP c ON b.br_id = c.br_id AND b.BR_TO_DEPARTMENT = c.BR_TO_DEPARTMENT"; 
 			sql += " LEFT JOIN BOOK_RECIEVE_USER d ON c.br_id = d.br_id AND c.BR_TO_GROUP = d.BR_TO_GROUP";
@@ -239,7 +241,7 @@ public class BookReciveOutDAOImpl implements BookReciveOutDAO {
 				}
 				sql = sql.substring(0, sql.length() - 4);
 			}
-			sql += " GROUP BY a.br_id ";
+			sql += " GROUP BY a.br_id, RUNNING_NO_DEPARTMENT ";
 			List<BookReciveOut> book = session.createSQLQuery(sql).addEntity(BookReciveOut.class).list();
 			bookReciveOutTable.setCountSelect(book.size());
 			bookReciveOutTable.setSendoutListReport(book);
@@ -324,6 +326,7 @@ public class BookReciveOutDAOImpl implements BookReciveOutDAO {
 			sql += "a.DIVISION,";
 			sql += "a.UPDATED_BY,";
 			sql += "a.UPDATED_DATE,";
+			sql += "b.RUNNING_NO RUNNING_NO_DEPARTMENT,";
 			if(user.getRole().equals("ADMIN")){
 				sql += "a.BR_STATUS,";
 				sql += "GROUP_CONCAT(DISTINCT b.BR_TO_DEPARTMENT ORDER BY b.BR_TO_DEPARTMENT ASC SEPARATOR ',') BR_TO_DEPARTMENT, ";
@@ -332,7 +335,8 @@ public class BookReciveOutDAOImpl implements BookReciveOutDAO {
 				sql += "NULL BR_TO_GROUP_NAME, NULL BR_TO_SECTION_NAME, NULL BR_TO_USER_NAME,";
 				sql += "GROUP_CONCAT(DISTINCT d.BR_TO_USER ORDER BY d.BR_TO_USER ASC SEPARATOR ',') BR_TO_USER,";
 				sql += "GROUP_CONCAT(DISTINCT c.BR_TO_GROUP ORDER BY c.BR_TO_GROUP ASC SEPARATOR ',') BR_TO_GROUP,"; 
-				sql += "GROUP_CONCAT(DISTINCT e.BR_TO_SECTION ORDER BY e.BR_TO_SECTION ASC SEPARATOR ',') BR_TO_SECTION"; 
+				sql += "GROUP_CONCAT(DISTINCT e.BR_TO_SECTION ORDER BY e.BR_TO_SECTION ASC SEPARATOR ',') BR_TO_SECTION, "; 
+				sql += " NULL BR_REMARK_DEPARTMENT, NULL BR_REMARK_GROUP, NULL BR_REMARK_SECTION, NULL BR_REMARK_USER";
 				sql += " FROM BOOK_RECIVE_OUT a LEFT JOIN BOOK_RECIEVE_DEPARTMENT b ON a.br_id = b.br_id ";
 				sql += " LEFT JOIN BOOK_RECIEVE_GROUP c ON a.br_id = c.br_id AND c.BR_TO_DEPARTMENT = b.BR_TO_DEPARTMENT";
 				sql += " LEFT JOIN BOOK_RECIEVE_SECTION e ON a.br_id = e.br_id AND c.BR_TO_GROUP = e.BR_TO_GROUP";
@@ -342,7 +346,8 @@ public class BookReciveOutDAOImpl implements BookReciveOutDAO {
 				sql += "a.BR_STATUS,";
 				sql += "GROUP_CONCAT(c.BR_TO_GROUP SEPARATOR ',') BR_TO_GROUP,";
 				sql += "GROUP_CONCAT(c.BR_TO_GROUP_NAME SEPARATOR ',') BR_TO_GROUP_NAME, ";
-				sql += "NULL BR_TO_USER, NULL BR_TO_SECTION, NULL BR_TO_SECTION_NAME, NULL BR_TO_USER_NAME, b.BR_TO_DEPARTMENT, b.BR_TO_DEPARTMENT_SHORT, b.BR_TO_DEPARTMENT_NAME";
+				sql += "NULL BR_TO_USER, NULL BR_TO_SECTION, NULL BR_TO_SECTION_NAME, NULL BR_TO_USER_NAME, b.BR_TO_DEPARTMENT, b.BR_TO_DEPARTMENT_SHORT, b.BR_TO_DEPARTMENT_NAME, ";
+				sql += " b.REMARK BR_REMARK_DEPARTMENT, NULL BR_REMARK_GROUP, NULL BR_REMARK_SECTION, NULL BR_REMARK_USER";
 				sql += " FROM BOOK_RECIVE_OUT a LEFT JOIN BOOK_RECIEVE_DEPARTMENT b ON a.br_id = b.br_id LEFT JOIN BOOK_RECIEVE_GROUP c ON b.br_id = c.br_id AND b.BR_TO_DEPARTMENT = c.BR_TO_DEPARTMENT ";
 				sql += " AND c.BR_TO_DEPARTMENT = b.BR_TO_DEPARTMENT";
 				sql += " WHERE a.br_id = " + brId;
@@ -354,7 +359,8 @@ public class BookReciveOutDAOImpl implements BookReciveOutDAO {
 				sql += "GROUP_CONCAT(DISTINCT e.BR_TO_SECTION_NAME ORDER BY e.BR_TO_SECTION_NAME ASC SEPARATOR ',') BR_TO_SECTION_NAME ,";
 				sql += "GROUP_CONCAT(DISTINCT d.BR_TO_USER_NAME ORDER BY d.BR_TO_USER_NAME ASC SEPARATOR ',') BR_TO_USER_NAME ,";
 				sql += "GROUP_CONCAT(DISTINCT d.BR_TO_USER ORDER BY d.BR_TO_USER ASC SEPARATOR ',') BR_TO_USER ,";
-				sql += "c.BR_TO_GROUP, c.BR_TO_GROUP_NAME, b.BR_TO_DEPARTMENT, b.BR_TO_DEPARTMENT_SHORT, b.BR_TO_DEPARTMENT_NAME";
+				sql += "c.BR_TO_GROUP, c.BR_TO_GROUP_NAME, b.BR_TO_DEPARTMENT, b.BR_TO_DEPARTMENT_SHORT, b.BR_TO_DEPARTMENT_NAME, ";
+				sql += " b.REMARK BR_REMARK_DEPARTMENT, c.REMARK BR_REMARK_GROUP, e.REMARK BR_REMARK_SECTION, NULL BR_REMARK_USER";
 				sql += " FROM BOOK_RECIVE_OUT a LEFT JOIN BOOK_RECIEVE_DEPARTMENT b ON a.br_id = b.br_id LEFT JOIN BOOK_RECIEVE_GROUP c ON b.br_id = c.br_id AND b.BR_TO_DEPARTMENT = c.BR_TO_DEPARTMENT LEFT JOIN BOOK_RECIEVE_USER d ON c.br_id = d.br_id AND c.BR_TO_GROUP = d.BR_TO_GROUP ";
 				sql += " LEFT JOIN BOOK_RECIEVE_SECTION e ON b.br_id = e.br_id ";
 				sql += " AND d.BR_TO_GROUP = c.BR_TO_GROUP";
@@ -366,19 +372,23 @@ public class BookReciveOutDAOImpl implements BookReciveOutDAO {
 				sql += "GROUP_CONCAT(d.BR_TO_USER SEPARATOR ',') BR_TO_USER,";
 				sql += "GROUP_CONCAT(d.BR_TO_USER_NAME SEPARATOR ',') BR_TO_USER_NAME, ";
 				sql += " NULL BR_TO_SECTION, NULL BR_TO_SECTION_NAME,";
-				sql += "c.BR_TO_GROUP, c.BR_TO_GROUP_NAME, b.BR_TO_DEPARTMENT, b.BR_TO_DEPARTMENT_SHORT, b.BR_TO_DEPARTMENT_NAME";
+				sql += "c.BR_TO_GROUP, c.BR_TO_GROUP_NAME, b.BR_TO_DEPARTMENT, b.BR_TO_DEPARTMENT_SHORT, b.BR_TO_DEPARTMENT_NAME, ";
+				sql += " b.REMARK BR_REMARK_DEPARTMENT, c.REMARK BR_REMARK_GROUP, e.REMARK BR_REMARK_SECTION, d.REMARK BR_REMARK_USER";
 				sql += " FROM BOOK_RECIVE_OUT a LEFT JOIN BOOK_RECIEVE_DEPARTMENT b ON a.br_id = b.br_id LEFT JOIN BOOK_RECIEVE_GROUP c ON b.br_id = c.br_id AND b.BR_TO_DEPARTMENT = c.BR_TO_DEPARTMENT LEFT JOIN BOOK_RECIEVE_USER d ON c.br_id = d.br_id AND c.BR_TO_GROUP = d.BR_TO_GROUP AND b.BR_TO_DEPARTMENT = d.BR_TO_DEPARTMENT";
 				sql += " AND d.BR_TO_GROUP = c.BR_TO_GROUP";
+				sql += " LEFT JOIN BOOK_RECIEVE_SECTION e ON b.br_id = e.br_id ";
 				sql += " WHERE a.br_id = " + brId;
 				sql += " AND b.BR_TO_DEPARTMENT = '" + user.getDivision() + "'";
 				sql += " AND c.BR_TO_GROUP = '" + user.getGroupId() + "'";
 				sql += " AND d.BR_TO_USER = '" + user.getId() + "'";
 			}
-			sql += " GROUP BY a.BR_ID";
+			sql += " GROUP BY a.BR_ID, RUNNING_NO_DEPARTMENT";
 			if(user.getRole().equals("DEPARTMENT")){
-				sql += " ,b.BR_TO_DEPARTMENT_SHORT, b.BR_TO_DEPARTMENT_NAME";
+				sql += " ,b.BR_TO_DEPARTMENT_SHORT, b.BR_TO_DEPARTMENT_NAME, b.REMARK ";
 			}else if(user.getRole().equals("GROUP")){
-				sql += " ,c.BR_TO_GROUP_NAME , b.BR_TO_DEPARTMENT_SHORT,b.BR_TO_DEPARTMENT_NAME";
+				sql += " ,c.BR_TO_GROUP_NAME , b.BR_TO_DEPARTMENT_SHORT,b.BR_TO_DEPARTMENT_NAME, b.REMARK, c.REMARK, e.REMARK ";
+			}else if(user.getRole().equals("USER")){
+				sql += " ,d.STATUS, c.BR_TO_GROUP_NAME, b.BR_TO_DEPARTMENT_SHORT, b.BR_TO_DEPARTMENT_NAME, d.REMARK, b.REMARK, c.REMARK, e.REMARK ";
 			}
 			data = session.createSQLQuery(sql).addEntity(BookReciveOut.class).list();
 			if(data.size() > 0){
@@ -530,11 +540,12 @@ public class BookReciveOutDAOImpl implements BookReciveOutDAO {
 		Transaction tx = session.beginTransaction();
 		int result = 0;
 		try{
-			Query query = session.createQuery("update BookRecieveDepartment set status = :status, updatedDate = SYSDATE(), updatedBy = :updatedBy where brId = :brId and brToDepartment = :brToDepartment");
+			Query query = session.createQuery("update BookRecieveDepartment set status = :status, updatedDate = SYSDATE(), updatedBy = :updatedBy, remark = :remark where brId = :brId and brToDepartment = :brToDepartment");
 			query.setParameter("status", recive.getStatus());
 			query.setParameter("updatedBy", recive.getUpdatedBy());
 			query.setParameter("brId", recive.getBrId());
 			query.setParameter("brToDepartment", recive.getBrToDepartment());
+			query.setParameter("remark", recive.getRemark());
 			result = query.executeUpdate();
 			tx.commit();
 		} catch (Exception ex) {
@@ -552,12 +563,13 @@ public class BookReciveOutDAOImpl implements BookReciveOutDAO {
 		Transaction tx = session.beginTransaction();
 		int result = 0;
 		try{
-			Query query = session.createQuery("update BookRecieveGroup set status = :status, updatedDate = SYSDATE(), updatedBy = :updatedBy where brId = :brId and brToDepartment = :brToDepartment and brToGroup = :brToGroup");
+			Query query = session.createQuery("update BookRecieveGroup set status = :status, updatedDate = SYSDATE(), updatedBy = :updatedBy, remark = :remark where brId = :brId and brToDepartment = :brToDepartment and brToGroup = :brToGroup");
 			query.setParameter("status", recive.getStatus());
 			query.setParameter("updatedBy", recive.getUpdatedBy());
 			query.setParameter("brId", recive.getBrId());
 			query.setParameter("brToDepartment", recive.getBrToDepartment());
 			query.setParameter("brToGroup", recive.getBrToGroup());
+			query.setParameter("remark", recive.getRemark());
 			result = query.executeUpdate();
 			tx.commit();
 		} catch (Exception ex) {
@@ -575,14 +587,27 @@ public class BookReciveOutDAOImpl implements BookReciveOutDAO {
 		Transaction tx = session.beginTransaction();
 		int result = 0;
 		try{
-			Query query = session.createQuery("update BookRecieveUser set status = :status, updatedDate = SYSDATE(), updatedBy = :updatedBy where brId = :brId and brToGroup = :brToGroup and brToUser = :brToUser and brToDepartment = :brToDepartment");
+			Query query = session.createQuery("update BookRecieveUser set status = :status, updatedDate = SYSDATE(), updatedBy = :updatedBy, remark = :remark where brId = :brId and brToGroup = :brToGroup and brToUser = :brToUser and brToDepartment = :brToDepartment");
 			query.setParameter("status", recive.getStatus());
 			query.setParameter("updatedBy", recive.getUpdatedBy());
 			query.setParameter("brId", recive.getBrId());
 			query.setParameter("brToGroup", recive.getBrToGroup());
 			query.setParameter("brToUser", recive.getBrToUser());
 			query.setParameter("brToDepartment", recive.getBrToDepartment());
+			query.setParameter("remark", recive.getRemark());
+			query.executeUpdate();
+			
+			
+			query = session.createQuery("update BookReciveOut set "
+					+ "brStatus = :brStatus, "
+					+ "updatedBy = :updatedBy, "
+					+ "updatedDate = SYSDATE() "
+					+ "where brId = :brId");
+			query.setParameter("brStatus", recive.getStatus());
+			query.setParameter("updatedBy", recive.getUpdatedBy());
+			query.setParameter("brId", recive.getBrId());
 			result = query.executeUpdate();
+			
 			tx.commit();
 		} catch (Exception ex) {
 			logger.error("updateReciveOutUser : ", ex);
@@ -593,6 +618,28 @@ public class BookReciveOutDAOImpl implements BookReciveOutDAO {
 		return result;
 	}
 
+	@Override
+	public int updateStatusReciveOut(BookReciveOut recive) {
+		Session session = OpenSession();
+		int result = 0;
+		try{
+			Query query = session.createQuery("update BookReciveOut set "
+					+ "brStatus = :brStatus, "
+					+ "updatedBy = :updatedBy, "
+					+ "updatedDate = SYSDATE() "
+					+ "where brId = :brId");
+			query.setParameter("brStatus", recive.getBrStatus());
+			query.setParameter("updatedBy", recive.getUpdatedBy());
+			query.setParameter("brId", recive.getBrId());
+			result = query.executeUpdate();
+		} catch (Exception ex) {
+			logger.error("updateStatusReciveOut : ", ex);
+		}finally{
+			HibernateUtil.close(session);
+		}
+		return result;
+	}
+	
 	@Override
 	public int updateReciveOutAdmin(BookReciveOut recive) {
 		Session session = OpenSession();
@@ -643,14 +690,16 @@ public class BookReciveOutDAOImpl implements BookReciveOutDAO {
 		Session session = OpenSession();
 		Transaction tx = session.beginTransaction();
 		try{
-			Query query = session.createSQLQuery("INSERT INTO BOOK_RECIEVE_DEPARTMENT (BR_ID, BR_TO_DEPARTMENT, BR_TO_DEPARTMENT_SHORT, BR_TO_DEPARTMENT_NAME, STATUS, UPDATED_BY, UPDATED_DATE)"
-					+ " VALUES (:BR_ID, :BR_TO_DEPARTMENT, :BR_TO_DEPARTMENT_SHORT, :BR_TO_DEPARTMENT_NAME, :STATUS, :UPDATED_BY, SYSDATE()) ");
+			Query query = session.createSQLQuery("INSERT INTO BOOK_RECIEVE_DEPARTMENT (BR_ID, BR_TO_DEPARTMENT, BR_TO_DEPARTMENT_SHORT, BR_TO_DEPARTMENT_NAME, STATUS, UPDATED_BY, UPDATED_DATE, RUNNING_NO, REMARK)"
+					+ " VALUES (:BR_ID, :BR_TO_DEPARTMENT, :BR_TO_DEPARTMENT_SHORT, :BR_TO_DEPARTMENT_NAME, :STATUS, :UPDATED_BY, SYSDATE(), :RUNNING_NO, :REMARK) ");
 			query.setParameter("BR_ID", recive.getBrId());
 			query.setParameter("BR_TO_DEPARTMENT", recive.getBrToDepartment());
 			query.setParameter("BR_TO_DEPARTMENT_SHORT", recive.getBrToDepartmentShort());
 			query.setParameter("BR_TO_DEPARTMENT_NAME", recive.getBrToDepartmentName());
 			query.setParameter("STATUS", recive.getStatus());
 			query.setParameter("UPDATED_BY", recive.getUpdatedBy());
+			query.setParameter("RUNNING_NO", recive.getRunningNo());
+			query.setParameter("REMARK", recive.getRemark());
 			query.executeUpdate();
 			result = (BigInteger) session.createSQLQuery("SELECT LAST_INSERT_ID()").uniqueResult();
 			tx.commit();
@@ -671,14 +720,15 @@ public class BookReciveOutDAOImpl implements BookReciveOutDAO {
 		Transaction tx = session.beginTransaction();
 		
 		try{
-			Query query = session.createSQLQuery("INSERT INTO BOOK_RECIEVE_GROUP (BR_ID, BR_TO_DEPARTMENT, BR_TO_GROUP, BR_TO_GROUP_NAME, STATUS, UPDATED_BY, UPDATED_DATE)"
-					+ " VALUES (:BR_ID, :BR_TO_DEPARTMENT, :BR_TO_GROUP, :BR_TO_GROUP_NAME, :STATUS, :UPDATED_BY, SYSDATE()) ");
+			Query query = session.createSQLQuery("INSERT INTO BOOK_RECIEVE_GROUP (BR_ID, BR_TO_DEPARTMENT, BR_TO_GROUP, BR_TO_GROUP_NAME, STATUS, UPDATED_BY, UPDATED_DATE, REMARK)"
+					+ " VALUES (:BR_ID, :BR_TO_DEPARTMENT, :BR_TO_GROUP, :BR_TO_GROUP_NAME, :STATUS, :UPDATED_BY, SYSDATE(), :REMARK) ");
 			query.setParameter("BR_ID", recive.getBrId());
 			query.setParameter("BR_TO_DEPARTMENT", recive.getBrToDepartment());
 			query.setParameter("BR_TO_GROUP", recive.getBrToGroup());
 			query.setParameter("BR_TO_GROUP_NAME", recive.getBrToGroupName());
 			query.setParameter("STATUS", recive.getStatus());
 			query.setParameter("UPDATED_BY", recive.getUpdatedBy());
+			query.setParameter("REMARK", recive.getRemark());
 			query.executeUpdate();
 			result = (BigInteger) session.createSQLQuery("SELECT LAST_INSERT_ID()").uniqueResult();
 			tx.commit();
@@ -699,8 +749,8 @@ public class BookReciveOutDAOImpl implements BookReciveOutDAO {
 		Session session = OpenSession();
 		Transaction tx = session.beginTransaction();
 		try{
-			Query query = session.createSQLQuery("INSERT INTO BOOK_RECIEVE_USER (BR_ID, BR_TO_GROUP, BR_TO_USER, BR_TO_USER_NAME, BR_TO_DEPARTMENT, STATUS, UPDATED_BY, UPDATED_DATE)"
-					+ " VALUES (:BR_ID, :BR_TO_GROUP, :BR_TO_USER, :BR_TO_USER_NAME, :BR_TO_DEPARTMENT, :STATUS, :UPDATED_BY, SYSDATE()) ");
+			Query query = session.createSQLQuery("INSERT INTO BOOK_RECIEVE_USER (BR_ID, BR_TO_GROUP, BR_TO_USER, BR_TO_USER_NAME, BR_TO_DEPARTMENT, STATUS, UPDATED_BY, UPDATED_DATE, REMARK)"
+					+ " VALUES (:BR_ID, :BR_TO_GROUP, :BR_TO_USER, :BR_TO_USER_NAME, :BR_TO_DEPARTMENT, :STATUS, :UPDATED_BY, SYSDATE(), :REMARK) ");
 			query.setParameter("BR_ID", recive.getBrId());
 			query.setParameter("BR_TO_GROUP", recive.getBrToGroup());
 			query.setParameter("BR_TO_USER", recive.getBrToUser());
@@ -708,6 +758,7 @@ public class BookReciveOutDAOImpl implements BookReciveOutDAO {
 			query.setParameter("BR_TO_DEPARTMENT", recive.getBrToDepartment());
 			query.setParameter("STATUS", recive.getStatus());
 			query.setParameter("UPDATED_BY", recive.getUpdatedBy());
+			query.setParameter("REMARK", recive.getRemark());
 			query.executeUpdate();
 			result = (BigInteger) session.createSQLQuery("SELECT LAST_INSERT_ID()").uniqueResult();
 			tx.commit();
@@ -1230,5 +1281,28 @@ public class BookReciveOutDAOImpl implements BookReciveOutDAO {
 			HibernateUtil.close(session);
 		}
 		return sections;
+	}
+	
+	
+	@Override
+	public Integer getNextRunningNoDepartment(int brYear, String brToDepartment) {
+		Integer id = 0; 
+		Integer brNum = 1;
+		Session session = OpenSession();
+		try{
+			
+			Query sql = session.createSQLQuery("SELECT a.RUNNING_NO FROM BOOK_RECIEVE_DEPARTMENT a INNER JOIN BOOK_RECIVE_OUT b ON a.BR_ID = b.BR_ID WHERE b.BR_YEAR = :BR_YEAR AND a.BR_TO_DEPARTMENT = :BR_TO_DEPARTMENT ORDER BY a.RUNNING_NO DESC LIMIT 1");
+			sql.setParameter("BR_YEAR", brYear);
+			sql.setParameter("BR_TO_DEPARTMENT", brToDepartment);
+			id =  (Integer) sql.uniqueResult();
+			brNum = (id == null) ? 1 : id + 1;
+		}catch(Exception ex){
+			logger.error("getNextRunningNoDepartment : ", ex);
+			ex.printStackTrace();
+			throw ex;
+		}finally{
+			HibernateUtil.close(session);
+		}
+		return brNum;
 	}
 }

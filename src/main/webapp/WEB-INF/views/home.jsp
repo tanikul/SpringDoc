@@ -88,8 +88,8 @@
 								    <div class="col-sm-3">
 								      <input type="text" class="form-control" id="num">
 								    </div>
-								    <label class="col-sm-3 control-label">หมายเหตุ</label>
-								    <div class="col-sm-3">
+								    <label class="col-sm-3 control-label" style="display:none;">หมายเหตุ</label>
+								    <div class="col-sm-3" style="display:none;">
 								      <input type="text" class="form-control" id="remark">
 								    </div>
 								  </div>
@@ -134,13 +134,21 @@
 							<div class="report">
 				            	<div class="col_12" id="table-display" style="display:none;">
 									<div class="bnt-export">
-										<!-- <input type="button" onclick="download(1);" value="ออกรายงาน (Pdf)" class="button blue"> -->
+										<input type="button" onclick="download(1);" value="ออกรายงาน (Pdf)" class="button blue">
 										<input type="button" onclick="download(2);" value="ออกรายงาน (Excel)" class="button blue">
 									</div>
 									<table id="myTable" class="tablesorter">
 										<thead>
 											<tr>
 												<th class="header" style="display:none;">1</th>
+												<c:choose>
+													<c:when test="${role == 'DEPARTMENT'}">
+														<th class="header">ลำดับ</th>
+													</c:when>
+													<c:otherwise>
+														<th class="header" style="display:none;">ลำดับ</th>
+													</c:otherwise>
+												</c:choose>
 												<th class="header">ปี</th>
 												<th class="header">วันที่ส่งหนังสือ</th>
 												<th class="header">เลขทะเบียนส่ง</th>
@@ -182,6 +190,14 @@
 										<tfoot>
 											<tr>
 										      <th class="header" style="display:none;">1</th>
+										      <c:choose>
+												<c:when test="${role == 'DEPARTMENT'}">
+													<th style="text-align:center;">ลำดับ</th>
+												</c:when>
+												<c:otherwise>
+													<th class="header" style="display:none;">ลำดับ</th>
+												</c:otherwise>
+											  </c:choose>
 										      <th style="text-align:center;">ปี</th>
 										      <th style="text-align:center;">วันที่ส่งหนังสือ</th>
 										      <th style="text-align:center;">เลขทะเบียนส่ง</th>
@@ -247,40 +263,48 @@
 			<table class="tablesorter" id="search_tb">
 				<thead>
 					<tr>
-						<th class="header" style="display:none;">1</th>
-										      <th style="text-align:center;">ปี</th>
-										      <th style="text-align:center;">วันที่ส่งหนังสือ</th>
-										      <th style="text-align:center;">เลขทะเบียนส่ง</th>
-										      <th style="text-align:center;">ที่</th>
-										      <th style="text-align:center;">ลงวันที่</th>
-										      <th style="text-align:center;">จาก</th>
-										      <c:choose>
-												<c:when test="${role == 'ADMIN'}">
-													<th style="text-align:center;">ถึงกอง</th>
-												</c:when>
-												<c:when test="${role == 'DEPARTMENT'}">
-													<th style="text-align:center;">ถึงฝ่าย</th>
-												</c:when>
-												<c:when test="${role == 'GROUP'}">
-													<th style="text-align:center;">ถึง</th>
-												</c:when>
-										      </c:choose>
-										      <th style="text-align:center;">เรื่อง</th>
-										      <th style="text-align:center;">ขั้นความเร็ว</th>
-										      <th style="text-align:center;">ชั้นความลับ</th>
-										      <th style="text-align:center;">หมายเหตุ</th>
-										      <th style="text-align:center;">สถานะ</th>
-										      <c:choose>
-										      	  <c:when test="${role == 'ADMIN'}">
-											      	<th style="text-align:center;">แก้ไข/ลบ</th>
-											      </c:when>
-											      <c:when test="${role == 'DEPARTMENT' || role == 'GROUP'}">
-											      	<th style="text-align:center;">แก้ไข</th>
-											      </c:when>
-											      <c:otherwise>
-											      	<th style="text-align:center;">ข้อมูล</th>
-											      </c:otherwise>
-										      </c:choose>
+					  <th class="header" style="display:none;">1</th>
+					  <c:choose>
+						<c:when test="${role == 'DEPARTMENT'}">
+							<th style="text-align:center;">ลำดับ</th>
+						</c:when>
+						<c:otherwise>
+							<th class="header" style="display:none;">ลำดับ</th>
+						</c:otherwise>
+					  </c:choose>
+				      <th style="text-align:center;">ปี</th>
+				      <th style="text-align:center;">วันที่ส่งหนังสือ</th>
+				      <th style="text-align:center;">เลขทะเบียนส่ง</th>
+				      <th style="text-align:center;">ที่</th>
+				      <th style="text-align:center;">ลงวันที่</th>
+				      <th style="text-align:center;">จาก</th>
+				      <c:choose>
+						<c:when test="${role == 'ADMIN'}">
+							<th style="text-align:center;">ถึงกอง</th>
+						</c:when>
+						<c:when test="${role == 'DEPARTMENT'}">
+							<th style="text-align:center;">ถึงฝ่าย</th>
+						</c:when>
+						<c:when test="${role == 'GROUP'}">
+							<th style="text-align:center;">ถึง</th>
+						</c:when>
+				      </c:choose>
+				      <th style="text-align:center;">เรื่อง</th>
+				      <th style="text-align:center;">ขั้นความเร็ว</th>
+				      <th style="text-align:center;">ชั้นความลับ</th>
+				      <th style="text-align:center;">หมายเหตุ</th>
+				      <th style="text-align:center;">สถานะ</th>
+				      <c:choose>
+				      	  <c:when test="${role == 'ADMIN'}">
+					      	<th style="text-align:center;">แก้ไข/ลบ</th>
+					      </c:when>
+					      <c:when test="${role == 'DEPARTMENT' || role == 'GROUP'}">
+					      	<th style="text-align:center;">แก้ไข</th>
+					      </c:when>
+					      <c:otherwise>
+					      	<th style="text-align:center;">ข้อมูล</th>
+					      </c:otherwise>
+				      </c:choose>
 					</tr>
 				</thead>
 				<tbody>
@@ -289,6 +313,14 @@
 				<tfoot>
 					<tr>
 				      <th class="header" style="display:none;">1</th>
+				      <c:choose>
+						<c:when test="${role == 'DEPARTMENT'}">
+							<th style="text-align:center;">ลำดับ</th>
+						</c:when>
+						<c:otherwise>
+							<th class="header" style="display:none;">ลำดับ</th>
+						</c:otherwise>
+					  </c:choose>
 										      <th style="text-align:center;">ปี</th>
 										      <th style="text-align:center;">วันที่ส่งหนังสือ</th>
 										      <th style="text-align:center;">เลขทะเบียนส่ง</th>

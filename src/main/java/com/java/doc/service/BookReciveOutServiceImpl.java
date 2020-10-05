@@ -92,12 +92,15 @@ public class BookReciveOutServiceImpl implements BookReciveOutService {
 					for(String item : arrDepartment){
 						Divisions division = divisions.getDivisionByCode(item);
 						BookRecieveDepartment bookRecieveTo = new BookRecieveDepartment();
+						Integer runningNo = reciveout.getNextRunningNoDepartment(UtilDateTime.getCurrentYear(),item);
+						bookRecieveTo.setRunningNo(runningNo);
 						bookRecieveTo.setBrId(recive.getBrId());
 						bookRecieveTo.setBrToDepartment(item);
 						bookRecieveTo.setBrToDepartmentName(division.getDivisionName());
 						bookRecieveTo.setBrToDepartmentShort(division.getDivisionShort());
 						bookRecieveTo.setStatus((chkFindDepartmentFromGroup.indexOf(item) == -1) ? "N" : "Y");
 						bookRecieveTo.setUpdatedBy(recive.getUpdatedBy());
+						bookRecieveTo.setRemark(recive.getBrRemarkDepartment());
 						reciveout.insertRecieveDepartment(bookRecieveTo);
 					}
 				}
@@ -121,6 +124,7 @@ public class BookReciveOutServiceImpl implements BookReciveOutService {
 						bookRecieveTo.setBrToGroupName(group.getGroupName());
 						bookRecieveTo.setUpdatedBy(recive.getUpdatedBy());
 						bookRecieveTo.setStatus((chkFindGroupFromUser.indexOf(arr[1]) == -1) ? "N" : "Y");
+						bookRecieveTo.setRemark(recive.getBrRemarkGroup());
 						reciveout.insertRecieveGroup(bookRecieveTo);
 					}
 				}
@@ -137,6 +141,7 @@ public class BookReciveOutServiceImpl implements BookReciveOutService {
 						bookRecieveTo.setBrToSection(arr[1]);
 						bookRecieveTo.setBrToSectionName(section.getSectionName());
 						bookRecieveTo.setStatus("N");
+						bookRecieveTo.setRemark(recive.getBrRemarkSection());
 						reciveout.insertRecieveSection(bookRecieveTo);
 					}
 				}
@@ -154,6 +159,7 @@ public class BookReciveOutServiceImpl implements BookReciveOutService {
 						//bookRecieveT
 						bookRecieveTo.setStatus("N");
 						bookRecieveTo.setBrToUserName(user.getPrefix() + user.getFname() + " " + user.getLname());
+						bookRecieveTo.setRemark(recive.getBrRemarkUser());
 						reciveout.insertRecieveUser(bookRecieveTo);
 					}
 				}
@@ -490,6 +496,7 @@ public class BookReciveOutServiceImpl implements BookReciveOutService {
 							bookRecieveTo.setBrToDepartmentName(division.getDivisionName());
 							bookRecieveTo.setBrToDepartmentShort(division.getDivisionShort());
 							bookRecieveTo.setUpdatedBy(recive.getUpdatedBy());
+							bookRecieveTo.setRemark(recive.getBrRemarkDepartment());
 							reciveout.insertRecieveDepartment(bookRecieveTo);
 						}
 					}
@@ -548,6 +555,7 @@ public class BookReciveOutServiceImpl implements BookReciveOutService {
 										bookRecieveTo.setBrToGroupName(group.getGroupName());
 										bookRecieveTo.setUpdatedBy(recive.getUpdatedBy());
 										bookRecieveTo.setStatus((chkFindGroupFromUser.indexOf(item3) == -1) ? "N" : "Y");
+										bookRecieveTo.setRemark(recive.getBrRemarkGroup());
 										reciveout.insertRecieveGroup(bookRecieveTo);
 									}
 								}
@@ -578,6 +586,7 @@ public class BookReciveOutServiceImpl implements BookReciveOutService {
 							bookRecieveTo.setBrToSection(h[1]);
 							bookRecieveTo.setBrToSectionName(section.getSectionName());
 							bookRecieveTo.setStatus("N");
+							bookRecieveTo.setRemark(recive.getBrRemarkSection());
 							reciveout.insertRecieveSection(bookRecieveTo);
 						}
 					}	
@@ -601,6 +610,7 @@ public class BookReciveOutServiceImpl implements BookReciveOutService {
 							bookRecieveTo.setBrToUser(h[2]);
 							bookRecieveTo.setStatus("N");
 							bookRecieveTo.setBrToUserName(user.getPrefix() + user.getFname() + " " + user.getLname());
+							bookRecieveTo.setRemark(recive.getBrRemarkUser());
 							reciveout.insertRecieveUser(bookRecieveTo);
 						}
 					}	
@@ -613,6 +623,7 @@ public class BookReciveOutServiceImpl implements BookReciveOutService {
 				bookRecieveDepartment.setBrId(recive.getBrId());
 				bookRecieveDepartment.setBrToDepartment(recive.getBrToDepartment());
 				bookRecieveDepartment.setUpdatedBy(recive.getUpdatedBy());
+				bookRecieveDepartment.setRemark(recive.getBrRemarkDepartment());
 				rs = reciveout.updateReciveOutDepartment(bookRecieveDepartment);
 				String brToNotIn = "\'\'";
 				String[] arr = null;
@@ -643,6 +654,7 @@ public class BookReciveOutServiceImpl implements BookReciveOutService {
 							bookRecieveTo.setBrToGroupName(group.getGroupName());
 							bookRecieveTo.setUpdatedBy(recive.getUpdatedBy());
 							bookRecieveTo.setStatus("N");
+							bookRecieveTo.setRemark(recive.getBrRemarkGroup());
 							reciveout.insertRecieveGroup(bookRecieveTo);
 						}
 					}
@@ -655,6 +667,7 @@ public class BookReciveOutServiceImpl implements BookReciveOutService {
 				bookRecieveGroup.setBrToGroup(recive.getBrToGroup());
 				bookRecieveGroup.setUpdatedBy(recive.getUpdatedBy());
 				bookRecieveGroup.setBrToDepartment(recive.getBrToDepartment());
+				bookRecieveGroup.setRemark(recive.getBrRemarkGroup());
 				rs = reciveout.updateReciveOutGroup(bookRecieveGroup);
 				String brToNotIn = "\'\'";
 				Map<Integer, String> arr = new HashMap<Integer, String>();
@@ -696,6 +709,7 @@ public class BookReciveOutServiceImpl implements BookReciveOutService {
 							bookRecieveTo.setBrToUser(item.toString());
 							bookRecieveTo.setStatus("N");
 							bookRecieveTo.setBrToUserName(user.getPrefix() + user.getFname() + " " + user.getLname());
+							bookRecieveGroup.setRemark(recive.getBrRemarkUser());
 							reciveout.insertRecieveUser(bookRecieveTo);
 						}
 					}
@@ -718,6 +732,7 @@ public class BookReciveOutServiceImpl implements BookReciveOutService {
 								bookRecieveTo.setBrToSection(section.getId().toString());
 								bookRecieveTo.setBrToSectionName(section.getSectionName());
 								bookRecieveTo.setStatus("N");
+								bookRecieveGroup.setRemark(recive.getBrRemarkSection());
 								reciveout.insertRecieveSection(bookRecieveTo);	
 							}
 							
@@ -725,19 +740,18 @@ public class BookReciveOutServiceImpl implements BookReciveOutService {
 					}	
 				}
 			}else if(role.equals("USER")){
-				if(!StringUtils.isNullOrEmpty(recive.getBrStatus())){
-					BookRecieveUser bookRecieveUser = new BookRecieveUser();
-					bookRecieveUser.setBrId(recive.getBrId());
-					bookRecieveUser.setBrToGroup(recive.getBrToGroup());
-					bookRecieveUser.setBrToUser(recive.getBrToUser());
-					bookRecieveUser.setBrToDepartment(recive.getBrToDepartment());
-					if(recive.getBrStatus().equals("SUCCESS")){
-						bookRecieveUser.setStatus("Y");
-					}else{
-						bookRecieveUser.setStatus("N");
-					}
-					rs = reciveout.updateReciveOutUser(bookRecieveUser);
+				BookRecieveUser bookRecieveUser = new BookRecieveUser();
+				bookRecieveUser.setBrId(recive.getBrId());
+				bookRecieveUser.setBrToGroup(recive.getBrToGroup());
+				bookRecieveUser.setBrToUser(recive.getBrToUser());
+				bookRecieveUser.setBrToDepartment(recive.getBrToDepartment());
+				bookRecieveUser.setRemark(recive.getBrRemarkUser());
+				if(!StringUtils.isNullOrEmpty(recive.getBrStatus()) && recive.getBrStatus().equals("SUCCESS")){
+					bookRecieveUser.setStatus("Y");
+				}else{
+					bookRecieveUser.setStatus("N");
 				}
+				rs = reciveout.updateReciveOutUser(bookRecieveUser);
 			}
 		}catch(Exception ex){
         	logger.error("updateReciveOut : ", ex);

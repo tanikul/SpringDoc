@@ -54,4 +54,6 @@ public interface BookReciveOutDAO {
 	public List<BookRecieveGroup> getBookRecieveOutGroup(int brId, String brToDepartment);
 	public List<BookRecieveUser> getBookRecieveOutUser(int brId, String brToDepartment, String brToGroup);
 	public Sections getSectionById(Integer id);
+	public Integer getNextRunningNoDepartment(int brYear, String brToDepartment);
+	int updateStatusReciveOut(BookReciveOut recive);
 }

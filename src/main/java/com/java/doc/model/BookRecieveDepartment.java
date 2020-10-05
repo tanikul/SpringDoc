@@ -29,6 +29,8 @@ public class BookRecieveDepartment implements java.io.Serializable {
 	private String status;
 	private String updatedBy;
 	private Date updatedDate;
+	private Integer runningNo;
+	private String remark;
 	
 	public BookRecieveDepartment() {
 	}
@@ -41,7 +43,8 @@ public class BookRecieveDepartment implements java.io.Serializable {
 				+ " brToDepartmentShort : " + brToDepartmentShort + ", "
 				+ " updatedBy : " + updatedBy + ", "
 				+ " updatedDate : " + updatedDate + ", "
-				+ " status : " + status;
+				+ " status : " + status
+				+ " runningNo : " + runningNo;
 		return str;
 	}
 	
@@ -129,6 +132,25 @@ public class BookRecieveDepartment implements java.io.Serializable {
 
 	public void setUpdatedDate(Date updatedDate) {
 		this.updatedDate = updatedDate;
-	}		
+	}	
+	
+	@Column(name = "RUNNING_NO")
+	public Integer getRunningNo() {
+		return runningNo;
+	}
+
+	public void setRunningNo(Integer runningNo) {
+		this.runningNo = runningNo;
+	}
+
+	@Column(name = "REMARK")
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}	
+	
 	
 }

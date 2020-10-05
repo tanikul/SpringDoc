@@ -265,18 +265,18 @@ SearchResult = function(){
           $("#table-display").show();
           $("#loading").hide();
           if($('input[id="type"]:checked').val() == 1){
-        	  var th = $('.tablesorter').find('thead').find('tr').find('th')[2];
+        	  var th = $('.tablesorter').find('thead').find('tr').find('th')[3];
         	  $(th).find('div').html('วันที่รับหนังสือ');
-        	  var tf = $('.tablesorter').find('tfoot').find('tr').find('th')[2];
+        	  var tf = $('.tablesorter').find('tfoot').find('tr').find('th')[3];
         	  $(tf).html('วันที่รับหนังสือ');
           }else{
-        	  var th = $('.tablesorter').find('thead').find('tr').find('th')[12];
-        	  var tf = $('.tablesorter').find('tfoot').find('tr').find('th')[12];
+        	  var th = $('.tablesorter').find('thead').find('tr').find('th')[13];
+        	  var tf = $('.tablesorter').find('tfoot').find('tr').find('th')[13];
         	  $(th).hide();
         	  $(tf).hide();
-        	  th = $('.tablesorter').find('thead').find('tr').find('th')[7];
+        	  th = $('.tablesorter').find('thead').find('tr').find('th')[8];
         	  $(th).find('div').html('ถึง');
-          	  tf = $('.tablesorter').find('tfoot').find('tr').find('th')[7];
+          	  tf = $('.tablesorter').find('tfoot').find('tr').find('th')[8];
     	  	  $(tf).html('ถึง');
           }
           return [ total, rows, headers ];
@@ -526,17 +526,17 @@ function loadTable(){
 	          }
 	          $("#loading").hide();
 	          if($('input[id="type"]:checked').val() == 1){
-	        	  var th = $('.tablesorter').find('thead').find('tr').find('th')[2];
+	        	  var th = $('.tablesorter').find('thead').find('tr').find('th')[3];
 	        	  $(th).find('div').html('วันที่รับหนังสือ');
-	          	  var tf = $('.tablesorter').find('tfoot').find('tr').find('th')[2];
+	          	  var tf = $('.tablesorter').find('tfoot').find('tr').find('th')[3];
         	  	  $(tf).html('วันที่รับหนังสือ');
 	          }else{
-	        	  var th = $('.tablesorter').find('thead').find('tr').find('th')[7];
+	        	  var th = $('.tablesorter').find('thead').find('tr').find('th')[8];
 	        	  $(th).find('div').html('ถึง');
-	          	  var tf = $('.tablesorter').find('tfoot').find('tr').find('th')[7];
+	          	  var tf = $('.tablesorter').find('tfoot').find('tr').find('th')[8];
         	  	  $(tf).html('ถึง');
 	          }
-	          var tf = $('.tablesorter').find('tfoot').find('tr').find('th')[2];
+	          var tf = $('.tablesorter').find('tfoot').find('tr').find('th')[3];
 	          $('#table-display').show();
 	          var type = $("input:radio[name ='type']:checked").val();
 			  setDDLYear(type);

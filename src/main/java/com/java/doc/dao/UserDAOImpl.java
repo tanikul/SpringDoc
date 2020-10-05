@@ -185,7 +185,7 @@ public class UserDAOImpl implements UserDAO {
 		UserTable result = new UserTable();
 		Session session = OpenSession();
 		try {
-			String strSQL = "SELECT u.id, u.fname, u.lname, u.role, d.division_name, d.division_code, d.organization, u.username, u.password, u.group_id, g.group_name, u.prefix, s.id section_id, s.section_name FROM users u LEFT JOIN divisions d ON u.division = d.division_code LEFT JOIN groups g ON u.group_id = g.group_id LEFT JOIN sections s ON g.group_id = s.group_id WHERE u.id = " + id;
+			String strSQL = "SELECT u.id, u.fname, u.lname, u.role, d.division_name, d.division_code, d.organization, u.username, u.password, u.group_id, (SELECT group_name FROM groups g WHERE g.group_id = u.group_id) group_name, u.prefix, u.section_id, (SELECT s2.section_name FROM sections s2 WHERE s2.id = u.section_id) section_name FROM users u LEFT JOIN divisions d ON u.division = d.division_code WHERE u.id = " + id;
 			SQLQuery query = session.createSQLQuery(strSQL);
 			List<?> list = query.list();
 			Iterator<?> it = list.iterator();

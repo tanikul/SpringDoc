@@ -151,6 +151,9 @@ public class HomeController {
 			}
 			List<HashMap<String, String>> rows = new ArrayList<HashMap<String, String>>();
 			List<String> headers = new ArrayList<String>();
+			if(user.getRole().equals("DEPARTMENT") && table.getSearch().getType().equals("1")){
+				headers.add("ลำดับ");
+			}
 			headers.add("ปี");
 			headers.add(table.getSearch().getType().equals("1") ? "วันที่รับหนังสือ" : "วันที่ส่งหนังสือ");
 			headers.add(table.getSearch().getType().equals("1") ? "เลขทะเบียนรับ" : "เลขทะเบียนส่ง");
@@ -180,13 +183,21 @@ public class HomeController {
 			}else{
 				headers.add("ข้อมูล");
 			}
+			
 			if(table.getSearch().getType().equals("1")){
 				BookReciveOutTable bookReciveOutTable = reciveout.ListPageRecive(table);
 				request.getSession().setAttribute("listResultRecive", bookReciveOutTable.getSendoutListReport());
 				if(bookReciveOutTable.getSendoutList() != null){
 					for(BookReciveOut item : bookReciveOutTable.getSendoutList()){
-						HashMap<String, String> row = new HashMap<String, String>();
+						HashMap<String, String> row = new HashMap<String, String>();					
 						row.put("id", item.getBrId().toString());
+						if(user.getRole().equals("DEPARTMENT")){
+							if(item.getRunninNoDepartment() == null) {
+								row.put("ลำดับ", "");
+							}else {
+								row.put("ลำดับ", item.getRunninNoDepartment().toString());
+							}
+						}
 						row.put("ปี", item.getBrYear().toString());
 						row.put("วันที่รับหนังสือ", (UtilDateTime.convertToDateTH(item.getBrRdate()) != null) ? UtilDateTime.convertToDateTH(item.getBrRdate()) : "");
 						row.put("เลขทะเบียนรับ", (item.getBrNum() != null) ? item.getBrNum().toString() : "");
@@ -221,12 +232,26 @@ public class HomeController {
 							row.put("ข้อมูล", "<a class='glyphicon glyphicon-search' id='edit-"+item.getBrId()+"' style='padding-left:6px;cursor:pointer;' href='internal/edit/?id="+ item.getBrId() + "'></a>");
 						}*/
 						if(table.getRole().equals("ADMIN")){
-							row.put("แก้ไข/ลบ", "<span class='glyphicon glyphicon-pencil' id='edit-"+item.getBrId()+"' style='padding-left:6px;cursor:pointer;' onclick='inter.editGet("+ item.getBrId() +");'></span>  <span class='glyphicon glyphicon-trash' style='padding-left:6px;cursor:pointer;' onclick='removeItem(" + item.getBrId() + ", 0, this, " + item.getBrNum() + ")'></span>");
+							if(StringUtils.isNullOrEmpty(item.getBrStatus()) || "N".equals(item.getBrStatus())) {
+								row.put("แก้ไข/ลบ", "<span class='glyphicon glyphicon-pencil' id='edit-"+item.getBrId()+"' style='padding-left:6px;cursor:pointer;' onclick='inter.editGet("+ item.getBrId() +");'></span>  <span class='glyphicon glyphicon-trash' style='padding-left:6px;cursor:pointer;' onclick='removeItem(" + item.getBrId() + ", 0, this, " + item.getBrNum() + ")'></span>");
+							}else {
+								row.put("แก้ไข/ลบ", "<a class='glyphicon glyphicon-search' id='edit-"+item.getBrId()+"' style='padding-left:6px;cursor:pointer;' href='internal/edit/?id="+ item.getBrId() + "'></a>");
+							}			
 						}else if(table.getRole().equals("DEPARTMENT") || table.getRole().equals("GROUP")) {
-							row.put("แก้ไข", "<a class='glyphicon glyphicon-pencil' id='edit-"+item.getBrId()+"' style='padding-left:6px;cursor:pointer;' href='internal/edit/?id="+ item.getBrId() + "'></a>");
+							if(StringUtils.isNullOrEmpty(item.getBrStatus()) || "N".equals(item.getBrStatus())) {
+								row.put("แก้ไข", "<a class='glyphicon glyphicon-pencil' id='edit-"+item.getBrId()+"' style='padding-left:6px;cursor:pointer;' href='internal/edit/?id="+ item.getBrId() + "'></a>");	
+							}else {
+								row.put("แก้ไข", "<a class='glyphicon glyphicon-search' id='edit-"+item.getBrId()+"' style='padding-left:6px;cursor:pointer;' href='internal/edit/?id="+ item.getBrId() + "'></a>");
+							}
 						}else{
-							row.put("ข้อมูล", "<a class='glyphicon glyphicon-search' id='edit-"+item.getBrId()+"' style='padding-left:6px;cursor:pointer;' href='internal/edit/?id="+ item.getBrId() + "'></a>");
+							if(StringUtils.isNullOrEmpty(item.getBrStatus()) || "N".equals(item.getBrStatus())) {
+								row.put("ข้อมูล", "<span class='glyphicon glyphicon-pencil' id='edit-"+item.getBrId()+"' style='padding-left:6px;cursor:pointer;' onclick='inter.editGet("+ item.getBrId() +");'></span>");
+							}else {
+								row.put("ข้อมูล", "<a class='glyphicon glyphicon-search' id='edit-"+item.getBrId()+"' style='padding-left:6px;cursor:pointer;' href='internal/edit/?id="+ item.getBrId() + "'></a>");
+							}
+							
 						}
+						
 						rows.add(row);
 					}
 				}

@@ -110,6 +110,7 @@ public class InternalController {
 					request.getSession().setAttribute("user", user);
 				}
 			}
+			model.addObject("disableAll", "");
 			model.addObject("groups", new HashMap<Integer, String>());
 			model.addObject("sections", new HashMap<Integer, String>());
 			model.addObject("userGroups", new HashMap<Integer, String>());
@@ -160,8 +161,11 @@ public class InternalController {
 			model.addObject("role", user.getRole());
 			model.addObject("mode", "edit");
 			model.addObject("sendRecive", sendRecive);
-			model.addObject("disable", (!user.getRole().equals("ADMIN")) ? "true" : "");
-			model.addObject("disableBtn", (!user.getRole().equals("USER")) ? "" : "true");
+			model.addObject("disable", (!user.getRole().equals("ADMIN") || (!StringUtils.isNullOrEmpty(sendRecive.getBrStatus()) && "Y".equals(sendRecive.getBrStatus()))) ? "true" : "");
+			model.addObject("disableRemarkDepartment", (!user.getRole().equals("DEPARTMENT") || (!StringUtils.isNullOrEmpty(sendRecive.getBrStatus()) && "Y".equals(sendRecive.getBrStatus()))) ? "true" : "");
+			model.addObject("disableRemarkGroup", (!user.getRole().equals("GROUP") || (!StringUtils.isNullOrEmpty(sendRecive.getBrStatus()) && "Y".equals(sendRecive.getBrStatus()))) ? "true" : "");
+			model.addObject("disableRemarkUser", (!user.getRole().equals("USER") || (!StringUtils.isNullOrEmpty(sendRecive.getBrStatus()) && "Y".equals(sendRecive.getBrStatus()))) ? "true" : "");
+			model.addObject("disableAll", (!StringUtils.isNullOrEmpty(sendRecive.getBrStatus()) && "Y".equals(sendRecive.getBrStatus())) ? "true" : "");
 			model.addObject("quick", this.typeQuick.listTypeQuick());
 			model.addObject("secret", this.typeSecret.listTypeSecret());			
 			if(user.getRole().equals("ADMIN")){

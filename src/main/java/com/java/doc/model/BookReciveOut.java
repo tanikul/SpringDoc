@@ -53,6 +53,11 @@ public class BookReciveOut implements java.io.Serializable {
 	private String division;
 	private String updatedBy;
 	private Date updatedDate;
+	private Integer runninNoDepartment;
+	private String brRemarkDepartment;
+	private String brRemarkGroup;
+	private String brRemarkSection;
+	private String brRemarkUser;
 	
 	public BookReciveOut() {
 	}
@@ -417,5 +422,51 @@ public class BookReciveOut implements java.io.Serializable {
 	public void setBrToSectionName(String brToSectionName) {
 		this.brToSectionName = brToSectionName;
 	}
+	
+	@Column(name = "RUNNING_NO_DEPARTMENT", length = 20)
+	public Integer getRunninNoDepartment() {
+		return this.runninNoDepartment;
+	}
+
+	public void setRunninNoDepartment(Integer runninNoDepartment) {
+		this.runninNoDepartment = runninNoDepartment;
+	}
+
+	@Column(name = "BR_REMARK_DEPARTMENT")
+	public String getBrRemarkDepartment() {
+		return brRemarkDepartment;
+	}
+
+	public void setBrRemarkDepartment(String brRemarkDepartment) {
+		this.brRemarkDepartment = brRemarkDepartment;
+	}
+
+	@Column(name = "BR_REMARK_GROUP")
+	public String getBrRemarkGroup() {
+		return brRemarkGroup;
+	}
+
+	public void setBrRemarkGroup(String brRemarkGroup) {
+		this.brRemarkGroup = brRemarkGroup;
+	}
+
+	@Column(name = "BR_REMARK_SECTION")
+	public String getBrRemarkSection() {
+		return brRemarkSection;
+	}
+
+	public void setBrRemarkSection(String brRemarkSection) {
+		this.brRemarkSection = brRemarkSection;
+	}
+	
+	@Column(name = "BR_REMARK_USER")
+	public String getBrRemarkUser() {
+		return brRemarkUser;
+	}
+
+	public void setBrRemarkUser(String brRemarkUser) {
+		this.brRemarkUser = brRemarkUser;
+	}
+	
 	
 }

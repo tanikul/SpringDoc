@@ -108,7 +108,7 @@
 				  <div class="form-group">
 				    <label class="col-sm-3 control-label">ถึงส่วนราชการ</label>
 				    <div class="col-sm-9">
-			    		<springForm:select path="brToDepartment" cssClass="form-control selectpicker" multiple="true" >
+			    		<springForm:select path="brToDepartment" cssClass="form-control selectpicker" multiple="true" disabled="${disableAll}">
 				    		<springForm:options items="${divisions}" />
 				    	</springForm:select>	    	
 				    </div>
@@ -142,7 +142,7 @@
 				  <div class="form-group">
 				    <label class="col-sm-3 control-label">ถึงฝ่าย/ส่วน</label>
 				    <div class="col-sm-9">
-				    	<springForm:select path="brToGroup" cssClass="form-control selectpicker" multiple="true" >
+				    	<springForm:select path="brToGroup" cssClass="form-control selectpicker" multiple="true" disabled="${disableAll}">
 				    		<springForm:options items="${groups}" />
 				    	</springForm:select>   
 				    </div>
@@ -153,7 +153,7 @@
 				  <div class="form-group">
 				    <label class="col-sm-3 control-label">ถึงกลุ่มงาน</label>
 				    <div class="col-sm-9" id="admin-section">
-				    	<springForm:select path="brToSection" cssClass="form-control selectpicker" multiple="true" >
+				    	<springForm:select path="brToSection" cssClass="form-control selectpicker" multiple="true" disabled="${disableAll}">
 				    		<springForm:options items="${sectionsId}" />
 				    	</springForm:select>   
 				    </div>
@@ -161,7 +161,7 @@
 				  <div class="form-group">
 				    <label class="col-sm-3 control-label">ถึงบุคคล</label>
 				    <div class="col-sm-9" id="admin-user">
-				    	<springForm:select path="brToUser" cssClass="form-control selectpicker" multiple="true" >
+				    	<springForm:select path="brToUser" cssClass="form-control selectpicker" multiple="true" disabled="${disableAll}">
 				    		<springForm:options items="${userGroups}" />
 				    	</springForm:select>   
 				    </div>
@@ -184,23 +184,75 @@
 			    </div>
 			  </div>
 			  <div class="form-group">
-			    <label class="col-sm-3 control-label">หมายเหตุ</label>
+			  <c:choose>
+			  	<c:when test="${role eq 'ADMIN'}">
+					<label class="col-sm-3 control-label">หมายเหตุ</label>
+				 </c:when>
+				 <c:otherwise>
+				    <label class="col-sm-3 control-label">หมายเหตุ (ผู้ดูแลระบบ)</label>
+				 </c:otherwise>
+			   </c:choose>
 			    <div class="col-sm-9">
 			      <springForm:textarea cssClass="form-control" path="brRemark" disabled="${disable}"></springForm:textarea>
 			    </div>
 			  </div>
+			  <c:if test="${role eq 'DEPARTMENT' || role eq 'GROUP' || role eq 'USER' }">
+				  <div class="form-group">
+				  	<c:choose>
+					  	<c:when test="${role eq 'DEPARTMENT'}">
+							<label class="col-sm-3 control-label">หมายเหตุ</label>
+						 </c:when>
+						 <c:otherwise>
+						    <label class="col-sm-3 control-label">หมายเหตุ (จากเจ้าหน้าที่รับ-ส่งหนังสือของสำนัก)</label>
+						 </c:otherwise>
+					</c:choose>
+				    <div class="col-sm-9">
+				      <springForm:textarea cssClass="form-control" path="brRemarkDepartment" disabled="${disableRemarkDepartment}"></springForm:textarea>
+				    </div>
+				  </div>
+			  </c:if>
+			  <c:if test="${role eq 'GROUP' || role eq 'USER' }">
+				  <div class="form-group">
+				  	<c:choose>
+					  	<c:when test="${role eq 'GROUP'}">
+					  		<label class="col-sm-3 control-label">หมายเหตุ</label>
+					  	</c:when>
+					  	<c:otherwise>
+						    <label class="col-sm-3 control-label">หมายเหตุ (จากเจ้าหน้าที่รับ-ส่งหนังสือของฝ่าย/กลุ่มงาน)</label>
+						 </c:otherwise>
+					</c:choose>
+				    <div class="col-sm-9">
+				      <springForm:textarea cssClass="form-control" path="brRemarkGroup" disabled="${disableRemarkGroup}"></springForm:textarea>
+				    </div>
+				  </div>
+			  </c:if>
+			  <c:if test="${role eq 'USER' }">
+				  <div class="form-group">
+				    <label class="col-sm-3 control-label">หมายเหตุ</label>
+				    <div class="col-sm-9">
+				      <springForm:textarea cssClass="form-control" path="brRemarkUser" disabled="${disableRemarkUser}"></springForm:textarea>
+				    </div>
+				  </div>
+			  </c:if>
 			  <c:if test="${role eq 'USER'}">
 				  <div class="form-group">
 				    <label class="col-sm-3 control-label" for="brStatus">เอกสารเสร็จสิ้น</label>
 				    <div class="col-sm-1">
-				      <springForm:checkbox path="brStatus" value="SUCCESS"></springForm:checkbox>
+				      <springForm:checkbox path="brStatus" value="SUCCESS" disabled="${disableAll}"></springForm:checkbox>
 				    </div>
 				  </div>
 			  </c:if>
 			  <div class="form-group">
 			    <div class="col-sm-3"></div>
 			    <div class="col-sm-9">
-			    	<button class="btn btn-info" type="button" id="plupload_start">บันทึก</button>
+			    	<c:choose>
+					  	<c:when test="${disableAll eq ''}">
+							<button class="btn btn-info" type="button" id="plupload_start">บันทึก</button>
+						 </c:when>
+						 <c:otherwise>
+						    <button class="btn btn-info" type="button" id="plupload_start" disabled>บันทึก</button>
+						 </c:otherwise>
+					</c:choose>
 			    </div>
 			  </div>
 			</div>
@@ -304,7 +356,6 @@
 			console.log(month);
 			console.log(year);
 			console.log(new Date(Date.parse(month + ' ' + day + ', ' + year))); */
-			
 			
 			var mode = "${mode}";
 			var disable = "${disable}";
@@ -820,6 +871,7 @@
 			        		//var subject;
 			        		for(var y in response[x]){
 			        			var t = response[x][y].split('xx#xx');
+			        			console.log(t);
 			        			if(brToUser != null && brToUser.indexOf(t[2]) > -1){
 			        				if(t.length == 6){
 				        				s += '<option value="' + t[0] + 'xx##xx' + t[1] + 'xx##xx' + t[2] + 'xx##xx' + t[3] + '" selected>' + t[5] + '</option>'; 

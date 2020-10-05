@@ -26,6 +26,7 @@ public class BookRecieveUser implements java.io.Serializable {
 	private String updatedBy;
 	private Date updatedDate;
 	private String brToSection;
+	private String remark;
 	
 	public BookRecieveUser() {
 	}
@@ -147,5 +148,14 @@ public class BookRecieveUser implements java.io.Serializable {
 
 	public void setUpdatedDate(Date updatedDate) {
 		this.updatedDate = updatedDate;
+	}	
+	
+	@Column(name = "REMARK")
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
 	}	
 }

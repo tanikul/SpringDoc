@@ -28,6 +28,7 @@ public class BookRecieveSection implements java.io.Serializable {
 	private String status;
 	private String updatedBy;
 	private Date updatedDate;
+	private String remark;
 	
 	
 	@Override
@@ -140,4 +141,12 @@ public class BookRecieveSection implements java.io.Serializable {
 		this.updatedDate = updatedDate;
 	}	
 	
+	@Column(name = "REMARK")
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}	
 }
