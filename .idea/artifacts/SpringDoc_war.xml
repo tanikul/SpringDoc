@@ -1,6 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="exploded-ear" name="SpringDoc:war">
-    <output-path>$PROJECT_DIR$/target</output-path>
-    <root id="root" />
-  </artifact>
-</component>
