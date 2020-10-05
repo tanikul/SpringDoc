@@ -1299,7 +1299,6 @@ public class BookReciveOutDAOImpl implements BookReciveOutDAO {
 		}catch(Exception ex){
 			logger.error("getNextRunningNoDepartment : ", ex);
 			ex.printStackTrace();
-			throw ex;
 		}finally{
 			HibernateUtil.close(session);
 		}
