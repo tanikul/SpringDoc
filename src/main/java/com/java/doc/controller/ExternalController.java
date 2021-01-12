@@ -101,7 +101,7 @@ public class ExternalController {
 			sendOut.setBsYear(UtilDateTime.getCurrentYear());
 			sendOut.setBsTypeQuick(1);
 			sendOut.setBsTypeSecret(1);
-			sendOut.setBsFrom("สำนักผังเมือง");
+			sendOut.setBsFrom("สำนักการวางผังและพัฒนาเมือง");
 			sendOut.setBsPlace("กท /" + sendOut.getBsNum());
 			
 			model.addObject("sendOut", sendOut);

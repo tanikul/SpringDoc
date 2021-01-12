@@ -13,6 +13,7 @@ import org.hibernate.Transaction;
 import org.springframework.stereotype.Repository;
 
 import com.java.doc.hibernate.HibernateUtil;
+import com.java.doc.model.Boards;
 import com.java.doc.model.Divisions;
 
 @Repository("divisionDao")
@@ -34,7 +35,7 @@ public class DivisionDAOImpl implements DivisionDAO {
 		try{
 			list = session.createQuery("from Divisions order by divisionCode asc").list();
 		}catch(Exception ex){
-			logger.error("Save : ", ex);
+			logger.error("listDivision : ", ex);
 			tx.rollback();
 		}finally{
 			HibernateUtil.close(session);
@@ -78,5 +79,50 @@ public class DivisionDAOImpl implements DivisionDAO {
 	private Session OpenSession() {
 		Session session = HibernateUtil.openSession();
 		return session;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Boards> listBorad() {
+		Session session = OpenSession();
+		Transaction tx = session.beginTransaction();
+		List<Boards> list = null;
+		try{
+			list = session.createQuery("from Boards order by id asc").list();
+		}catch(Exception ex){
+			logger.error("listBorad : ", ex);
+			tx.rollback();
+		}finally{
+			HibernateUtil.close(session);
+		}
+		return list;
+	}
+	
+	@Override
+	public Boards getBoardById(Integer id) {
+		Session session = OpenSession();
+		Transaction tx = session.beginTransaction();
+		Boards list = null;
+		try{
+			list = (Boards) session.createQuery("from Boards where id=?").setParameter(0, id).uniqueResult();
+		}catch(Exception ex){
+			logger.error("getBoardById : ", ex);
+			tx.rollback();
+		}finally{
+			HibernateUtil.close(session);
+		}
+		return list;
+	}
+	
+	@Override
+	public Map<Integer, String> selectBoard() {
+		Iterator<Boards> itr = this.listBorad().iterator();
+		Map<Integer, String> list = new HashMap<Integer, String>();
+		while(itr.hasNext()){
+			Boards d = itr.next();
+			list.put(d.getId() , d.getBoardName());
+		}
+		Map<Integer, String> sortedMap = new TreeMap<Integer, String>(list);
+		return sortedMap;
 	}
 }

@@ -151,7 +151,7 @@
 												</c:choose>
 												<th class="header">ปี</th>
 												<th class="header">วันที่ส่งหนังสือ</th>
-												<th class="header">เลขทะเบียนส่ง</th>
+												<th class="header" id="registerLabel_1">เลขทะเบียนรับ</th>
 												<th class="header">ที่</th>
 												<th class="header">ลงวันที่</th>
 												<th class="header">จาก</th>
@@ -200,7 +200,7 @@
 											  </c:choose>
 										      <th style="text-align:center;">ปี</th>
 										      <th style="text-align:center;">วันที่ส่งหนังสือ</th>
-										      <th style="text-align:center;">เลขทะเบียนส่ง</th>
+										      <th style="text-align:center;" id="registerLabel_2">เลขทะเบียนรับ</th>
 										      <th style="text-align:center;">ที่</th>
 										      <th style="text-align:center;">ลงวันที่</th>
 										      <th style="text-align:center;">จาก</th>
@@ -274,7 +274,7 @@
 					  </c:choose>
 				      <th style="text-align:center;">ปี</th>
 				      <th style="text-align:center;">วันที่ส่งหนังสือ</th>
-				      <th style="text-align:center;">เลขทะเบียนส่ง</th>
+				      <th style="text-align:center;" id="registerLabel_3">เลขทะเบียนรับ</th>
 				      <th style="text-align:center;">ที่</th>
 				      <th style="text-align:center;">ลงวันที่</th>
 				      <th style="text-align:center;">จาก</th>
@@ -323,7 +323,7 @@
 					  </c:choose>
 										      <th style="text-align:center;">ปี</th>
 										      <th style="text-align:center;">วันที่ส่งหนังสือ</th>
-										      <th style="text-align:center;">เลขทะเบียนส่ง</th>
+										      <th style="text-align:center;" id="registerLabel_4">เลขทะเบียนรับ</th>
 										      <th style="text-align:center;">ที่</th>
 										      <th style="text-align:center;">ลงวันที่</th>
 										      <th style="text-align:center;">จาก</th>

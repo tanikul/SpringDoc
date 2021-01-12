@@ -1,5 +1,7 @@
 package com.java.doc.model;
 
+import javax.persistence.Column;
+
 public class UserTable implements java.io.Serializable {
 
 	private static final long serialVersionUID = -1677858587302392908L;
@@ -19,6 +21,7 @@ public class UserTable implements java.io.Serializable {
 	private String groupName;
 	private Integer sectionId;
 	private String sectionName;
+	private Integer boardId;
 	
 	public int getId() {
 		return id;
@@ -116,5 +119,10 @@ public class UserTable implements java.io.Serializable {
 	public void setSectionName(String sectionName) {
 		this.sectionName = sectionName;
 	}
-	
+	public Integer getBoardId() {
+		return boardId;
+	}
+	public void setBoardId(Integer boardId) {
+		this.boardId = boardId;
+	}
 }

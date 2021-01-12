@@ -48,6 +48,16 @@
 			    </div>
 			  </div>
 			  <div class="form-group">
+			    <label class="col-sm-3 control-label">สิทธิ์การใช้ระบบ</label>
+			    <div class="col-sm-9">
+			    	<springForm:select path="role" cssClass="form-control" onchange="changeRoleToSection(this);">
+			    		<springForm:option value="" label="--- เลือกสิทธิ์ ---" />
+			    		<springForm:options items="${roles}" />
+			    	</springForm:select>   
+			    	<p class="help-block"></p>
+			    </div>
+			  </div>
+			  <div class="form-group" id="division-box" style="display:none;">
 			    <label class="col-sm-3 control-label">ส่วนราชการ</label>
 			    <div class="col-sm-9">
 			    	<springForm:select path="divisionCode" cssClass="form-control" onchange="changeDivisionToGroup(this);">
@@ -56,7 +66,7 @@
 			    	</springForm:select>   
 			    </div>
 			  </div>
-			  <div class="form-group">
+			  <div class="form-group" id="group-boxes" style="display:none;">
 			    <label class="col-sm-3 control-label">ฝ่าย/ส่วนงาน</label>
 			    <div class="col-sm-9" id="group-box">
 			    	<springForm:select path="groupId" cssClass="form-control" onchange="changeGroupToSection(this);">
@@ -66,7 +76,7 @@
 			    	<p class="help-block"></p>
 			    </div>
 			  </div>
-			  <div class="form-group">
+			  <div class="form-group" id="section-boxes" style="display:none;">
 			    <label class="col-sm-3 control-label">กลุ่มงาน</label>
 			    <div class="col-sm-9" id="section-box">
 			    	<springForm:select path="sectionId" cssClass="form-control">
@@ -76,12 +86,13 @@
 			    	<p class="help-block"></p>
 			    </div>
 			  </div>
-			  <div class="form-group">
-			    <label class="col-sm-3 control-label">สิทธิ์การใช้ระบบ</label>
+			  
+			  <div class="form-group" id="position-box" style="display:none;">
+			    <label class="col-sm-3 control-label">ตำแหน่ง</label>
 			    <div class="col-sm-9">
-			    	<springForm:select path="role" cssClass="form-control">
-			    		<springForm:option value="" label="--- เลือกสิทธิ์ ---" />
-			    		<springForm:options items="${roles}" />
+			    	<springForm:select path="boardId" cssClass="form-control">
+			    		<springForm:option value="" label="--- เลือกตำแหน่ง ---" />
+			    		<springForm:options items="${boards}" />
 			    	</springForm:select>   
 			    	<p class="help-block"></p>
 			    </div>
@@ -95,3 +106,21 @@
 		</springForm:form>
     </div>
  </div>
+ 
+ <script type="text/javascript">
+	$(function() {
+		var role = "${users.role}";
+		if(role == 'BOARD'){
+			$('#position-box').show();
+			$('#division-box').hide();
+			$('#group-boxes').hide();
+			$('#section-boxes').hide();
+		}else{
+			$('#position-box').hide();
+			
+			$('#division-box').show();
+			$('#group-boxes').show();
+			$('#section-boxes').show();
+		}
+	});
+ </script>

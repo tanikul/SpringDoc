@@ -149,6 +149,12 @@ public class HomeController {
 			if(user.getGroupId() != null) {
 				table.setGroupId(user.getGroupId());
 			}
+			if(user.getSectionId() != null) {
+				table.setSectionId(user.getSectionId());
+			}
+			if(user.getBoardId() != null) {
+				table.setBoardId(user.getBoardId());
+			}
 			List<HashMap<String, String>> rows = new ArrayList<HashMap<String, String>>();
 			List<String> headers = new ArrayList<String>();
 			if(user.getRole().equals("DEPARTMENT") && table.getSearch().getType().equals("1")){

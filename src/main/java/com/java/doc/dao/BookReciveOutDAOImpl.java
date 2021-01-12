@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
@@ -26,6 +27,7 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
 import com.java.doc.hibernate.HibernateUtil;
+import com.java.doc.model.BookRecieveBoard;
 import com.java.doc.model.BookRecieveDepartment;
 import com.java.doc.model.BookRecieveGroup;
 import com.java.doc.model.BookRecieveSection;
@@ -161,18 +163,31 @@ public class BookReciveOutDAOImpl implements BookReciveOutDAO {
 			sql += "a.BR_DATE,";
 			sql += "a.BR_FROM,";
 			sql += "a.BR_TO,";
-			sql += "GROUP_CONCAT(DISTINCT b.BR_TO_DEPARTMENT ORDER BY b.BR_TO_DEPARTMENT ASC SEPARATOR ', ') BR_TO_DEPARTMENT,";
+			if(table.getRole().equals("ADMIN")) {
+				sql += " (CASE WHEN GROUP_CONCAT(DISTINCT b.BR_TO_DEPARTMENT ORDER BY b.BR_TO_DEPARTMENT ASC SEPARATOR ', ') IS NULL ";
+				sql += " THEN GROUP_CONCAT(DISTINCT bo.BR_TO_BOARD_NAME ORDER BY bo.BR_BOARD_ID ASC SEPARATOR ', ') ";
+				sql += " ELSE GROUP_CONCAT(DISTINCT b.BR_TO_DEPARTMENT ORDER BY b.BR_TO_DEPARTMENT ASC SEPARATOR ', ') END) BR_TO_DEPARTMENT, ";
+			}else {
+				sql += "GROUP_CONCAT(DISTINCT b.BR_TO_DEPARTMENT ORDER BY b.BR_TO_DEPARTMENT ASC SEPARATOR ', ') BR_TO_DEPARTMENT,";
+			}
 			sql += "GROUP_CONCAT(DISTINCT c.BR_TO_GROUP ORDER BY c.BR_TO_GROUP ASC SEPARATOR ', ') BR_TO_GROUP,";
 			sql += "GROUP_CONCAT(DISTINCT d.BR_TO_USER ORDER BY d.BR_TO_USER ASC SEPARATOR ', ') BR_TO_USER,";
 			sql += "GROUP_CONCAT(DISTINCT b.BR_TO_DEPARTMENT_SHORT ORDER BY b.BR_TO_DEPARTMENT ASC SEPARATOR ', ') BR_TO_DEPARTMENT_SHORT,";
 			sql += "GROUP_CONCAT(DISTINCT b.BR_TO_DEPARTMENT_NAME ORDER BY b.BR_TO_DEPARTMENT ASC SEPARATOR ', ') BR_TO_DEPARTMENT_NAME,";
 			sql += "GROUP_CONCAT(DISTINCT c.BR_TO_GROUP_NAME ORDER BY c.BR_TO_GROUP ASC SEPARATOR ', ') BR_TO_GROUP_NAME,";
 			sql += "GROUP_CONCAT(DISTINCT d.BR_TO_USER_NAME ORDER BY d.BR_TO_USER ASC SEPARATOR ', ') BR_TO_USER_NAME,";
+			sql	+= "GROUP_CONCAT(DISTINCT b.RUNNING_NO ORDER BY b.RUNNING_NO ASC SEPARATOR ', ') RUNNING_NO_DEPARTMENT, ";
 			sql += "a.BR_SUBJECT,";
 			sql += "a.BR_REMARK,";
 			sql += "a.BR_DIVISION,";
 			sql += "a.BR_PCODE,";
-			sql += "a.BR_STATUS,";
+			if(table.getRole().equals("USER")) {
+				sql += "d.STATUS BR_STATUS,";
+			}else if(table.getRole().equals("BOARD")) {
+				sql += "bo.STATUS BR_STATUS,";
+			}else {
+				sql += "a.BR_STATUS,";
+			}
 			sql += "a.BR_IMAGE,";
 			sql += "a.CREATED_BY,";
 			sql += "a.CREATED_DATE,";
@@ -181,11 +196,37 @@ public class BookReciveOutDAOImpl implements BookReciveOutDAO {
 			sql += "a.UPDATED_DATE,";
 			sql += "a.BR_TO_SECTION,";
 			sql += "a.BR_TO_SECTION_NAME, ";
-			sql += "b.RUNNING_NO RUNNING_NO_DEPARTMENT, ";
-			sql += " NULL BR_REMARK_DEPARTMENT, NULL BR_REMARK_GROUP, NULL BR_REMARK_SECTION, NULL BR_REMARK_USER";
-			sql += " FROM BOOK_RECIVE_OUT a LEFT JOIN BOOK_RECIEVE_DEPARTMENT b ON a.br_id = b.br_id ";
-			sql += " LEFT JOIN BOOK_RECIEVE_GROUP c ON b.br_id = c.br_id AND b.BR_TO_DEPARTMENT = c.BR_TO_DEPARTMENT"; 
-			sql += " LEFT JOIN BOOK_RECIEVE_USER d ON c.br_id = d.br_id AND c.BR_TO_GROUP = d.BR_TO_GROUP";
+			sql += " NULL CNT_CHILD, ";
+			sql += " NULL BR_TO_BOARD, ";
+			sql += " NULL BR_REMARK_DEPARTMENT, NULL BR_REMARK_GROUP, NULL BR_REMARK_SECTION, NULL BR_REMARK_USER, NULL BR_REMARK_BOARD";
+			sql += " FROM BOOK_RECIVE_OUT a ";
+			if(table.getRole().equals("BOARD")){
+				sql += " INNER JOIN BOOK_RECIEVE_BOARD bo ON a.br_id = bo.br_id AND bo.BR_TO_BOARD = " + table.getBoardId();
+			}
+			sql += " LEFT JOIN BOOK_RECIEVE_DEPARTMENT b ON a.br_id = b.br_id ";
+			
+			if(table.getRole().equals("GROUP")) {
+				sql += " INNER JOIN BOOK_RECIEVE_GROUP c ON b.br_id = c.br_id AND b.BR_TO_DEPARTMENT = c.BR_TO_DEPARTMENT"; 
+			}else {
+				sql += " LEFT JOIN BOOK_RECIEVE_GROUP c ON b.br_id = c.br_id AND b.BR_TO_DEPARTMENT = c.BR_TO_DEPARTMENT"; 
+			}
+			if(table.getRole().equals("GROUP") && table.getSectionId() != 0) {
+				sql += " INNER JOIN BOOK_RECIEVE_SECTION s ON s.br_id = b.BR_ID AND s.BR_TO_GROUP = c.BR_TO_GROUP AND s.BR_TO_SECTION = " + table.getSectionId();
+				sql += " LEFT JOIN BOOK_RECIEVE_USER d ON c.br_id = d.br_id AND c.BR_TO_GROUP = d.BR_TO_GROUP AND d.BR_TO_SECTION  = s.BR_TO_SECTION";
+			}
+			
+			if(table.getRole().equals("USER") && table.getSectionId() != 0) {
+				sql += " LEFT JOIN BOOK_RECIEVE_SECTION s ON s.br_id = b.BR_ID AND s.BR_TO_GROUP = c.BR_TO_GROUP AND s.BR_TO_SECTION = " + table.getSectionId();
+				sql += " LEFT JOIN BOOK_RECIEVE_USER d ON c.br_id = d.br_id AND c.BR_TO_GROUP = d.BR_TO_GROUP AND (d.BR_TO_SECTION  = s.BR_TO_SECTION OR d.BR_TO_SECTION IS NULL)";
+			}else if(table.getRole().equals("USER")) {
+				sql += " INNER JOIN BOOK_RECIEVE_USER d ON c.br_id = d.br_id AND c.BR_TO_GROUP = d.BR_TO_GROUP";
+				
+			}else if(!(table.getRole().equals("GROUP") && table.getSectionId() != 0)){
+				sql += " LEFT JOIN BOOK_RECIEVE_USER d ON c.br_id = d.br_id AND c.BR_TO_GROUP = d.BR_TO_GROUP";
+			} 
+			if(table.getRole().equals("ADMIN")) {
+				sql += " LEFT JOIN BOOK_RECIEVE_BOARD bo ON a.BR_ID = bo.BR_ID ";
+			}
 			List<String> where = new ArrayList<String>();
 			if(!StringUtils.isNullOrEmpty(table.getSearch().getFrom().trim())){
 				where.add("a.BR_FROM LIKE '%" + table.getSearch().getFrom().trim() + "%'");
@@ -241,7 +282,12 @@ public class BookReciveOutDAOImpl implements BookReciveOutDAO {
 				}
 				sql = sql.substring(0, sql.length() - 4);
 			}
-			sql += " GROUP BY a.br_id, RUNNING_NO_DEPARTMENT ";
+			sql += " GROUP BY a.br_id ";
+			if(table.getRole().equals("USER")) {
+				sql += " , d.STATUS";
+			}else if(table.getRole().equals("BOARD")) {
+				sql += " , bo.STATUS";
+			}
 			List<BookReciveOut> book = session.createSQLQuery(sql).addEntity(BookReciveOut.class).list();
 			bookReciveOutTable.setCountSelect(book.size());
 			bookReciveOutTable.setSendoutListReport(book);
@@ -305,7 +351,20 @@ public class BookReciveOutDAOImpl implements BookReciveOutDAO {
 		List<BookReciveOut> data = new ArrayList<BookReciveOut>();
 		BookReciveOut result = new BookReciveOut();
 		try{
-			String sql = "SELECT a.BR_ID,";
+			String sql = "";
+			sql	+= "SELECT  x.* ";
+			if(user.getRole().equals("ADMIN")) {
+			
+				sql	+= ", (SELECT  GROUP_CONCAT(s.xx SEPARATOR ',') CNT_CHILD FROM (";
+				sql	+= "SELECT count(f.BR_TO_GROUP) xx FROM (SELECT BR_TO_DEPARTMENT FROM BOOK_RECIEVE_DEPARTMENT WHERE BR_ID = " + brId + " ORDER BY BR_TO_DEPARTMENT ASC) a ";
+				sql	+= "LEFT JOIN BOOK_RECIEVE_GROUP f ON f.BR_TO_DEPARTMENT = a.BR_TO_DEPARTMENT  AND f.BR_ID = " + brId + " ";
+				sql	+= "GROUP BY a.BR_TO_DEPARTMENT ) s) CNT_CHILD ";
+			}else {
+				sql	+= ", NULL CNT_CHILD ";
+			}
+			sql	+= "FROM (";
+					
+			sql += "SELECT a.BR_ID,";
 			sql	+= "a.BR_NUM,";
 			sql += "a.BR_YEAR,";
 			sql += "a.BR_RDATE,";
@@ -326,9 +385,14 @@ public class BookReciveOutDAOImpl implements BookReciveOutDAO {
 			sql += "a.DIVISION,";
 			sql += "a.UPDATED_BY,";
 			sql += "a.UPDATED_DATE,";
-			sql += "b.RUNNING_NO RUNNING_NO_DEPARTMENT,";
-			if(user.getRole().equals("ADMIN")){
-				sql += "a.BR_STATUS,";
+			
+			if(user.getRole().equals("ADMIN") || user.getRole().equals("BOARD")){
+				if(user.getRole().equals("BOARD")) {
+					sql += "bo.STATUS BR_STATUS,";
+				}else {
+					sql += "a.BR_STATUS,";
+				}
+				
 				sql += "GROUP_CONCAT(DISTINCT b.BR_TO_DEPARTMENT ORDER BY b.BR_TO_DEPARTMENT ASC SEPARATOR ',') BR_TO_DEPARTMENT, ";
 				sql += "GROUP_CONCAT(DISTINCT b.BR_TO_DEPARTMENT_SHORT ORDER BY b.BR_TO_DEPARTMENT ASC SEPARATOR ',') BR_TO_DEPARTMENT_SHORT,";
 				sql += "GROUP_CONCAT(DISTINCT b.BR_TO_DEPARTMENT_NAME ORDER BY b.BR_TO_DEPARTMENT ASC SEPARATOR ',') BR_TO_DEPARTMENT_NAME, ";
@@ -336,20 +400,28 @@ public class BookReciveOutDAOImpl implements BookReciveOutDAO {
 				sql += "GROUP_CONCAT(DISTINCT d.BR_TO_USER ORDER BY d.BR_TO_USER ASC SEPARATOR ',') BR_TO_USER,";
 				sql += "GROUP_CONCAT(DISTINCT c.BR_TO_GROUP ORDER BY c.BR_TO_GROUP ASC SEPARATOR ',') BR_TO_GROUP,"; 
 				sql += "GROUP_CONCAT(DISTINCT e.BR_TO_SECTION ORDER BY e.BR_TO_SECTION ASC SEPARATOR ',') BR_TO_SECTION, "; 
-				sql += " NULL BR_REMARK_DEPARTMENT, NULL BR_REMARK_GROUP, NULL BR_REMARK_SECTION, NULL BR_REMARK_USER";
+				sql += "GROUP_CONCAT(DISTINCT b.RUNNING_NO ORDER BY b.RUNNING_NO ASC SEPARATOR ',') RUNNING_NO_DEPARTMENT, "; 
+				sql += " NULL BR_REMARK_DEPARTMENT, NULL BR_REMARK_GROUP, NULL BR_REMARK_SECTION, NULL BR_REMARK_USER, ";
+				sql += " GROUP_CONCAT(DISTINCT bo.BR_TO_BOARD ORDER BY bo.BR_BOARD_ID ASC SEPARATOR ',') BR_TO_BOARD, ";
+				sql += " GROUP_CONCAT(DISTINCT bo.REMARK ORDER BY bo.BR_BOARD_ID ASC SEPARATOR ',') BR_REMARK_BOARD "; 
 				sql += " FROM BOOK_RECIVE_OUT a LEFT JOIN BOOK_RECIEVE_DEPARTMENT b ON a.br_id = b.br_id ";
 				sql += " LEFT JOIN BOOK_RECIEVE_GROUP c ON a.br_id = c.br_id AND c.BR_TO_DEPARTMENT = b.BR_TO_DEPARTMENT";
 				sql += " LEFT JOIN BOOK_RECIEVE_SECTION e ON a.br_id = e.br_id AND c.BR_TO_GROUP = e.BR_TO_GROUP";
 				sql += " LEFT JOIN BOOK_RECIEVE_USER d ON a.br_id = d.br_id AND c.BR_TO_DEPARTMENT = d.BR_TO_DEPARTMENT AND c.BR_TO_GROUP = d.BR_TO_GROUP";
+				sql += " LEFT JOIN BOOK_RECIEVE_BOARD bo ON a.br_id = bo.br_id ";
 				sql += " WHERE a.br_id = " + brId;
+				if(user.getRole().equals("BOARD")) {
+					sql += " AND bo.br_to_board = " + user.getBoardId();
+				}
 			}else if(user.getRole().equals("DEPARTMENT")){
 				sql += "a.BR_STATUS,";
 				sql += "GROUP_CONCAT(c.BR_TO_GROUP SEPARATOR ',') BR_TO_GROUP,";
 				sql += "GROUP_CONCAT(c.BR_TO_GROUP_NAME SEPARATOR ',') BR_TO_GROUP_NAME, ";
 				sql += "NULL BR_TO_USER, NULL BR_TO_SECTION, NULL BR_TO_SECTION_NAME, NULL BR_TO_USER_NAME, b.BR_TO_DEPARTMENT, b.BR_TO_DEPARTMENT_SHORT, b.BR_TO_DEPARTMENT_NAME, ";
-				sql += " b.REMARK BR_REMARK_DEPARTMENT, NULL BR_REMARK_GROUP, NULL BR_REMARK_SECTION, NULL BR_REMARK_USER";
+				sql += " b.REMARK BR_REMARK_DEPARTMENT, NULL BR_REMARK_GROUP, NULL BR_REMARK_SECTION, NULL BR_REMARK_USER, ";
+				sql += "GROUP_CONCAT(b.RUNNING_NO SEPARATOR ',') RUNNING_NO_DEPARTMENT, NULL BR_REMARK_BOARD, NULL BR_TO_BOARD ";
 				sql += " FROM BOOK_RECIVE_OUT a LEFT JOIN BOOK_RECIEVE_DEPARTMENT b ON a.br_id = b.br_id LEFT JOIN BOOK_RECIEVE_GROUP c ON b.br_id = c.br_id AND b.BR_TO_DEPARTMENT = c.BR_TO_DEPARTMENT ";
-				sql += " AND c.BR_TO_DEPARTMENT = b.BR_TO_DEPARTMENT";
+				sql += " AND c.BR_TO_DEPARTMENT = b.BR_TO_DEPARTMENT ";
 				sql += " WHERE a.br_id = " + brId;
 				sql += " AND b.BR_TO_DEPARTMENT = '" + user.getDivision() + "'";
 			}else if(user.getRole().equals("GROUP")){
@@ -360,36 +432,52 @@ public class BookReciveOutDAOImpl implements BookReciveOutDAO {
 				sql += "GROUP_CONCAT(DISTINCT d.BR_TO_USER_NAME ORDER BY d.BR_TO_USER_NAME ASC SEPARATOR ',') BR_TO_USER_NAME ,";
 				sql += "GROUP_CONCAT(DISTINCT d.BR_TO_USER ORDER BY d.BR_TO_USER ASC SEPARATOR ',') BR_TO_USER ,";
 				sql += "c.BR_TO_GROUP, c.BR_TO_GROUP_NAME, b.BR_TO_DEPARTMENT, b.BR_TO_DEPARTMENT_SHORT, b.BR_TO_DEPARTMENT_NAME, ";
-				sql += " b.REMARK BR_REMARK_DEPARTMENT, c.REMARK BR_REMARK_GROUP, e.REMARK BR_REMARK_SECTION, NULL BR_REMARK_USER";
+				sql += " b.REMARK BR_REMARK_DEPARTMENT, c.REMARK BR_REMARK_GROUP, NULL BR_REMARK_USER, ";
+				if(user.getSectionId() != null) {
+					sql += " e.REMARK BR_REMARK_SECTION,";
+				}else {
+					sql += " NULL BR_REMARK_SECTION,";
+				}
+				sql += " NULL RUNNING_NO_DEPARTMENT, NULL BR_REMARK_BOARD, NULL BR_TO_BOARD ";
 				sql += " FROM BOOK_RECIVE_OUT a LEFT JOIN BOOK_RECIEVE_DEPARTMENT b ON a.br_id = b.br_id LEFT JOIN BOOK_RECIEVE_GROUP c ON b.br_id = c.br_id AND b.BR_TO_DEPARTMENT = c.BR_TO_DEPARTMENT LEFT JOIN BOOK_RECIEVE_USER d ON c.br_id = d.br_id AND c.BR_TO_GROUP = d.BR_TO_GROUP ";
 				sql += " LEFT JOIN BOOK_RECIEVE_SECTION e ON b.br_id = e.br_id ";
-				sql += " AND d.BR_TO_GROUP = c.BR_TO_GROUP";
+				sql += " AND e.BR_TO_GROUP = c.BR_TO_GROUP";
 				sql += " WHERE a.br_id = " + brId;
+				if(user.getSectionId() != null) {
+					sql += " AND e.BR_TO_SECTION = '" + user.getSectionId() + "'";
+				}
 				sql += " AND b.BR_TO_DEPARTMENT = '" + user.getDivision() + "'";
 				sql += " AND c.BR_TO_GROUP = '" + user.getGroupId() + "'";
 			}else if(user.getRole().equals("USER")){
 				sql += "d.STATUS BR_STATUS,";
-				sql += "GROUP_CONCAT(d.BR_TO_USER SEPARATOR ',') BR_TO_USER,";
-				sql += "GROUP_CONCAT(d.BR_TO_USER_NAME SEPARATOR ',') BR_TO_USER_NAME, ";
+				sql += "d.BR_TO_USER,";
+				sql += "d.BR_TO_USER_NAME, ";
 				sql += " NULL BR_TO_SECTION, NULL BR_TO_SECTION_NAME,";
 				sql += "c.BR_TO_GROUP, c.BR_TO_GROUP_NAME, b.BR_TO_DEPARTMENT, b.BR_TO_DEPARTMENT_SHORT, b.BR_TO_DEPARTMENT_NAME, ";
-				sql += " b.REMARK BR_REMARK_DEPARTMENT, c.REMARK BR_REMARK_GROUP, e.REMARK BR_REMARK_SECTION, d.REMARK BR_REMARK_USER";
-				sql += " FROM BOOK_RECIVE_OUT a LEFT JOIN BOOK_RECIEVE_DEPARTMENT b ON a.br_id = b.br_id LEFT JOIN BOOK_RECIEVE_GROUP c ON b.br_id = c.br_id AND b.BR_TO_DEPARTMENT = c.BR_TO_DEPARTMENT LEFT JOIN BOOK_RECIEVE_USER d ON c.br_id = d.br_id AND c.BR_TO_GROUP = d.BR_TO_GROUP AND b.BR_TO_DEPARTMENT = d.BR_TO_DEPARTMENT";
+				sql += " b.REMARK BR_REMARK_DEPARTMENT, c.REMARK BR_REMARK_GROUP, e.REMARK BR_REMARK_SECTION, d.REMARK BR_REMARK_USER,";
+				sql += " NULL RUNNING_NO_DEPARTMENT, NULL BR_REMARK_BOARD, NULL BR_TO_BOARD ";
+				sql += " FROM BOOK_RECIVE_OUT a LEFT JOIN BOOK_RECIEVE_DEPARTMENT b ON a.br_id = b.br_id LEFT JOIN BOOK_RECIEVE_GROUP c ON b.br_id = c.br_id AND b.BR_TO_DEPARTMENT = c.BR_TO_DEPARTMENT INNER JOIN BOOK_RECIEVE_USER d ON b.br_id = d.br_id AND c.BR_TO_GROUP = d.BR_TO_GROUP AND b.BR_TO_DEPARTMENT = d.BR_TO_DEPARTMENT";
 				sql += " AND d.BR_TO_GROUP = c.BR_TO_GROUP";
-				sql += " LEFT JOIN BOOK_RECIEVE_SECTION e ON b.br_id = e.br_id ";
+				sql += " LEFT JOIN BOOK_RECIEVE_SECTION e ON b.br_id = e.br_id AND e.BR_TO_SECTION = d.BR_TO_SECTION";
 				sql += " WHERE a.br_id = " + brId;
 				sql += " AND b.BR_TO_DEPARTMENT = '" + user.getDivision() + "'";
 				sql += " AND c.BR_TO_GROUP = '" + user.getGroupId() + "'";
 				sql += " AND d.BR_TO_USER = '" + user.getId() + "'";
 			}
-			sql += " GROUP BY a.BR_ID, RUNNING_NO_DEPARTMENT";
+			sql += " GROUP BY a.BR_ID";
 			if(user.getRole().equals("DEPARTMENT")){
 				sql += " ,b.BR_TO_DEPARTMENT_SHORT, b.BR_TO_DEPARTMENT_NAME, b.REMARK ";
 			}else if(user.getRole().equals("GROUP")){
-				sql += " ,c.BR_TO_GROUP_NAME , b.BR_TO_DEPARTMENT_SHORT,b.BR_TO_DEPARTMENT_NAME, b.REMARK, c.REMARK, e.REMARK ";
+				sql += " ,c.BR_TO_GROUP_NAME , b.BR_TO_DEPARTMENT_SHORT,b.BR_TO_DEPARTMENT_NAME, b.REMARK, c.REMARK ";
+				if(user.getSectionId() != null) {
+					sql += " , e.REMARK";
+				}
 			}else if(user.getRole().equals("USER")){
-				sql += " ,d.STATUS, c.BR_TO_GROUP_NAME, b.BR_TO_DEPARTMENT_SHORT, b.BR_TO_DEPARTMENT_NAME, d.REMARK, b.REMARK, c.REMARK, e.REMARK ";
+				sql += " ,d.STATUS, d.BR_TO_USER, d.BR_TO_USER_NAME, c.BR_TO_GROUP_NAME, b.BR_TO_DEPARTMENT_SHORT, b.BR_TO_DEPARTMENT_NAME, d.REMARK, b.REMARK, c.REMARK, e.REMARK ";
+			}else if(user.getRole().equals("BOARD")){
+				sql += " ,bo.STATUS";
 			}
+			sql	+= ") x";
 			data = session.createSQLQuery(sql).addEntity(BookReciveOut.class).list();
 			if(data.size() > 0){
 				result = data.get(0);
@@ -580,6 +668,32 @@ public class BookReciveOutDAOImpl implements BookReciveOutDAO {
 		}
 		return result;
 	}
+	
+	@Override
+	public int updateReciveOutSection(BookRecieveSection recive) {
+		Session session = OpenSession();
+		Transaction tx = session.beginTransaction();
+		int result = 0;
+		try{
+			Query query = session.createQuery("update BookRecieveSection set status = :status, updatedDate = SYSDATE(), updatedBy = :updatedBy, remark = :remark where brId = :brId and brToDepartment = :brToDepartment and brToGroup = :brToGroup and brToSection = :brToSection");
+			query.setParameter("status", recive.getStatus());
+			query.setParameter("updatedBy", recive.getUpdatedBy());
+			query.setParameter("remark", recive.getRemark());
+			query.setParameter("brId", recive.getBrId());
+			query.setParameter("brToDepartment", recive.getBrToDepartment());
+			query.setParameter("brToGroup", recive.getBrToGroup());
+			query.setParameter("brToSection", recive.getBrToSection());
+			
+			result = query.executeUpdate();
+			tx.commit();
+		} catch (Exception ex) {
+			logger.error("updateReciveOutSection : ", ex);
+			tx.rollback();
+		}finally{
+			HibernateUtil.close(session);
+		}
+		return result;
+	}
 
 	@Override
 	public int updateReciveOutUser(BookRecieveUser recive) {
@@ -590,24 +704,31 @@ public class BookReciveOutDAOImpl implements BookReciveOutDAO {
 			Query query = session.createQuery("update BookRecieveUser set status = :status, updatedDate = SYSDATE(), updatedBy = :updatedBy, remark = :remark where brId = :brId and brToGroup = :brToGroup and brToUser = :brToUser and brToDepartment = :brToDepartment");
 			query.setParameter("status", recive.getStatus());
 			query.setParameter("updatedBy", recive.getUpdatedBy());
+			query.setParameter("remark", recive.getRemark());
 			query.setParameter("brId", recive.getBrId());
 			query.setParameter("brToGroup", recive.getBrToGroup());
 			query.setParameter("brToUser", recive.getBrToUser());
 			query.setParameter("brToDepartment", recive.getBrToDepartment());
-			query.setParameter("remark", recive.getRemark());
-			query.executeUpdate();
-			
-			
-			query = session.createQuery("update BookReciveOut set "
-					+ "brStatus = :brStatus, "
-					+ "updatedBy = :updatedBy, "
-					+ "updatedDate = SYSDATE() "
-					+ "where brId = :brId");
-			query.setParameter("brStatus", recive.getStatus());
-			query.setParameter("updatedBy", recive.getUpdatedBy());
-			query.setParameter("brId", recive.getBrId());
 			result = query.executeUpdate();
 			
+			List<BookRecieveUser> data = session.createSQLQuery("select * from Book_Recieve_User where BR_ID = '" + recive.getBrId() + "'").addEntity(BookRecieveUser.class).list();
+			boolean flag = true;
+			for(BookRecieveUser u : data) {
+				if("N".equals(u.getStatus())){
+					flag = false;
+				}
+			}
+			if(flag) {
+				query = session.createQuery("update BookReciveOut set "
+						+ "brStatus = :brStatus, "
+						+ "updatedBy = :updatedBy, "
+						+ "updatedDate = SYSDATE() "
+						+ "where brId = :brId");
+				query.setParameter("brStatus", recive.getStatus());
+				query.setParameter("updatedBy", recive.getUpdatedBy());
+				query.setParameter("brId", recive.getBrId());
+				result = query.executeUpdate();
+			}
 			tx.commit();
 		} catch (Exception ex) {
 			logger.error("updateReciveOutUser : ", ex);
@@ -714,6 +835,33 @@ public class BookReciveOutDAOImpl implements BookReciveOutDAO {
 	}
 	
 	@Override
+	public int insertRecieveBoard(BookRecieveBoard recive) throws Exception {
+		BigInteger result = new BigInteger("0");
+		Session session = OpenSession();
+		Transaction tx = session.beginTransaction();
+		try{
+			Query query = session.createSQLQuery("INSERT INTO BOOK_RECIEVE_BOARD (BR_ID, BR_TO_BOARD, BR_TO_BOARD_NAME, STATUS, UPDATED_BY, UPDATED_DATE, REMARK)"
+					+ " VALUES (:BR_ID, :BR_TO_BOARD, :BR_TO_BOARD_NAME, :STATUS, :UPDATED_BY, SYSDATE(), :REMARK) ");
+			query.setParameter("BR_ID", recive.getBrId());
+			query.setParameter("BR_TO_BOARD", recive.getBrToBoard());
+			query.setParameter("BR_TO_BOARD_NAME", recive.getBrToBoardName());
+			query.setParameter("STATUS", recive.getStatus());
+			query.setParameter("UPDATED_BY", recive.getUpdatedBy());
+			query.setParameter("REMARK", recive.getRemark());
+			query.executeUpdate();
+			result = (BigInteger) session.createSQLQuery("SELECT LAST_INSERT_ID()").uniqueResult();
+			tx.commit();
+		}catch(Exception ex){
+			logger.error("insertRecieveBoard : ", ex);
+			tx.rollback();
+			throw ex;
+		}finally{
+			HibernateUtil.close(session);
+		}
+		return result.intValue();
+	}
+	
+	@Override
 	public int insertRecieveGroup(BookRecieveGroup recive) throws Exception {
 		BigInteger result = new BigInteger("0");
 		Session session = OpenSession();
@@ -749,8 +897,8 @@ public class BookReciveOutDAOImpl implements BookReciveOutDAO {
 		Session session = OpenSession();
 		Transaction tx = session.beginTransaction();
 		try{
-			Query query = session.createSQLQuery("INSERT INTO BOOK_RECIEVE_USER (BR_ID, BR_TO_GROUP, BR_TO_USER, BR_TO_USER_NAME, BR_TO_DEPARTMENT, STATUS, UPDATED_BY, UPDATED_DATE, REMARK)"
-					+ " VALUES (:BR_ID, :BR_TO_GROUP, :BR_TO_USER, :BR_TO_USER_NAME, :BR_TO_DEPARTMENT, :STATUS, :UPDATED_BY, SYSDATE(), :REMARK) ");
+			Query query = session.createSQLQuery("INSERT INTO BOOK_RECIEVE_USER (BR_ID, BR_TO_GROUP, BR_TO_USER, BR_TO_USER_NAME, BR_TO_DEPARTMENT, STATUS, UPDATED_BY, UPDATED_DATE, REMARK, BR_TO_SECTION)"
+					+ " VALUES (:BR_ID, :BR_TO_GROUP, :BR_TO_USER, :BR_TO_USER_NAME, :BR_TO_DEPARTMENT, :STATUS, :UPDATED_BY, SYSDATE(), :REMARK, :BR_TO_SECTION) ");
 			query.setParameter("BR_ID", recive.getBrId());
 			query.setParameter("BR_TO_GROUP", recive.getBrToGroup());
 			query.setParameter("BR_TO_USER", recive.getBrToUser());
@@ -759,6 +907,7 @@ public class BookReciveOutDAOImpl implements BookReciveOutDAO {
 			query.setParameter("STATUS", recive.getStatus());
 			query.setParameter("UPDATED_BY", recive.getUpdatedBy());
 			query.setParameter("REMARK", recive.getRemark());
+			query.setParameter("BR_TO_SECTION", recive.getBrToSection());
 			query.executeUpdate();
 			result = (BigInteger) session.createSQLQuery("SELECT LAST_INSERT_ID()").uniqueResult();
 			tx.commit();
@@ -778,17 +927,17 @@ public class BookReciveOutDAOImpl implements BookReciveOutDAO {
 		Transaction tx = session.beginTransaction();
 		String rs = "0";
 		try{
-			session.createSQLQuery("delete from Book_Recieve_Department where br_Id = :brId and br_to_department not in(:brToNotIn)")
+			session.createSQLQuery("delete from Book_Recieve_Department where br_Id = :brId and br_to_department not in(" + brToNotIn + ")")
 				.setParameter("brId", bookReciveOut.getBrId())
-				.setParameter("brToNotIn", brToNotIn)
 				.executeUpdate();
-			session.createSQLQuery("delete from Book_Recieve_Group where br_Id = :brId and br_to_department not in(:brToNotIn)")
+			session.createSQLQuery("delete from Book_Recieve_Group where br_Id = :brId and br_to_department not in(" + brToNotIn + ")")
 				.setParameter("brId", bookReciveOut.getBrId())
-				.setParameter("brToNotIn", brToNotIn)
 				.executeUpdate();
-			session.createSQLQuery("delete from Book_Recieve_User where br_Id = :brId and br_to_department not in(:brToNotIn)")
+			session.createSQLQuery("delete from Book_Recieve_Section where br_Id = :brId and br_to_department not in(" + brToNotIn + ")")
 				.setParameter("brId", bookReciveOut.getBrId())
-				.setParameter("brToNotIn", brToNotIn)
+				.executeUpdate();
+			session.createSQLQuery("delete from Book_Recieve_User where br_Id = :brId and br_to_department not in(" + brToNotIn + ")")
+				.setParameter("brId", bookReciveOut.getBrId())
 				.executeUpdate();
 			tx.commit();
 			rs = "1";
@@ -807,15 +956,13 @@ public class BookReciveOutDAOImpl implements BookReciveOutDAO {
 		Transaction tx = session.beginTransaction();
 		String rs = "0";
 		try{
-			session.createSQLQuery("delete from Book_Recieve_Group where br_Id = :brId and br_To_Department = :brToDepartment and br_to_group not in(:brToNotIn)")
+			session.createSQLQuery("delete from Book_Recieve_Group where br_Id = :brId and br_To_Department = :brToDepartment and br_to_group not in(" + brToNotIn + ")")
 				.setParameter("brId", bookRecieveDepartment.getBrId())
 				.setParameter("brToDepartment", bookRecieveDepartment.getBrToDepartment())
-				.setParameter("brToNotIn", brToNotIn)
 				.executeUpdate();
-			session.createSQLQuery("delete from Book_Recieve_User where br_Id = :brId and br_To_Department = :brToDepartment and br_to_group not in(:brToNotIn)")
+			session.createSQLQuery("delete from Book_Recieve_User where br_Id = :brId and br_To_Department = :brToDepartment and br_to_group not in(" + brToNotIn + ")")
 				.setParameter("brId", bookRecieveDepartment.getBrId())
 				.setParameter("brToDepartment", bookRecieveDepartment.getBrToDepartment())
-				.setParameter("brToNotIn", brToNotIn)
 				.executeUpdate();
 			tx.commit();
 			rs = "1";
@@ -834,16 +981,38 @@ public class BookReciveOutDAOImpl implements BookReciveOutDAO {
 		Transaction tx = session.beginTransaction();
 		String rs = "0";
 		try{
-			session.createSQLQuery("delete from Book_Recieve_User where br_Id = :brId and br_To_Group = :brToGroup and br_To_Department = :brToDepartment and br_to_user not in(:brToNotIn)")
+			session.createSQLQuery("delete from Book_Recieve_User where br_Id = :brId and br_To_Group = :brToGroup and br_To_Department = :brToDepartment and br_to_user not in(" + brToNotIn + ")")
 				.setParameter("brId", bookRecieveGroup.getBrId())
-				.setParameter("brToDepartment", bookRecieveGroup.getBrToDepartment())
 				.setParameter("brToGroup", bookRecieveGroup.getBrToGroup())
-				.setParameter("brToNotIn", brToNotIn)
+				.setParameter("brToDepartment", bookRecieveGroup.getBrToDepartment())
 				.executeUpdate();
 			tx.commit();
 			rs = "1";
 		} catch (Exception ex) {
 			logger.error("deleteRecieveUser : ", ex);
+			tx.rollback();
+		}finally{
+			HibernateUtil.close(session);
+		}
+		return rs;
+	}
+	
+	@Override
+	public String deleteRecieveSectionUser(BookRecieveSection bookRecieveSection, String brToNotIn) {
+		Session session = OpenSession();
+		Transaction tx = session.beginTransaction();
+		String rs = "0";
+		try{
+			session.createSQLQuery("delete from Book_Recieve_User where br_Id = :brId and br_To_Group = :brToGroup and br_To_Department = :brToDepartment and br_To_Section = :brToSection and br_to_user not in(" + brToNotIn + ")")
+				.setParameter("brId", bookRecieveSection.getBrId())
+				.setParameter("brToGroup", bookRecieveSection.getBrToGroup())
+				.setParameter("brToSection", bookRecieveSection.getBrToSection())
+				.setParameter("brToDepartment", bookRecieveSection.getBrToDepartment())
+				.executeUpdate();
+			tx.commit();
+			rs = "1";
+		} catch (Exception ex) {
+			logger.error("deleteRecieveSectionUser : ", ex);
 			tx.rollback();
 		}finally{
 			HibernateUtil.close(session);
@@ -937,11 +1106,17 @@ public class BookReciveOutDAOImpl implements BookReciveOutDAO {
 		List<StatusDetail> statusDetail = null;
 		Session session = OpenSession();
 		try {
-			String sql = "SELECT a.BR_TO_DEPARTMENT, b.BR_TO_GROUP, c.BR_TO_USER, a.BR_TO_DEPARTMENT_NAME, b.BR_TO_GROUP_NAME, c.BR_TO_USER_NAME, c.STATUS,  d.BR_SECTION_ID, d.BR_TO_SECTION_NAME FROM book_recieve_department a ";
+			String sql = "SELECT * FROM (SELECT a.BR_TO_DEPARTMENT, b.BR_TO_GROUP, c.BR_TO_USER, a.BR_TO_DEPARTMENT_NAME, b.BR_TO_GROUP_NAME, c.BR_TO_USER_NAME, c.STATUS,  d.BR_SECTION_ID, d.BR_TO_SECTION_NAME FROM book_recieve_department a ";
 			sql += "LEFT JOIN book_recieve_group b on a.BR_ID = b.BR_ID AND a.BR_TO_DEPARTMENT = b.BR_TO_DEPARTMENT ";
-			sql += "LEFT JOIN book_recieve_user c ON a.BR_ID = c.BR_ID AND b.BR_TO_GROUP = c.BR_TO_GROUP ";
-			sql += "LEFT JOIN book_recieve_section d ON a.BR_ID = d.BR_ID AND b.BR_TO_GROUP = c.BR_TO_GROUP ";
-			sql += "WHERE a.BR_ID = :brId ORDER BY a.BR_TO_DEPARTMENT, b.BR_TO_GROUP, c.BR_TO_USER";
+			sql += "LEFT JOIN book_recieve_section d ON a.BR_ID = d.BR_ID AND d.BR_TO_GROUP = b.BR_TO_GROUP ";
+			sql += "LEFT JOIN book_recieve_user c ON a.BR_ID = c.BR_ID AND c.BR_TO_GROUP = b.BR_TO_GROUP AND c.BR_TO_SECTION = d.BR_TO_SECTION ";
+			sql += "WHERE a.BR_ID = :brId ";
+			sql += "UNION ";
+			sql += "SELECT a.BR_TO_DEPARTMENT, b.BR_TO_GROUP, c.BR_TO_USER, a.BR_TO_DEPARTMENT_NAME, b.BR_TO_GROUP_NAME, c.BR_TO_USER_NAME, c.STATUS,  NULL BR_SECTION_ID, NULL BR_TO_SECTION_NAME FROM book_recieve_department a ";
+			sql += "LEFT JOIN book_recieve_group b on a.BR_ID = b.BR_ID AND a.BR_TO_DEPARTMENT = b.BR_TO_DEPARTMENT ";
+			sql += "LEFT JOIN book_recieve_user c ON a.BR_ID = c.BR_ID AND c.BR_TO_GROUP = b.BR_TO_GROUP AND c.BR_TO_SECTION IS NULL ";
+			sql += "WHERE a.BR_ID = :brId) a ORDER BY a.BR_TO_DEPARTMENT, a.BR_TO_GROUP, a.BR_TO_USER";
+			
 			Query query = session.createSQLQuery(sql);
 			query.setParameter("brId", brId);
 			List<Object[]> rows = query.list();
@@ -1000,7 +1175,7 @@ public class BookReciveOutDAOImpl implements BookReciveOutDAO {
 	
 	@Override
 	public Map<String, List<String>> getUserSelectedByAdmin(String groups, String sections) {
-		Map<String, List<String>> map = null;
+		Map<String, List<String>> map = new HashMap<String, List<String>>();;
 		Session session = OpenSession();
 		try {
 			String[] arrSections = null;
@@ -1008,6 +1183,7 @@ public class BookReciveOutDAOImpl implements BookReciveOutDAO {
 			if(StringUtils.isNullOrEmpty((groups))) {
 				groups = "''";
 			}
+			Map<String, String> users = new HashMap<String, String>();
 			if(!StringUtils.isNullOrEmpty(sections)) {
 				sections = sections.replaceAll("'",  "");
 				arrSections = sections.split(",");
@@ -1026,28 +1202,17 @@ public class BookReciveOutDAOImpl implements BookReciveOutDAO {
 						dataNotfound = true;
 						break;
 					}else {
-						map = new HashMap<String, List<String>>();
-						String chk = "";
-						List<String> users = new ArrayList<String>();
 						
 						for(Object[] row : rows){
-							if(StringUtils.isNullOrEmpty(chk)){
-								chk = row[0].toString();
-							}else if(!chk.equals(row[0].toString())){
-								map.put(chk, users);
-								users = new ArrayList<String>();
-								chk = row[0].toString();
-							}
 							String result = "";
 							if(!StringUtils.isNullOrEmpty(sections)){
-								result = row[6] + "xx#xx" + row[7] + "xx#xx" + row[2] + "xx#xx" + row[8] + "xx#xx" + row[9] + "xx#xx" + row[3] + row[4] + " " + row[5];
+								result = row[0] + "xx#xx" + row[6] + "xx#xx" + row[7] + "xx#xx" + row[2] + "xx#xx" + row[8] + "xx#xx" + row[9] + "xx#xx" + row[3] + row[4] + " " + row[5];
 							}else {
-								result = row[6] + "xx#xx" + row[7] + "xx#xx" + row[2] + "xx#xx" + row[3] + row[4] + " " + row[5];
+								result = row[0] + "xx#xx" + row[6] + "xx#xx" + row[7] + "xx#xx" + row[2] + "xx#xx" + row[3] + row[4] + " " + row[5];
 							}
 							
-							users.add(result);
+							users.put(row[2].toString(), result);
 						}
-						map.put(chk, users);
 					}
 				}
 				if(dataNotfound) {
@@ -1061,28 +1226,18 @@ public class BookReciveOutDAOImpl implements BookReciveOutDAO {
 					Query query = session.createSQLQuery(sql);
 					List<Object[]> rows = query.list();
 					if(!rows.isEmpty()){
-						map = new HashMap<String, List<String>>();
-						String chk = "";
-						List<String> users = new ArrayList<String>();
 						
 						for(Object[] row : rows){
-							if(StringUtils.isNullOrEmpty(chk)){
-								chk = row[0].toString();
-							}else if(!chk.equals(row[0].toString())){
-								map.put(chk, users);
-								users = new ArrayList<String>();
-								chk = row[0].toString();
-							}
+							
 							String result = "";
 							if(!StringUtils.isNullOrEmpty(sections)){
-								result = row[6] + "xx#xx" + row[7] + "xx#xx" + row[2] + "xx#xx" + row[8] + "xx#xx" + row[9] + "xx#xx" + row[3] + row[4] + " " + row[5];
+								result = row[0] + "xx#xx" + row[6] + "xx#xx" + row[7] + "xx#xx" + row[2] + "xx#xx" + row[8] + "xx#xx" + row[9] + "xx#xx" + row[3] + row[4] + " " + row[5];
 							}else {
-								result = row[6] + "xx#xx" + row[7] + "xx#xx" + row[2] + "xx#xx" + row[3] + row[4] + " " + row[5];
+								result = row[0] + "xx#xx" + row[6] + "xx#xx" + row[7] + "xx#xx" + row[2] + "xx#xx" + row[3] + row[4] + " " + row[5];
 							}
 							
-							users.add(result);
+							users.put(row[2].toString(), result);
 						}
-						map.put(chk, users);
 					}
 				}
 			}else {
@@ -1096,23 +1251,23 @@ public class BookReciveOutDAOImpl implements BookReciveOutDAO {
 				Query query = session.createSQLQuery(sql);
 				List<Object[]> rows = query.list();
 				if(!rows.isEmpty()){
-					map = new HashMap<String, List<String>>();
-					String chk = "";
-					List<String> users = new ArrayList<String>();
 					
 					for(Object[] row : rows){
-						if(StringUtils.isNullOrEmpty(chk)){
-							chk = row[0].toString();
-						}else if(!chk.equals(row[0].toString())){
-							map.put(chk, users);
-							users = new ArrayList<String>();
-							chk = row[0].toString();
-						}
-						String result = row[6] + "xx#xx" + row[7] + "xx#xx" + row[2] + "xx#xx" + row[3] + row[4] + " " + row[5];
-						users.add(result);
+						
+						String result = row[0] + "xx#xx" + row[6] + "xx#xx" + row[7] + "xx#xx" + row[2] + "xx#xx" + row[3] + row[4] + " " + row[5];
+						users.put(row[2].toString(), result);
 					}
-					map.put(chk, users);
-					
+				}
+			}
+			for(Entry<String, String> ent : users.entrySet()){
+				String[] arr = ent.getValue().split("xx#xx");
+				String str = ent.getValue().replaceFirst(arr[0] + "xx#xx", "");
+				if(map.containsKey(arr[0])) {
+					map.get(arr[0]).add(str);
+				}else {
+					List<String> l = new ArrayList<String>();
+					l.add(str);
+					map.put(arr[0], l);
 				}
 			}
 		} catch (Exception ex) { 
@@ -1124,13 +1279,64 @@ public class BookReciveOutDAOImpl implements BookReciveOutDAO {
 	}
 
 	@Override
+	public Map<String, List<String>> getUserForSectionRoleSelectedByAdmin(String groups, String sections) {
+		Map<String, List<String>> map = new HashMap<String, List<String>>();
+		Session session = OpenSession();
+		try {
+			String[] arrSections = null;
+			String sql = "";
+			if(StringUtils.isNullOrEmpty((groups))) {
+				groups = "''";
+			}
+			sql = "SELECT b.division_name, c.group_name, a.id, a.prefix, a.fname, a.lname, a.division, a.group_id, s.id section_id, s.section_name";
+			sql += " FROM users a ";
+			sql += " INNER JOIN divisions b ON a.division = b.division_code ";
+			sql += " INNER JOIN groups c ON a.division = c.division_code and a.group_id = c.group_id";
+			sql += " INNER JOIN sections s ON a.section_id = s.id AND s.id = " + sections; 
+			sql += " WHERE a.group_id IN (" + groups + ") AND a.role = 'USER'";
+			
+			Query query = session.createSQLQuery(sql);
+			List<Object[]> rows = query.list();
+
+			
+			String chk = "";
+			List<String> users = new ArrayList<String>();
+			
+			for(Object[] row : rows){
+				if(StringUtils.isNullOrEmpty(chk)){
+					chk = row[0].toString();
+				}else if(!chk.equals(row[0].toString())){
+					map.put(chk, users);
+					users = new ArrayList<String>();
+					chk = row[0].toString();
+				}
+				String result = "";
+				if(!StringUtils.isNullOrEmpty(sections)){
+					result = row[6] + "xx#xx" + row[7] + "xx#xx" + row[2] + "xx#xx" + row[8] + "xx#xx" + row[9] + "xx#xx" + row[3] + row[4] + " " + row[5];
+				}else {
+					result = row[6] + "xx#xx" + row[7] + "xx#xx" + row[2] + "xx#xx" + row[3] + row[4] + " " + row[5];
+				}
+				
+				users.add(result);
+			}
+			map.put(chk, users);
+			
+		} catch (Exception ex) { 
+			logger.error("getUserSelectedByAdmin : ", ex);
+		}finally{
+			HibernateUtil.close(session);
+		}
+		return map;
+	}
+	
+	@Override
 	public List<BookRecieveDepartment> getBookRecieveOutDepartment(int brId) {
-		List<BookRecieveDepartment> data = null;
+		List<BookRecieveDepartment> data = new ArrayList<BookRecieveDepartment>();
 		Session session = OpenSession();
 		try {
 			String sql = "SELECT * FROM BOOK_RECIEVE_DEPARTMENT WHERE BR_ID = " + brId;
 			sql += " ORDER BY BR_TO_DEPARTMENT ASC ";
-			data = session.createSQLQuery(sql).addEntity(BookRecieveDepartment.class).list();
+			data = (List<BookRecieveDepartment>) session.createSQLQuery(sql).addEntity(BookRecieveDepartment.class).list();
 		} catch (Exception ex) { 
 			logger.error("getBookRecieveOutDepartment : ", ex);
 		}finally{
@@ -1161,6 +1367,22 @@ public class BookReciveOutDAOImpl implements BookReciveOutDAO {
 		Session session = OpenSession();
 		try {
 			String sql = "SELECT * FROM BOOK_RECIEVE_USER WHERE BR_ID = " + brId + " AND BR_TO_DEPARTMENT = '" + brToDepartment + "' AND BR_TO_GROUP = '" + brToGroup + "'";
+			sql += " ORDER BY BR_TO_USER ASC ";
+			data = session.createSQLQuery(sql).addEntity(BookRecieveUser.class).list();
+		} catch (Exception ex) { 
+			logger.error("getBookRecieveOutUser : ", ex);
+		}finally{
+			HibernateUtil.close(session);
+		}
+		return data;
+	}
+	
+	@Override
+	public List<BookRecieveUser> getBookRecieveOutSectionUser(int brId, String brToDepartment, String brToGroup, String brToSection) {
+		List<BookRecieveUser> data = null;
+		Session session = OpenSession();
+		try {
+			String sql = "SELECT * FROM BOOK_RECIEVE_USER WHERE BR_ID = " + brId + " AND BR_TO_DEPARTMENT = '" + brToDepartment + "' AND BR_TO_GROUP = '" + brToGroup + "' AND BR_TO_SECTION = '" + brToSection + "'";
 			sql += " ORDER BY BR_TO_USER ASC ";
 			data = session.createSQLQuery(sql).addEntity(BookRecieveUser.class).list();
 		} catch (Exception ex) { 
@@ -1291,7 +1513,7 @@ public class BookReciveOutDAOImpl implements BookReciveOutDAO {
 		Session session = OpenSession();
 		try{
 			
-			Query sql = session.createSQLQuery("SELECT a.RUNNING_NO FROM BOOK_RECIEVE_DEPARTMENT a INNER JOIN BOOK_RECIVE_OUT b ON a.BR_ID = b.BR_ID WHERE b.BR_YEAR = :BR_YEAR AND a.BR_TO_DEPARTMENT = :BR_TO_DEPARTMENT ORDER BY a.RUNNING_NO DESC LIMIT 1");
+			Query sql = session.createSQLQuery("SELECT a.RUNNING_NO FROM BOOK_RECIEVE_DEPARTMENT a INNER JOIN BOOK_RECIVE_OUT b ON a.BR_ID = b.BR_ID WHERE b.BR_YEAR = :BR_YEAR AND a.BR_TO_DEPARTMENT = :BR_TO_DEPARTMENT AND a.RUNNING_NO IS NOT NULL ORDER BY a.BR_DEPARTMENT_ID DESC LIMIT 1");
 			sql.setParameter("BR_YEAR", brYear);
 			sql.setParameter("BR_TO_DEPARTMENT", brToDepartment);
 			id =  (Integer) sql.uniqueResult();
@@ -1303,5 +1525,47 @@ public class BookReciveOutDAOImpl implements BookReciveOutDAO {
 			HibernateUtil.close(session);
 		}
 		return brNum;
+	}
+	
+	@Override
+	public int updateReciveOutBoard(BookRecieveBoard recive) {
+		Session session = OpenSession();
+		Transaction tx = session.beginTransaction();
+		int result = 0;
+		try{
+			Query query = session.createQuery("update BookRecieveBoard set status = :status, updatedDate = SYSDATE(), updatedBy = :updatedBy, remark = :remark where brId = :brId and brToBoard = :brToBoard");
+			query.setParameter("status", recive.getStatus());
+			query.setParameter("updatedBy", recive.getUpdatedBy());
+			query.setParameter("remark", recive.getRemark());
+			query.setParameter("brId", recive.getBrId());
+			query.setParameter("brToBoard", recive.getBrToBoard());
+			result = query.executeUpdate();
+			
+			List<BookRecieveBoard> data = session.createSQLQuery("select * from Book_Recieve_Board where BR_ID = '" + recive.getBrId() + "'").addEntity(BookRecieveBoard.class).list();
+			boolean flag = true;
+			for(BookRecieveBoard u : data) {
+				if("N".equals(u.getStatus())){
+					flag = false;
+				}
+			}
+			if(flag) {
+				query = session.createQuery("update BookReciveOut set "
+						+ "brStatus = :brStatus, "
+						+ "updatedBy = :updatedBy, "
+						+ "updatedDate = SYSDATE() "
+						+ "where brId = :brId");
+				query.setParameter("brStatus", recive.getStatus());
+				query.setParameter("updatedBy", recive.getUpdatedBy());
+				query.setParameter("brId", recive.getBrId());
+				result = query.executeUpdate();
+			}
+			tx.commit();
+		} catch (Exception ex) {
+			logger.error("updateReciveOutBoard : ", ex);
+			tx.rollback();
+		}finally{
+			HibernateUtil.close(session);
+		}
+		return result;
 	}
 }

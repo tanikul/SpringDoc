@@ -44,6 +44,16 @@
 			    </div>
 			  </div>
 			  <div class="form-group">
+			    <label class="col-sm-3 control-label">สิทธิ์การใช้ระบบ</label>
+			    <div class="col-sm-9">
+			    	<springForm:select path="role" cssClass="form-control" value="${obj.getRole()}"  onchange="changeRoleToSection(this);">
+			    		<springForm:option value="" label="--- เลือกสิทธิ์ ---" />
+			    		<springForm:options items="${roles}" />
+			    	</springForm:select>   
+			    	<p class="help-block"></p>
+			    </div>
+			  </div>
+			  <div class="form-group" id="division-box" style="display:none;">
 			    <label class="col-sm-3 control-label">ส่วนราชการ</label>
 			    <div class="col-sm-9">
 			    	<springForm:select path="division" cssClass="form-control" value="${obj.getDivisionCode()}" onchange="changeDivisionToGroup(this);">
@@ -53,7 +63,7 @@
 			    	<p class="help-block"></p>
 			    </div>
 			  </div>
-			  <div class="form-group">
+			  <div class="form-group" id="group-boxes" style="display:none;">
 			    <label class="col-sm-3 control-label">ฝ่าย/ส่วนงาน</label>
 			    <div class="col-sm-9" id="group-box">
 			    	<springForm:select path="groupId" cssClass="form-control" value="${obj.getGroupId()}" disabled="true" onchange="changeGroupToSection(this);">
@@ -62,7 +72,7 @@
 			    	<p class="help-block"></p>
 			    </div>
 			  </div>
-			  <div class="form-group">
+			  <div class="form-group" id="section-boxes" style="display:none;">
 			    <label class="col-sm-3 control-label">กลุ่มงาน</label>
 			    <div class="col-sm-9" id="section-box">
 			    	<springForm:select path="sectionId" cssClass="form-control" value="${obj.getSectionId()}" disabled="true">
@@ -71,12 +81,13 @@
 			    	<p class="help-block"></p>
 			    </div>
 			  </div>
-			  <div class="form-group">
-			    <label class="col-sm-3 control-label">สิทธิ์การใช้ระบบ</label>
+			  
+			  <div class="form-group" id="position-box" style="display:none;">
+			    <label class="col-sm-3 control-label">ตำแหน่ง</label>
 			    <div class="col-sm-9">
-			    	<springForm:select path="role" cssClass="form-control" value="${obj.getRole()}">
-			    		<springForm:option value="" label="--- เลือกสิทธิ์ ---" />
-			    		<springForm:options items="${roles}" />
+			    	<springForm:select path="boardId" cssClass="form-control">
+			    		<springForm:option value="" label="--- เลือกตำแหน่ง ---" />
+			    		<springForm:options items="${boards}" />
 			    	</springForm:select>   
 			    	<p class="help-block"></p>
 			    </div>

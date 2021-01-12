@@ -232,6 +232,7 @@ public class AccountController {
 			UserTable user = userService.findUserById(id); 
 			model.addObject("users", user);
 			model.addObject("divisions", divisionService.selectDivision());
+			model.addObject("boards", divisionService.selectBoard());
 			model.addObject("roles", Constants.getRoles());
 			model.addObject("groups", userService.getGroupFromDivisionDropDown(user.getDivisionCode()));
 			model.addObject("sections", (user.getGroupId() == null) ? null : userService.getSectionFromGroupDropDown(user.getGroupId().toString()));
@@ -311,6 +312,7 @@ public class AccountController {
 			model.addObject("divisions", divisionService.selectDivision());
 			model.addObject("roles", Constants.getRoles());
 			model.addObject("prefixs", Constants.PREFIXS);
+			model.addObject("boards", divisionService.selectBoard());
 			model.setViewName("add_user");
 		}catch(Exception ex){
 			logger.error("AddUser_GET : ", ex);
@@ -328,7 +330,8 @@ public class AccountController {
 			@RequestParam("role") String role,
 			@RequestParam("groupId") Integer groupId,
 			@RequestParam("prefix") String prefix,
-			@RequestParam("sectionId") Integer sectionId) {
+			@RequestParam("sectionId") Integer sectionId,
+			@RequestParam("boardId") Integer boardId) {
 		String rs = "";
 		try {
 			Users user = new Users();
@@ -341,7 +344,9 @@ public class AccountController {
 			user.setDivision(division);
 			user.setRole(role);
 			user.setGroupId(groupId);
+			user.setSectionId(sectionId);
 			user.setPrefix(prefix);
+			user.setBoardId(boardId);
 			boolean r = userService.addUser(user);
 			if(r) {
 				rs = "success";

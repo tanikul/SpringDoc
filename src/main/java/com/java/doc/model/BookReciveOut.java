@@ -30,6 +30,7 @@ public class BookReciveOut implements java.io.Serializable {
 	private String brPlace;
 	private Date brDate;
 	private String brFrom;
+	private String brToBoard;
 	private String brToDepartment;
 	private String brToGroup;
 	private String brToSection;
@@ -40,6 +41,7 @@ public class BookReciveOut implements java.io.Serializable {
 	private String brToSectionName;
 	private String brToGroupName;
 	private String brToUserName;
+	
 	private String brSubject;
 	private String brRemark;
 	private String brDivision;
@@ -58,6 +60,8 @@ public class BookReciveOut implements java.io.Serializable {
 	private String brRemarkGroup;
 	private String brRemarkSection;
 	private String brRemarkUser;
+	private String brRemarkBoard;
+	private String cntChild;
 	
 	public BookReciveOut() {
 	}
@@ -221,6 +225,15 @@ public class BookReciveOut implements java.io.Serializable {
 
 	public void setBrTo(String brTo) {
 		this.brTo = brTo;
+	}
+	
+	@Column(name = "BR_TO_BOARD", length = 255)
+	public String getBrToBoard() {
+		return this.brToBoard;
+	}
+
+	public void setBrToBoard(String brToBoard) {
+		this.brToBoard = brToBoard;
 	}
 	
 	@Column(name = "BR_TO_DEPARTMENT", length = 100)
@@ -466,6 +479,24 @@ public class BookReciveOut implements java.io.Serializable {
 
 	public void setBrRemarkUser(String brRemarkUser) {
 		this.brRemarkUser = brRemarkUser;
+	}
+
+	@Column(name = "CNT_CHILD")
+	public String getCntChild() {
+		return cntChild;
+	}
+
+	public void setCntChild(String cntChild) {
+		this.cntChild = cntChild;
+	}
+
+	@Column(name = "BR_REMARK_BOARD")
+	public String getBrRemarkBoard() {
+		return brRemarkBoard;
+	}
+
+	public void setBrRemarkBoard(String brRemarkBoard) {
+		this.brRemarkBoard = brRemarkBoard;
 	}
 	
 	

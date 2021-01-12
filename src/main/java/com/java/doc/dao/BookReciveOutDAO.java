@@ -3,6 +3,7 @@ package com.java.doc.dao;
 import java.util.List;
 import java.util.Map;
 
+import com.java.doc.model.BookRecieveBoard;
 import com.java.doc.model.BookRecieveDepartment;
 import com.java.doc.model.BookRecieveGroup;
 import com.java.doc.model.BookRecieveSection;
@@ -50,10 +51,17 @@ public interface BookReciveOutDAO {
 	public Map<String, List<String>> getGroupSelectedByAdmin(String departments);
 	public Map<String, List<String>> getSectionSelectedByAdmin(String groups);
 	public Map<String, List<String>> getUserSelectedByAdmin(String groups, String sections);
+	public Map<String, List<String>> getUserForSectionRoleSelectedByAdmin(String groups, String sections);
 	public List<BookRecieveDepartment> getBookRecieveOutDepartment(int brId);
 	public List<BookRecieveGroup> getBookRecieveOutGroup(int brId, String brToDepartment);
 	public List<BookRecieveUser> getBookRecieveOutUser(int brId, String brToDepartment, String brToGroup);
 	public Sections getSectionById(Integer id);
 	public Integer getNextRunningNoDepartment(int brYear, String brToDepartment);
 	int updateStatusReciveOut(BookReciveOut recive);
+	String deleteRecieveSectionUser(BookRecieveSection bookRecieveSection, String brToNotIn);
+	int updateReciveOutSection(BookRecieveSection recive);
+	List<BookRecieveUser> getBookRecieveOutSectionUser(int brId, String brToDepartment, String brToGroup,
+			String brToSection);
+	int insertRecieveBoard(BookRecieveBoard recive) throws Exception;
+	int updateReciveOutBoard(BookRecieveBoard recive);
 }

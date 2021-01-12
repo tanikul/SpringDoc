@@ -120,6 +120,7 @@ public class InternalController {
 			model.addObject("quick", this.typeQuick.listTypeQuick());
 			model.addObject("secret", this.typeSecret.listTypeSecret());
 			model.addObject("divisions", this.divisions.selectDivision());
+			model.addObject("boards", this.divisions.selectBoard());
 			model.addObject("lastId", sendRecive.getBrNum());
 			model.addObject("mode", "add");
 			model.setViewName("internal");
@@ -163,17 +164,26 @@ public class InternalController {
 			model.addObject("sendRecive", sendRecive);
 			model.addObject("disable", (!user.getRole().equals("ADMIN") || (!StringUtils.isNullOrEmpty(sendRecive.getBrStatus()) && "Y".equals(sendRecive.getBrStatus()))) ? "true" : "");
 			model.addObject("disableRemarkDepartment", (!user.getRole().equals("DEPARTMENT") || (!StringUtils.isNullOrEmpty(sendRecive.getBrStatus()) && "Y".equals(sendRecive.getBrStatus()))) ? "true" : "");
-			model.addObject("disableRemarkGroup", (!user.getRole().equals("GROUP") || (!StringUtils.isNullOrEmpty(sendRecive.getBrStatus()) && "Y".equals(sendRecive.getBrStatus()))) ? "true" : "");
+			model.addObject("disableRemarkGroup", ((!user.getRole().equals("GROUP") && user.getSectionId() == null) || (!StringUtils.isNullOrEmpty(sendRecive.getBrStatus()) && "Y".equals(sendRecive.getBrStatus()))) ? "true" : "");
 			model.addObject("disableRemarkUser", (!user.getRole().equals("USER") || (!StringUtils.isNullOrEmpty(sendRecive.getBrStatus()) && "Y".equals(sendRecive.getBrStatus()))) ? "true" : "");
+			model.addObject("disableRemarkSection", ((!user.getRole().equals("GROUP") && user.getSectionId() == null) || (!StringUtils.isNullOrEmpty(sendRecive.getBrStatus()) && "Y".equals(sendRecive.getBrStatus()))) ? "true" : "");
+			model.addObject("disableRemarkBoard", (!user.getRole().equals("BOARD") || (!StringUtils.isNullOrEmpty(sendRecive.getBrStatus()) && "Y".equals(sendRecive.getBrStatus()))) ? "true" : "");
 			model.addObject("disableAll", (!StringUtils.isNullOrEmpty(sendRecive.getBrStatus()) && "Y".equals(sendRecive.getBrStatus())) ? "true" : "");
 			model.addObject("quick", this.typeQuick.listTypeQuick());
-			model.addObject("secret", this.typeSecret.listTypeSecret());			
+			model.addObject("secret", this.typeSecret.listTypeSecret());
+			model.addObject("cntChild", sendRecive.getCntChild());
+			model.addObject("userSectionId", user.getSectionId());
+			model.addObject("brRemarkSection", sendRecive.getBrRemarkSection());
 			if(user.getRole().equals("ADMIN")){
 				model.addObject("divisions", this.divisions.selectDivision());
+				model.addObject("boards", this.divisions.selectBoard());
 				model.addObject("brTo", sendRecive.getBrToDepartment());
 				model.addObject("brToGroup", sendRecive.getBrToGroup());
 				model.addObject("brToSection", sendRecive.getBrToSection());
 				model.addObject("brToUser", sendRecive.getBrToUser());
+				model.addObject("brToBoard", sendRecive.getBrToBoard());
+			}else if(user.getRole().equals("BOARD")){
+				model.addObject("brToBoard", sendRecive.getBrToBoard());
 			}else if(user.getRole().equals("DEPARTMENT")){
 				model.addObject("groups", userService.getGroupFromDivisionDropDown(sendRecive.getBrToDepartment()));
 				model.addObject("brTo", sendRecive.getBrToGroup());
@@ -184,11 +194,6 @@ public class InternalController {
 				model.addObject("brTo", sendRecive.getBrToUser());
 				model.addObject("brToUser", sendRecive.getBrToUser());
 				model.addObject("brToGroup", sendRecive.getBrToGroup());
-			}else if(user.getRole().equals("SECTION")){
-				model.addObject("userGroups", userService.getSectionFromGroupDropDown(sendRecive.getBrToSection()));
-				model.addObject("brTo", sendRecive.getBrToUser());	
-				model.addObject("brToSection", sendRecive.getBrToSection());
-				model.addObject("brToUser", sendRecive.getBrToUser());
 			}
 			model.addObject("attachments", this.attachmentService.listAttachment(id, Constants.OBJECT_NAME_BOOK_RECIVE_OUT));
 			model.setViewName("internal");
@@ -272,7 +277,7 @@ public class InternalController {
 				recive.setBrDate(brDate);
 			}
 			recive.setUpdatedBy(user.getId().toString());
-			if(reciveout.updateReciveOut(recive, user.getRole()) == 1){
+			if(reciveout.updateReciveOut(recive, user) == 1){
 				if(user.getRole().equals("ADMIN")){
 					// Update Attachment
 					String attachmentIdList = request.getParameter("attachmentIdList");
@@ -348,6 +353,18 @@ public class InternalController {
 		Map<String, List<String>> message = null;
 		try{
 			message = reciveout.getUserSelectedByAdmin(groups, sections);
+		}catch(Exception ex){
+			logger.error("/getUserSelectedByAdmin : ", ex);
+		}
+		return message;
+	}
+	
+	@RequestMapping(value = "/getUserForSectionRoleSelectedByAdmin", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@PreAuthorize("isAuthenticated()")
+	public @ResponseBody Map<String, List<String>> getUserForSectionRoleSelectedByAdmin(@RequestParam("groups") String groups, @RequestParam("sections") String sections) {
+		Map<String, List<String>> message = null;
+		try{
+			message = reciveout.getUserForSectionRoleSelectedByAdmin(groups, sections);
 		}catch(Exception ex){
 			logger.error("/getUserSelectedByAdmin : ", ex);
 		}

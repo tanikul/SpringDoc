@@ -185,7 +185,7 @@ public class UserDAOImpl implements UserDAO {
 		UserTable result = new UserTable();
 		Session session = OpenSession();
 		try {
-			String strSQL = "SELECT u.id, u.fname, u.lname, u.role, d.division_name, d.division_code, d.organization, u.username, u.password, u.group_id, (SELECT group_name FROM groups g WHERE g.group_id = u.group_id) group_name, u.prefix, u.section_id, (SELECT s2.section_name FROM sections s2 WHERE s2.id = u.section_id) section_name FROM users u LEFT JOIN divisions d ON u.division = d.division_code WHERE u.id = " + id;
+			String strSQL = "SELECT u.id, u.fname, u.lname, u.role, d.division_name, d.division_code, d.organization, u.username, u.password, u.group_id, (SELECT group_name FROM groups g WHERE g.group_id = u.group_id) group_name, u.prefix, u.section_id, (SELECT s2.section_name FROM sections s2 WHERE s2.id = u.section_id) section_name, u.board_id FROM users u LEFT JOIN divisions d ON u.division = d.division_code WHERE u.id = " + id;
 			SQLQuery query = session.createSQLQuery(strSQL);
 			List<?> list = query.list();
 			Iterator<?> it = list.iterator();
@@ -205,6 +205,7 @@ public class UserDAOImpl implements UserDAO {
 				result.setPrefix(row[11] == null ? "" : row[11].toString());
 				result.setSectionId(row[12] == null ? null : Integer.parseInt(row[12].toString()));
 				result.setSectionName(row[13] == null ? "" : row[13].toString());
+				result.setBoardId(row[14] == null ? null : Integer.parseInt(row[14].toString()));
 				result.setButton("<button type='button' class='btn btn-warning' onclick='editUser(" + row[0].toString() + ");'><span class='glyphicon glyphicon-edit' aria-hidden='true'></span> เน�เธ�เน�เน�เธ�</button> <button type='button' class='btn btn-danger' onclick='deleteUser(" + row[0].toString() + ");'><span class='glyphicon glyphicon-trash' aria-hidden='true'></span> เธฅเธ�</button>");
 			}
 		}catch(HibernateException ex){

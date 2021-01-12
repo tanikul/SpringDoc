@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import com.java.doc.dao.DivisionDAO;
+import com.java.doc.model.Boards;
 import com.java.doc.model.Divisions;
 
 @Service("divisionService")
@@ -33,5 +34,19 @@ public class DivisionServiceImpl implements DivisionService {
 		return divisions.getDivisionByCode(code);
 	}
 
+	@Override
+	public List<Boards> listBorad() {
+		return divisions.listBorad();
+	}
+
+	@Override
+	public Boards getBoardById(Integer id) {
+		return divisions.getBoardById(id);
+	}
+
+	@Override
+	public Map<Integer, String> selectBoard() {
+		return divisions.selectBoard();
+	}
 	
 }

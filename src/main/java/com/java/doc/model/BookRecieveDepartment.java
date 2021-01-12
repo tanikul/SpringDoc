@@ -62,7 +62,7 @@ public class BookRecieveDepartment implements java.io.Serializable {
 
 	@Id
 	@GeneratedValue(strategy = IDENTITY)
-	@Column(name = "BR_TO_ID", unique = true, nullable = false)
+	@Column(name = "BR_DEPARTMENT_ID", unique = true, nullable = false)
 	public Integer getBrDepartmentId() {
 		return this.brDepartmentId;
 	}

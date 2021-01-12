@@ -27,6 +27,7 @@ public class Users implements java.io.Serializable {
 	private String division;
 	private Integer groupId;
 	private Integer sectionId;
+	private Integer boardId;
 
 	public Users() {
 	}
@@ -131,6 +132,15 @@ public class Users implements java.io.Serializable {
 
 	public void setSectionId(Integer sectionId) {
 		this.sectionId = sectionId;
+	}
+	
+	@Column(name = "board_id", length = 2)
+	public Integer getBoardId() {
+		return boardId;
+	}
+
+	public void setBoardId(Integer boardId) {
+		this.boardId = boardId;
 	}
 
 }

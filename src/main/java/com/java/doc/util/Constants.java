@@ -20,6 +20,7 @@ public class Constants {
 	public static LinkedHashMap<String, String> getRoles() {
 		ROLES = new LinkedHashMap<String, String>();
 		ROLES.put("ADMIN", "เจ้าหน้าที่ดูแลระบบ");
+		ROLES.put("BOARD", "ผู้บริหาร");
 		ROLES.put("DEPARTMENT", "เจ้าหน้าที่รับ-ส่งหนังสือ ของสำนัก");
 		ROLES.put("GROUP", "เจ้าหน้าที่รับ-ส่งหนังสือ ของฝ่าย/กลุ่มงาน");
 		//ROLES.put("SECTION", "เจ้าหน้าที่รับ-ส่งหนังสือ ของกลุ่มงาน");

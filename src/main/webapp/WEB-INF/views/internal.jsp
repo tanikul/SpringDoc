@@ -105,6 +105,14 @@
 			  </c:if>
 			  <c:choose>
 			  	<c:when test="${role == 'ADMIN'}">
+			  	  <div class="form-group">
+				    <label class="col-sm-3 control-label">ถึงผู้บริหารระดับสูง</label>
+				    <div class="col-sm-9">
+			    		<springForm:select path="brToBoard" cssClass="form-control selectpicker" multiple="true" disabled="${disableAll}">
+				    		<springForm:options items="${boards}" />
+				    	</springForm:select>	    	
+				    </div>
+				  </div>
 				  <div class="form-group">
 				    <label class="col-sm-3 control-label">ถึงส่วนราชการ</label>
 				    <div class="col-sm-9">
@@ -148,16 +156,19 @@
 				    </div>
 				  </div>
 				  <springForm:hidden path="brToDepartment"/>
+				  <springForm:hidden path="brToBoard"/>
 				</c:when>
 				<c:when test="${role == 'GROUP'}">
-				  <div class="form-group">
-				    <label class="col-sm-3 control-label">ถึงกลุ่มงาน</label>
-				    <div class="col-sm-9" id="admin-section">
-				    	<springForm:select path="brToSection" cssClass="form-control selectpicker" multiple="true" disabled="${disableAll}">
-				    		<springForm:options items="${sectionsId}" />
-				    	</springForm:select>   
-				    </div>
-				  </div>
+					<c:if test="${userSectionId == '0' || userSectionId == null}">
+					  <div class="form-group">
+					    <label class="col-sm-3 control-label">ถึงกลุ่มงาน</label>
+					    <div class="col-sm-9" id="admin-section">
+					    	<springForm:select path="brToSection" cssClass="form-control selectpicker" multiple="true" disabled="${disableAll}">
+					    		<springForm:options items="${sectionsId}" />
+					    	</springForm:select>   
+					    </div>
+					  </div>
+				  </c:if>
 				  <div class="form-group">
 				    <label class="col-sm-3 control-label">ถึงบุคคล</label>
 				    <div class="col-sm-9" id="admin-user">
@@ -168,12 +179,14 @@
 				  </div>
 				  <springForm:hidden path="brToGroup"/>
 				  <springForm:hidden path="brToDepartment"/>
-				  <springForm:hidden path="brToSection"/>
+				  <springForm:hidden path="brToBoard"/>
 				</c:when>
 				<c:when test="${role == 'USER'}">
 					<springForm:hidden path="brToGroup"/>
 				 	<springForm:hidden path="brToDepartment"/>
 				 	<springForm:hidden path="brToUser"/>
+				  	<springForm:hidden path="brToSection"/>
+				  	<springForm:hidden path="brToBoard"/>
 				</c:when>
 			  </c:choose>
 			  <div class="form-group">
@@ -196,6 +209,23 @@
 			      <springForm:textarea cssClass="form-control" path="brRemark" disabled="${disable}"></springForm:textarea>
 			    </div>
 			  </div>
+			  <c:if test="${role eq 'BOARD' }">
+			  	<springForm:hidden path="brToBoard"/>
+				  <div class="form-group">
+				    <label class="col-sm-3 control-label">หมายเหตุ</label>
+				    <div class="col-sm-9">
+				      <springForm:textarea cssClass="form-control" path="brRemarkBoard" disabled="${disableRemarkBoard}"></springForm:textarea>
+				    </div>
+				  </div>
+			  </c:if>
+			  <c:if test="${role eq 'BOARD'}">
+				  <div class="form-group">
+				    <label class="col-sm-3 control-label" for="brStatus">เอกสารเสร็จสิ้น</label>
+				    <div class="col-sm-1">
+				      <springForm:checkbox path="brStatus" value="SUCCESS" disabled="${disableAll}"></springForm:checkbox>
+				    </div>
+				  </div>
+			  </c:if>
 			  <c:if test="${role eq 'DEPARTMENT' || role eq 'GROUP' || role eq 'USER' }">
 				  <div class="form-group">
 				  	<c:choose>
@@ -214,7 +244,7 @@
 			  <c:if test="${role eq 'GROUP' || role eq 'USER' }">
 				  <div class="form-group">
 				  	<c:choose>
-					  	<c:when test="${role eq 'GROUP'}">
+					  	<c:when test="${role eq 'GROUP' && (userSectionId == '0' || userSectionId == null)}">
 					  		<label class="col-sm-3 control-label">หมายเหตุ</label>
 					  	</c:when>
 					  	<c:otherwise>
@@ -225,6 +255,22 @@
 				      <springForm:textarea cssClass="form-control" path="brRemarkGroup" disabled="${disableRemarkGroup}"></springForm:textarea>
 				    </div>
 				  </div>
+				  <c:if test="${role eq 'GROUP' && userSectionId != '0' && userSectionId != null}">
+				  	<div class="form-group">
+					  	 <label class="col-sm-3 control-label">หมายเหตุ</label>
+					  	 <div class="col-sm-9">
+					      <springForm:textarea cssClass="form-control" path="brRemarkSection" disabled="${disableRemarkSection}"></springForm:textarea>
+					    </div>
+				    </div>
+				</c:if>
+				  <c:if test="${role eq 'USER' && userSectionId != '0' && userSectionId != null && brRemarkSection != null && brRemarkSection != ''}">
+				  	 <div class="form-group">
+					  	 <label class="col-sm-3 control-label">หมายเหตุ (จากเจ้าหน้าที่รับ-ส่งหนังสือของกลุ่มงานย่อย)</label>
+					  	 <div class="col-sm-9">
+					      <springForm:textarea cssClass="form-control" path="brRemarkSection" disabled="${disableRemarkSection}"></springForm:textarea>
+					    </div>
+				    </div>
+				  </c:if>
 			  </c:if>
 			  <c:if test="${role eq 'USER' }">
 				  <div class="form-group">
@@ -361,16 +407,40 @@
 			var disable = "${disable}";
 			var brTo = "${brTo}";
 			var role = "${role}";
+			var cntChild = "${cntChild}";
+			var brToBoard = "${brToBoard}";
+
+			if(brToBoard != null){
+				var arrBrToBoard = brToBoard.split(',');
+				$("#brToBoard option").each(function(i, item){console.log(arrBrToBoard);
+					if(arrBrToBoard.indexOf(item.value) > -1){
+						$(item).attr('selected', 'selected');
+					}
+				});	
+			}
 			if(brTo != null){
 				var arrBrTo = brTo.split(',');
+				var arrCntChild = cntChild.split(',');
 				$("#brToDepartment option").each(function(i, item){
 					if(arrBrTo.indexOf(item.value) > -1){
-						$(item).attr('selected', 'selected');	
+						/*if(arrCntChild[i] != null && arrCntChild[i] > 0){
+							$(item).attr('selected', 'selected').attr("disabled", true);
+							var str = "<input type='hidden' name='brToDepartment' value='" + item.value + "'>";
+							$('#sendReciveForm').append(str);
+						}else{*/
+							$(item).attr('selected', 'selected');
+						//}
 					}
 				});	
 				$("#brToGroup option").each(function(i, item){
 					if(arrBrTo.indexOf(item.value) > -1){
-						$(item).attr('selected', 'selected');	
+						/*if(arrCntChild != null && arrCntChild > 0){
+							$(item).attr('selected', 'selected').attr("disabled", true);
+							var str = "<input type='hidden' name='brToGroup' value='" + item.value + "'>";
+							$('#sendReciveForm').append(str);
+						}else{*/
+							$(item).attr('selected', 'selected');
+						//}
 					}
 				});	
 				$("#brToSection option").each(function(i, item){
@@ -379,6 +449,7 @@
 					}
 				});	
 				$("#brToUser option").each(function(i, item){
+					
 					if(arrBrTo.indexOf(item.value) > -1){
 						$(item).attr('selected', 'selected');	
 					}
@@ -396,7 +467,12 @@
 				var sectionTmp = [];
 
 				var brToSection = "${brToSection}";
-				getUser(strGroup, brToSection, "${brToUser}");
+				var userSectionId = "${userSectionId}";
+				if(userSectionId == null || userSectionId == ''){
+					getUser(strGroup, brToSection, "${brToUser}");
+				}else{
+					getUserForSectionRole(strGroup, userSectionId, "${brToUser}");
+				}
 				getSectionEditMode(strGroup, brToSection)
 				/*$.ajax({
 			        url: GetSiteRoot() + "/getSectionSelectedByAdmin",
@@ -537,17 +613,11 @@
   	   							        	$('#brToSection').selectpicker('refresh');
    	   							        	$('#brToSection').on('changed.bs.select', function (event, clickedIndex, newValue, oldValue) {
    	   							        		resetUserSelect();
-   	   							        		if(sectionTmp.hasOwnProperty('x' + clickedIndex)){
-	   	   		   									delete sectionTmp['x' + clickedIndex];
-	   	   		   								}else{
-	   	   		   									var b = $("#brToSection option").eq(clickedIndex).val();
-	   	   		   									var af = b.split('xx##xx');
-	   	   		   									sectionTmp['x' + clickedIndex] = af[1];		
-	   	   		   								}
-	   	   		   								var str = '';
-	   	   		   								for(var x in sectionTmp){
-	   	   		   									str += "'" + sectionTmp[x] + "',";
-	   	   		   								}
+	   	   							        	var str = '';
+		   	 					        		$("#brToSection").find(":selected").each(function(i, item){	
+		   	 					        			var af = $(item).val().split('xx##xx');
+		   	 					        			str += "'" + af[1] + "',";
+		   	 					        		});
 	   	   		   								if(str.length > 0){
 	   	   		   									str = str.substring(0, str.length - 1);
 	   	   		   								}
@@ -675,17 +745,11 @@
   	   							        	$('#brToSection').selectpicker('refresh');
    	   							        	$('#brToSection').on('changed.bs.select', function (event, clickedIndex, newValue, oldValue) {
    	   							        		resetUserSelect();
-   	   							        		if(sectionTmp.hasOwnProperty('x' + clickedIndex)){
-	   	   		   									delete sectionTmp['x' + clickedIndex];
-	   	   		   								}else{
-	   	   		   									var b = $("#brToSection option").eq(clickedIndex).val();
-	   	   		   									var af = b.split('xx##xx');
-	   	   		   									sectionTmp['x' + clickedIndex] = af[1];		
-	   	   		   								}
-	   	   		   								var str = '';
-	   	   		   								for(var x in sectionTmp){
-	   	   		   									str += "'" + sectionTmp[x] + "',";
-	   	   		   								}
+	   	   							        	var str = '';
+		   	 					        		$("#brToSection").find(":selected").each(function(i, item){	
+		   	 					        			var af = $(item).val().split('xx##xx');
+		   	 					        			str += "'" + af[1] + "',";
+		   	 					        		});
 	   	   		   								if(str.length > 0){
 	   	   		   									str = str.substring(0, str.length - 1);
 	   	   		   								}
@@ -865,13 +929,12 @@
 			        	var s = '';
 	        			if(brToUser != '' && brToUser != null){
 	        				brToUser = brToUser.split(',');
-						}console.log(brToUser);
+						}
 			        	for(var x in response){
 			        		//s += '<optgroup label="' + x + '">';
 			        		//var subject;
 			        		for(var y in response[x]){
 			        			var t = response[x][y].split('xx#xx');
-			        			console.log(t);
 			        			if(brToUser != null && brToUser.indexOf(t[2]) > -1){
 			        				if(t.length == 6){
 				        				s += '<option value="' + t[0] + 'xx##xx' + t[1] + 'xx##xx' + t[2] + 'xx##xx' + t[3] + '" selected>' + t[5] + '</option>'; 
@@ -900,6 +963,58 @@
 			    });
 			 }
 			 
+			function getUserForSectionRole(strGroup, sections, brToUser){
+				 
+				 if(typeof sections == 'undefined'){
+					 sections = null;
+				 }
+				 if(typeof brToUser == 'undefined'){
+					 brToUser = null;
+				 }
+				 
+				 $.ajax({
+			        url: GetSiteRoot() + "/getUserForSectionRoleSelectedByAdmin",
+			        type: "POST",
+			        cache: false,
+			        dataType : "json",
+			        data: { 'groups': strGroup, 'sections': sections },
+			        success: function (response) {
+			        	var s = '';
+	        			if(brToUser != '' && brToUser != null){
+	        				brToUser = brToUser.split(',');
+						}
+			        	for(var x in response){
+			        		//s += '<optgroup label="' + x + '">';
+			        		//var subject;
+			        		for(var y in response[x]){
+			        			var t = response[x][y].split('xx#xx');
+			        			if(brToUser != null && brToUser.indexOf(t[2]) > -1){
+			        				if(t.length == 6){
+				        				s += '<option value="' + t[0] + 'xx##xx' + t[1] + 'xx##xx' + t[2] + 'xx##xx' + t[3] + '" selected>' + t[5] + '</option>'; 
+				        			}else if(t.length == 4){
+				        				s += '<option value="' + t[0] + 'xx##xx' + t[1] + 'xx##xx' + t[2] + '" selected>' + t[3] + '</option>'; 
+				        			}	
+			        			}else{
+			        				if(t.length == 6){
+				        				s += '<option value="' + t[0] + 'xx##xx' + t[1] + 'xx##xx' + t[2] + 'xx##xx' + t[3] + '">' + t[5] + '</option>'; 
+				        			}else if(t.length == 4){
+				        				s += '<option value="' + t[0] + 'xx##xx' + t[1] + 'xx##xx' + t[2] + '">' + t[3] + '</option>'; 
+				        			}
+			        			}
+			        		}
+			        		s = '<optgroup label="">' +  s + '</optgroup>';			        	  
+			        	}
+			        	var strs = '';
+			        	if(s != ''){
+			        		strs = '<select class="form-control selectpicker" id="brToUser" name="brToUser" multiple="true">';
+			        		strs += s;
+			        		strs += '</select>';
+			        		$('#admin-user').html(strs);
+			        		$('#brToUser').selectpicker('refresh');
+			        	}
+			        }
+			    });
+			 }
 			 
 			 function getSectionEditMode(strGroup, brToSection){
 				 $.ajax({
@@ -913,7 +1028,6 @@
 	        			if(brToSection != '' && brToSection != null){
 							brToSection = brToSection.split(',');
 						}
-	        			console.log(brToSection);
 			        	for(var x in response){
 
 			        		s += '<optgroup label="' + x + '">';
@@ -922,14 +1036,16 @@
 				        		for(var y in response[x]){
 				        			var t = response[x][y].split('xx#xx');
 				        			var o = t[0].split('xx##xx');
-				        			console.log(t);
 									if(brToSection.indexOf(o[1]) > -1){
 				        				s += '<option value="' + t[0] + '" selected>' + t[1] + '</option>'; 	
+				        				
 				        			}else{
 				        				s += '<option value="' + t[0] + '">' + t[1] + '</option>'; 
 				        			}
 				        			
 				        		}
+				        		//s += '<option value="17" selected>xxxx</option>'; 	
+				        		//s += '<option value="18" selected>yyyyy</option>'; 	
 				        		s += '</optgroup>';			        	  
 				        	}
 			        		s += '</optgroup>';			        	  
@@ -943,17 +1059,11 @@
 					        	$('#brToSection').selectpicker('refresh');
 					        	$('#brToSection').on('changed.bs.select', function (event, clickedIndex, newValue, oldValue) {
 					        		resetUserSelect();
-					        		if(sectionTmp.hasOwnProperty('x' + clickedIndex)){
-	   									delete sectionTmp['x' + clickedIndex];
-	   								}else{
-	   									var b = $("#brToSection option").eq(clickedIndex).val();
-	   									var af = b.split('xx##xx');
-	   									sectionTmp['x' + clickedIndex] = af[1];		
-	   								}
-	   								var str = '';
-	   								for(var x in sectionTmp){
-	   									str += "'" + sectionTmp[x] + "',";
-	   								}
+					        		var str = '';
+					        		$("#brToSection").find(":selected").each(function(i, item){	
+					        			var af = $(item).val().split('xx##xx');
+					        			str += "'" + af[1] + "',";
+					        		});
 	   								if(str.length > 0){
 	   									str = str.substring(0, str.length - 1);
 	   								}

@@ -12,6 +12,8 @@ public class TableSorter {
 	private String division;
 	private int groupId;
 	private String userId;
+	private int sectionId;
+	private int boardId;
 	
 	public ObjSearch getSearch() {
 		return search;
@@ -70,6 +72,23 @@ public class TableSorter {
 	public void setGroupId(int groupId) {
 		this.groupId = groupId;
 	}
+
+
+	public int getSectionId() {
+		return sectionId;
+	}
+	public void setSectionId(int sectionId) {
+		this.sectionId = sectionId;
+	}
+
+
+	public int getBoardId() {
+		return boardId;
+	}
+	public void setBoardId(int boardId) {
+		this.boardId = boardId;
+	}
+
 
 	public class ObjSearch {
 		private String type;

@@ -270,6 +270,10 @@ SearchResult = function(){
         	  var tf = $('.tablesorter').find('tfoot').find('tr').find('th')[3];
         	  $(tf).html('วันที่รับหนังสือ');
           }else{
+	          var ti = $('.tablesorter').find('thead').find('tr').find('th')[4];
+	          $(ti).find('div').html('เลขทะเบียนส่ง');
+	          ti = $('.tablesorter').find('tfoot').find('tr').find('th')[4];
+	          $(ti).html('เลขทะเบียนส่ง');
         	  var th = $('.tablesorter').find('thead').find('tr').find('th')[13];
         	  var tf = $('.tablesorter').find('tfoot').find('tr').find('th')[13];
         	  $(th).hide();
@@ -413,13 +417,21 @@ saveAddUser = function(){
 		$('#lname').next().html('');
 		$('#lname').parent().prev().parent().removeClass('has-error');
 	}
-	if($('#division').val() == ''){
+	if($('#division').val() == '' && $('#role').val() != 'BOARD'){
 		$('#division').parent().prev().parent().addClass('has-error');
 		$('#division').next().html('กรุณาระบุหน่วยงาน');
 		chk = false;
 	}else{
 		$('#division').next().html('');
 		$('#division').parent().prev().parent().removeClass('has-error');
+	}
+	if($('#role').val() == 'BOARD' && $('#boardId').val() == ''){
+		$('#boardId').parent().prev().parent().addClass('has-error');
+		$('#boardId').next().html('กรุณาระบุตำแหน่ง');
+		chk = false;
+	}else{
+		$('#boardId').next().html('');
+		$('#boardId').parent().prev().parent().removeClass('has-error');
 	}
 	if(chk){
 		var fname = $('#fname').val();
@@ -431,11 +443,12 @@ saveAddUser = function(){
 		var sectionId = $('#sectionId').val();
 		var prefix = $('#prefix').val();
 		var role = $('#role').val();
+		var boardId = $('#boardId').val();
 		$.ajax({
 	        url: GetSiteRoot() + "/addUser",
 	        type: "POST",
 	        cache: false,
-	        data: { 'username': username, 'password': password,'fname': fname, 'lname' : lname, 'division' : division, 'groupId' : groupId, 'prefix' : prefix, 'role' : role, 'sectionId': sectionId },
+	        data: { 'username': username, 'password': password,'fname': fname, 'lname' : lname, 'division' : division, 'groupId' : groupId, 'prefix' : prefix, 'role' : role, 'sectionId': sectionId, 'boardId': boardId },
 	        success: function (response) {
 	        	if(response == 'success'){
 	        		table.ajax.reload();
@@ -672,3 +685,18 @@ function changeGroupToSection(obj){
     });
 }
 
+
+function changeRoleToSection(obj){
+	if(obj.value == 'BOARD'){
+		$('#position-box').show();
+		$('#division-box').hide();
+		$('#group-boxes').hide();
+		$('#section-boxes').hide();
+	}else{
+		$('#position-box').hide();
+		
+		$('#division-box').show();
+		$('#group-boxes').show();
+		$('#section-boxes').show();
+	}
+}
